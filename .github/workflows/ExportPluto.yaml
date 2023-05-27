@@ -2,7 +2,7 @@ name: Export Pluto notebooks
 on:
   push:
     branches:
-      - main/notebooks
+      - main
       - master
   workflow_dispatch:
 
