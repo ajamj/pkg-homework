@@ -53,11 +53,30 @@ jobs:
 
                   import PlutoSliderServer
 
-                  PlutoSliderServer.github_action(".";
-                    Export_cache_dir="pluto_state_cache",
-                    Export_baked_notebookfile=false,
-                    Export_baked_state=false,
+                  #PlutoSliderServer.github_action(".";
+                    #Export_cache_dir="pluto_state_cache",
+                    #Export_baked_notebookfile=false,
+                    #Export_baked_state=false,
                     # more parameters can go here
+                    
+                notebooks = split(join(
+                filter(
+                  x -> occursin(".jl", x),
+                  split(
+                    read(`find notebooks -type f`, String),
+                    '\n'
+                  )
+                ),
+                ' '),' ')
+
+            for notebook in notebooks
+              PlutoSliderServer.github_action(notebook;
+                Export_cache_dir="pluto_state_cache",
+                Export_baked_notebookfile=false,
+                Export_baked_state=false,
+                # more parameters can go here
+              )
+            end'
                   )'
 
 
