@@ -17,3 +17,5 @@ function is_prime(x)
         return false
     end
 end
+
+println(is_prime(7))
