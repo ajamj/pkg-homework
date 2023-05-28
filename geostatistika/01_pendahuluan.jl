@@ -118,6 +118,9 @@ Jadi, intinya bedanya statistika sama geostatistika itu ada di sumber data yang 
 # ╔═╡ f6fc1a90-ab96-4427-a4b0-29eb38ce0705
 load(download("https://github.com/ajamj/pkg-homework/blob/main/img/geostat_2_1.png?raw=true"))
 
+# ╔═╡ 5651410a-8795-48dc-83a5-cdfc0c6fd7f7
+load(download("https://github.com/ajamj/pkg-homework/blob/main/img/geostat_2_2.png?raw=true"))
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1070,5 +1073,6 @@ version = "17.4.0+0"
 # ╟─8d01ca3a-1622-491d-81db-1bc4c0eaca5d
 # ╟─30318226-b5ca-4b8d-aa38-39d80ba55c09
 # ╟─f6fc1a90-ab96-4427-a4b0-29eb38ce0705
+# ╟─5651410a-8795-48dc-83a5-cdfc0c6fd7f7
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
