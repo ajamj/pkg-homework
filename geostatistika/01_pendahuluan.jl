@@ -292,12 +292,6 @@ Versi kodingan:
 # ╔═╡ 69b0e611-edbd-4e47-8139-4a8114e9e2ea
 df = DataFrame(Class = String[], Frequency = Int[])
 
-# ╔═╡ 464cb752-363a-4ffd-82c4-0cbe9dc601f7
-df
-
-# ╔═╡ 802ef0a2-3128-4ece-9623-adaa5b791d27
-histogram(sampel_50,bins=7) # versi kodingan
-
 # ╔═╡ 8e4cca1b-5386-41aa-87c5-f4e9378bdc38
 md"""
 #### c. Pengembangan Distribusi Frekuensi
@@ -410,9 +404,6 @@ md"""
 # ╔═╡ f7867512-dc39-4551-a56c-96246e72309b
 data1 = DataFrame((x=[75,72,69,66,63,60,57,54,51,48,45]),(f=[1,3,6,12,20,18,11,6,3,2,1]))
 
-# ╔═╡ 4d2219f8-63ac-480b-9563-ea113bde4239
-histogram(data1.x,data1.f)
-
 # ╔═╡ 97217e4a-97b0-4186-8961-d75c71f5bcff
 md"""
 ## Fungsi-Fungsi
@@ -518,6 +509,9 @@ function arr_to_df(arr)
 end
 
 
+# ╔═╡ aff674cd-0c0c-4fea-abda-69101aa45471
+df_pengantar = arr_to_df(sampel_50)
+
 # ╔═╡ 59fc299a-0281-4e96-a097-b855aff1e303
 function plot_ogive(df_ogive)
 	plot(df_ogive.Class, df_ogive.CumulativeFrequency, label = "Ogive Tipe I", marker = :circle)
@@ -562,8 +556,14 @@ function plot_histogram(df)
     @df df bar(:Class, :Frequency, xlabel = "Kelas Interval", ylabel = "Frekuensi", title = "Histogram Distribusi Frekuensi", legend = false, bar_width = 1, size = (800, 600))
 end
 
-# ╔═╡ 0e8e7be9-79bf-4e33-a9b4-e792a018b3e5
+# ╔═╡ 66c84c08-38a0-4071-9559-94831e0a512e
+plot_histogram(df)
+
+# ╔═╡ 4d2219f8-63ac-480b-9563-ea113bde4239
 plot_histogram(df_freq1)
+
+# ╔═╡ 0e8e7be9-79bf-4e33-a9b4-e792a018b3e5
+
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -2335,8 +2335,8 @@ version = "1.4.1+0"
 # ╠═29bfe83e-ae36-420a-b346-4a4e460b9b0e
 # ╠═69b0e611-edbd-4e47-8139-4a8114e9e2ea
 # ╠═53227240-8988-41b4-a04f-2df57ea71f0e
-# ╠═464cb752-363a-4ffd-82c4-0cbe9dc601f7
-# ╠═802ef0a2-3128-4ece-9623-adaa5b791d27
+# ╠═aff674cd-0c0c-4fea-abda-69101aa45471
+# ╠═66c84c08-38a0-4071-9559-94831e0a512e
 # ╟─8e4cca1b-5386-41aa-87c5-f4e9378bdc38
 # ╟─b7c4de9d-2ce9-45fc-940a-f55773443284
 # ╟─4a91b2f6-b19a-4200-9f81-ef9ca0ba30f9
