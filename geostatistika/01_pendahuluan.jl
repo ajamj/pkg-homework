@@ -410,15 +410,6 @@ md"""
 # ╔═╡ f7867512-dc39-4551-a56c-96246e72309b
 data1 = DataFrame((x=[75,72,69,66,63,60,57,54,51,48,45]),(f=[1,3,6,12,20,18,11,6,3,2,1]))
 
-# ╔═╡ bb562de0-67d1-44d4-88bd-d0b1d7f1116e
-total_data1 = sum(data1.f)
-
-# ╔═╡ 859ccac4-4fc0-46cc-ab08-807b187d53b1
-
-
-# ╔═╡ 10264e4d-04cc-47f7-ba3f-c28507b017ef
-
-
 # ╔═╡ 4d2219f8-63ac-480b-9563-ea113bde4239
 histogram(data1.x,data1.f)
 
@@ -429,7 +420,7 @@ md"""
 
 # ╔═╡ 2fc519f7-d7f6-4f00-b28f-cbb7bdcd0dcd
 """
-Fungsi untuk mencari banyak sampel data berdasarkan rumus Sturges (1925), yaitu ```k = 1 + 3.322*log_{2}(n)``` dengan n adalah jumlah data keseluruhan.
+Fungsi untuk mencari banyak sampel data berdasarkan rumus Sturges (1925), yaitu ```k = 1 + 3.322*log_{10}(n)``` dengan n adalah jumlah data keseluruhan.
 
 Input: n = jumlah data.
 
@@ -479,9 +470,6 @@ end
 # ╔═╡ d6390110-5514-4a27-a377-99f6db04cced
 df_ogive_tipe1 = ogive_1(df)
 
-# ╔═╡ 4b01494e-07c8-43cc-8a3f-5c9c74537ce0
-ogive_1(data1)
-
 # ╔═╡ 0e71ec1f-8659-4c56-bc5f-ff5345a14364
 """
 Fungsi membuat tabel ogive tipe 2 (tabel frekuensi lebih dari).
@@ -514,20 +502,21 @@ Input: array = [1,2,312,142,12,1,2,312]
 Output: dataframe = tabel frekuensi data
 """
 function arr_to_df(arr)
-	n = length(arr)
-	data_range = maximum(arr) - minimum(arr)
-	k = k_sturges(n)
-	class_width = round(data_range /k)
-	class_boundaries = minimum(arr)-0.5:class_width:minimum(arr)+round(k)*class_width
-	df = DataFrame(Class = String[], Frequency = Int[])
-	for i in 1:length(class_boundaries)-1
-    	lower_bound = class_boundaries[i]
-    	upper_bound = class_boundaries[i+1]
-    	freq = count(x -> lower_bound ≤ x < upper_bound, arr)
-    	push!(df, [string(lower_bound) * " - " * string(upper_bound), freq])
-	end
-	return df
+    n = length(arr)
+    data_range = maximum(arr) - minimum(arr)
+    k = ceil(k_sturges(n))
+    class_width = ceil(data_range / k)
+    class_boundaries = minimum(arr) - 0.5:class_width:maximum(arr) + class_width/2  # Menyesuaikan batas atas kelas terakhir
+    df_final = DataFrame(Class = String[], Frequency = Int[])
+    for i in 1:length(class_boundaries)-1
+        lower_bound = class_boundaries[i]
+        upper_bound = class_boundaries[i+1]
+        freq = count(x -> lower_bound ≤ x < upper_bound, arr)
+        push!(df_final, [string(lower_bound) * " - " * string(upper_bound), freq])
+    end
+    return df_final
 end
+
 
 # ╔═╡ 59fc299a-0281-4e96-a097-b855aff1e303
 function plot_ogive(df_ogive)
@@ -556,36 +545,31 @@ arr1 = create_array(data1)
 # ╔═╡ b858f894-f922-47cb-973e-4a6c97693bae
 df_freq1 = arr_to_df(arr1)
 
-# ╔═╡ b846202e-555d-4c91-8ed3-1be49d9c865a
-total_data1b = sum(df_freq1[!,2])
+# ╔═╡ 859ccac4-4fc0-46cc-ab08-807b187d53b1
+ogive_1(df_freq1)
 
-# ╔═╡ c82ade35-567f-4be8-bcc1-a843ca94aadb
-function arr_to_df_gpt(arr)
-    n = length(arr)
-    data_range = maximum(arr) - minimum(arr)
-    k = ceil(k_sturges(n))
-    class_width = round(data_range / k)
-    class_boundaries = minimum(arr) - 0.5:class_width:maximum(arr) + k * class_width
-    df = DataFrame(Class = String[], Frequency = Int[])
-    for i in 1:length(class_boundaries)-1
-        lower_bound = class_boundaries[i]
-        upper_bound = class_boundaries[i+1]
-        freq = count(x -> lower_bound ≤ x < upper_bound, arr)
-        push!(df, [string(lower_bound) * " - " * string(upper_bound), freq])
-    end
-    return df
-end
+# ╔═╡ 10264e4d-04cc-47f7-ba3f-c28507b017ef
+ogive_2(df_freq1)
 
+# ╔═╡ 38b2733d-08d7-4b32-b942-0a1ab61989b4
+plot_ogive(ogive_1(df_freq1))
+
+# ╔═╡ 89eaf2c1-27b4-4147-b2a0-2dc5a2f54f48
+plot_ogive(ogive_2(df_freq1))
 
 # ╔═╡ e828d58b-0857-4d58-9bab-33561c9f1f86
-df_freq12 = arr_to_df_gpt(arr1)
+function plot_histogram(df)
+    @df df bar(:Class, :Frequency, xlabel = "Kelas Interval", ylabel = "Frekuensi", title = "Histogram Distribusi Frekuensi", legend = false, bar_width = 1, size = (800, 600))
+end
+
+# ╔═╡ 0e8e7be9-79bf-4e33-a9b4-e792a018b3e5
+plot_histogram(df_freq1)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Images = "916415d5-f1e6-5110-898d-aaa5f9f070e0"
-IterTools = "c8e1da08-722c-5040-9ed9-7db0dc04731e"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
@@ -594,7 +578,6 @@ StatsPlots = "f3b207a7-027a-5e70-b257-86293d7955fd"
 [compat]
 DataFrames = "~1.5.0"
 Images = "~0.25.3"
-IterTools = "~1.4.0"
 Plots = "~1.38.13"
 PlutoUI = "~0.7.51"
 StatsPlots = "~0.15.5"
@@ -606,7 +589,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.0"
 manifest_format = "2.0"
-project_hash = "c0e6722b59e1b65b24bcf5a114e3bdf661239e6d"
+project_hash = "6d8b90e19b9c7b2f64bd59124bf2177956081d91"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -788,9 +771,10 @@ weakdeps = ["IntervalSets", "StaticArrays"]
     ConstructionBaseStaticArraysExt = "StaticArrays"
 
 [[deps.Contour]]
-git-tree-sha1 = "d05d9e7b7aedff4e5b51a029dced05cfb6125781"
+deps = ["StaticArrays"]
+git-tree-sha1 = "9f02045d934dc030edad45944ea80dbd1f0ebea7"
 uuid = "d38c429a-6771-53c6-b99e-75d170b6e991"
-version = "0.6.2"
+version = "0.5.7"
 
 [[deps.CoordinateTransformations]]
 deps = ["LinearAlgebra", "StaticArrays"]
@@ -866,9 +850,9 @@ version = "0.25.95"
 
 [[deps.DocStringExtensions]]
 deps = ["LibGit2"]
-git-tree-sha1 = "2fb1e02f2b635d0845df5d7c167fec4dd739b00d"
+git-tree-sha1 = "b19534d1895d702889b219c382a6e18010797f0b"
 uuid = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
-version = "0.9.3"
+version = "0.8.6"
 
 [[deps.Downloads]]
 deps = ["ArgTools", "FileWatching", "LibCURL", "NetworkOptions"]
@@ -990,6 +974,12 @@ git-tree-sha1 = "9b02998aba7bf074d14de89f9d37ca24a1a0b046"
 uuid = "78b55507-aeef-58d4-861c-77aaff3498b1"
 version = "0.21.0+0"
 
+[[deps.Ghostscript_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
+git-tree-sha1 = "43ba3d3c82c18d88471cfd2924931658838c9d8f"
+uuid = "61579ee1-b43e-5ca0-a5da-69d92c66a64b"
+version = "9.55.0+4"
+
 [[deps.Glib_jll]]
 deps = ["Artifacts", "Gettext_jll", "JLLWrappers", "Libdl", "Libffi_jll", "Libiconv_jll", "Libmount_jll", "PCRE2_jll", "Pkg", "Zlib_jll"]
 git-tree-sha1 = "d3b3624125c1474292d0d8ed0f65554ac37ddb23"
@@ -1021,9 +1011,9 @@ version = "1.0.2"
 
 [[deps.HTTP]]
 deps = ["Base64", "CodecZlib", "ConcurrentUtilities", "Dates", "Logging", "LoggingExtras", "MbedTLS", "NetworkOptions", "OpenSSL", "Random", "SimpleBufferStream", "Sockets", "URIs", "UUIDs"]
-git-tree-sha1 = "ba9eca9f8bdb787c6f3cf52cb4a404c0e349a0d1"
+git-tree-sha1 = "5e77dbf117412d4f164a464d610ee6050cc75272"
 uuid = "cd3eb016-35fb-5094-929b-558a96fad6f3"
-version = "1.9.5"
+version = "1.9.6"
 
 [[deps.HarfBuzz_jll]]
 deps = ["Artifacts", "Cairo_jll", "Fontconfig_jll", "FreeType2_jll", "Glib_jll", "Graphite2_jll", "JLLWrappers", "Libdl", "Libffi_jll", "Pkg"]
@@ -1098,16 +1088,16 @@ uuid = "82e4d734-157c-48bb-816b-45c225c6df19"
 version = "0.6.6"
 
 [[deps.ImageMagick]]
-deps = ["FileIO", "ImageCore", "ImageMagick_jll", "InteractiveUtils"]
-git-tree-sha1 = "ca8d917903e7a1126b6583a097c5cb7a0bedeac1"
+deps = ["FileIO", "ImageCore", "ImageMagick_jll", "InteractiveUtils", "Libdl", "Pkg", "Random"]
+git-tree-sha1 = "5bc1cb62e0c5f1005868358db0692c994c3a13c6"
 uuid = "6218d12a-5da1-5696-b52f-db25d2ecc6d1"
-version = "1.2.2"
+version = "1.2.1"
 
 [[deps.ImageMagick_jll]]
-deps = ["JpegTurbo_jll", "Libdl", "Libtiff_jll", "Pkg", "Zlib_jll", "libpng_jll"]
-git-tree-sha1 = "1c0a2295cca535fabaf2029062912591e9b61987"
+deps = ["Artifacts", "Ghostscript_jll", "JLLWrappers", "JpegTurbo_jll", "Libdl", "Libtiff_jll", "Pkg", "Zlib_jll", "libpng_jll"]
+git-tree-sha1 = "124626988534986113cfd876e3093e4a03890f58"
 uuid = "c73af94c-d91f-53ed-93a7-00f77d67a9d7"
-version = "6.9.10-12+3"
+version = "6.9.12+3"
 
 [[deps.ImageMetadata]]
 deps = ["AxisArrays", "ImageAxes", "ImageBase", "ImageCore"]
@@ -1917,9 +1907,9 @@ version = "1.6.0"
 
 [[deps.StatsBase]]
 deps = ["DataAPI", "DataStructures", "LinearAlgebra", "LogExpFunctions", "Missings", "Printf", "Random", "SortingAlgorithms", "SparseArrays", "Statistics", "StatsAPI"]
-git-tree-sha1 = "75ebe04c5bed70b91614d684259b661c9e6274a4"
+git-tree-sha1 = "d1bf48bfcc554a3761a133fe3a9bb01488e06916"
 uuid = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
-version = "0.34.0"
+version = "0.33.21"
 
 [[deps.StatsFuns]]
 deps = ["HypergeometricFunctions", "IrrationalConstants", "LogExpFunctions", "Reexport", "Rmath", "SpecialFunctions"]
@@ -2363,12 +2353,11 @@ version = "1.4.1+0"
 # ╠═f7867512-dc39-4551-a56c-96246e72309b
 # ╠═639c3498-c408-41cc-8c37-8e11e773b6df
 # ╠═b858f894-f922-47cb-973e-4a6c97693bae
-# ╠═bb562de0-67d1-44d4-88bd-d0b1d7f1116e
-# ╠═b846202e-555d-4c91-8ed3-1be49d9c865a
 # ╠═859ccac4-4fc0-46cc-ab08-807b187d53b1
 # ╠═10264e4d-04cc-47f7-ba3f-c28507b017ef
+# ╠═38b2733d-08d7-4b32-b942-0a1ab61989b4
+# ╠═89eaf2c1-27b4-4147-b2a0-2dc5a2f54f48
 # ╠═4d2219f8-63ac-480b-9563-ea113bde4239
-# ╠═4b01494e-07c8-43cc-8a3f-5c9c74537ce0
 # ╟─97217e4a-97b0-4186-8961-d75c71f5bcff
 # ╠═2fc519f7-d7f6-4f00-b28f-cbb7bdcd0dcd
 # ╠═8b0fd643-fe62-4f7f-a18a-7b64219aad9d
@@ -2376,7 +2365,7 @@ version = "1.4.1+0"
 # ╠═7c9368b7-108a-4ff4-801f-46d74c9ae2e3
 # ╠═59fc299a-0281-4e96-a097-b855aff1e303
 # ╠═0035f4c9-d42b-44a6-91a6-0deafcffb0b3
-# ╠═c82ade35-567f-4be8-bcc1-a843ca94aadb
 # ╠═e828d58b-0857-4d58-9bab-33561c9f1f86
+# ╠═0e8e7be9-79bf-4e33-a9b4-e792a018b3e5
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
