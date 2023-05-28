@@ -5,7 +5,7 @@ using Markdown
 using InteractiveUtils
 
 # ╔═╡ 95484ff5-be27-4470-a526-e0bd0181fd70
-using PlutoUI, Images, DataFrames, Plots
+using PlutoUI, Images, DataFrames, Plots, Statistics
 
 # ╔═╡ b1763ae5-4d44-489d-af8f-4f22abc6974e
 TableOfContents()
@@ -175,7 +175,7 @@ gambar_3_2 = plot(bar([4.5,5.5,6.5,7.5,8.5,9.5],[1,3,6,15,10,2]), legend = false
 
 # ╔═╡ e6c58801-300b-4ad0-bf27-ab84e81e0a10
 md"""
-### 3. Penyusunan Distribusi Frekuensi
+#### b. Penyusunan Distribusi Frekuensi
 Cara menyusun distribusi frekuensi itu penting banget supaya data kita bisa teratur dan bisa dibuat histogramnya. Ada dua jenis penyusunan data yang umum, yaitu data yang tak dikelompokkan dan data yang dikelompokkan.
 
 Kalo data tak dikelompokkan, biasanya nilai-nilainya tersebar secara acak. Nah, kita perlu mengelompokkan data ini ke dalam kelompok-kelompok dengan interval nilai tertentu yang nantinya akan mempresentasikan histogramnya. Interval kelas ini bisa dipilih sembarang, tapi kita harus hati-hati dalam memilih lebar intervalnya, bro.
@@ -188,9 +188,17 @@ Berikut ini langkah-langkah buat membuat histogram yang representatif:
    - Interval kelas itu interval antara dua nilai, misalnya antara 0-2, 2-4, 4-6, dan seterusnya.
    - Banyaknya interval kelas yang efisien biasanya antara 5 sampai 15. Tapi ada rumus Sturges (1925) yang bisa dipake buat menentuin banyaknya interval kelas, yaitu:
 $$k = 1 + 3.322*log_{10}(n)$$
+atau
+
+$$k = 1 + log_{2}(n)$$
+
 dengan `n` adalah jumlah data keseluruhan.
    - Lebar interval kelas itu lebar jangkauan (range) dibagi dengan banyaknya interval kelas.
    - Lebar jangkauan (range) itu nilai data terbesar dikurangi nilai data terkecil.
+
+!!! catatan
+
+	Rumus Sturgess untuk menentukan banyaknya kelas interval adalah $$k=1+3.322*log_{10}(n)$$ atau $$k = 1 + log_{2}(n)$$ dengan ```n``` adalah banyaknya data. Referensi: [https://www.statology.org/sturges-rule/](https://www.statology.org/sturges-rule/)
 
 2. Interval-interval kelas ini diletakkan dalam satu kolom dan diurutkan dari interval kelas dengan nilai batas terkecil di paling atas, lalu nilai batas yang lebih besar (berikutnya) di bawahnya, dan seterusnya.
 
@@ -214,7 +222,7 @@ maximum(sampel_50)
 minimum(sampel_50)
 
 # ╔═╡ a4efd439-06ea-4d72-af87-6a15de067271
-(maximum(sampel_50)-minimum(sampel_50))
+data_range = maximum(sampel_50) - minimum(sampel_50)
 
 # ╔═╡ 4efd078d-3f64-4855-ac89-aa1e43467608
 md"""
@@ -232,13 +240,14 @@ $$k = 1 + 3.322*log_{10}(50) = 6.644$$
 
 # ╔═╡ 824721fb-24e2-4a4b-8b47-cbbcbc76a500
 """
-Fungsi untuk mencari banyak sampel data berdasarkan rumus Sturges (1925), yaitu k = 1 + 3.322*log(n) dengan n adalah jumlah data keseluruhan.
+Fungsi untuk mencari banyak sampel data berdasarkan rumus Sturges (1925), yaitu ```k = 1 + 3.322*log_{2}(n)``` dengan n adalah jumlah data keseluruhan.
 
-Input: n = jumlah data
-outout: k = banyak interval kelas
+Input: n = jumlah data.
+
+output: k = banyak interval kelas.
 """
 function k_sturges(n)
-	return 1 + 3.322*log10(n)
+	return 1 + log2(n)
 end
 
 # ╔═╡ 2cfe7bb8-b388-4fc2-9d8e-6fb482b4ea08
@@ -246,11 +255,23 @@ k_sampel_50 = k_sturges(n)
 
 # ╔═╡ 16fc3402-665d-4f8e-ad78-6c2a7e730db3
 md"""
-Kita bisa pilih banyaknya interval kelas = 6, jadi lebar interval kelasnya = 20 / 6 = 3.3. 
+Kita bisa pilih banyaknya interval kelas = 6, jadi lebar interval kelasnya = 20/6 = 3.333. 
+"""
 
-Atau kita bisa pilih banyaknya interval kelas = 7, jadi lebar interval kelasnya = 20 / 7 = 2.85.
+# ╔═╡ 2f1a33e4-6a06-43bb-877a-c3308b9c2f97
+20/6
 
-Dari nilai-nilai di atas, kita bisa pilih banyaknya interval kelas = 7 dan lebar interval kelas = 3. Ini bakal menghasilkan interval kelas dengan nilai 164.5 - 167.5, 167.5 - 170.5, 170.5 - 173.5, ..., 182.5 - 185.5.
+# ╔═╡ 3092d142-e0e5-4b1f-a685-dd15fed5ceb4
+md"""
+Atau kita bisa pilih banyaknya interval kelas = 7, jadi lebar interval kelasnya = 20 / 7 = 2.857.
+"""
+
+# ╔═╡ 159cef77-fe64-4bd3-afbf-0ae1416e2110
+20/7
+
+# ╔═╡ 468df0cc-5088-4a07-82e8-5cac07017226
+md"""
+Dari nilai-nilai di atas, kita bisa pilih banyaknya interval kelas = 20 dan lebar interval kelas = 3. Ini bakal menghasilkan interval kelas dengan nilai 164.5 - 167.5, 167.5 - 170.5, 170.5 - 173.5, ..., 182.5 - 185.5.
 
 Kalo data dipecah-pecah dan dikelompokkan sesuai dengan nilai interval kelasnya, kita bakal dapetin tabel distribusi frekuensi yang ditulis di Tabel 3.1. Berdasarkan tabel distribusi frekuensi ini, kita bisa tampilin histogramnya kayak yang ada di Gambar 3.2.
 
@@ -264,20 +285,130 @@ Tabel 3.1 menunjukkan distribusi frekuensi umur baterai.
 
 | Umur Baterai | Frekuensi |
 |--------------|-----------|
-| 164.5 - 167.5| 11        |
-| 167.5 - 170.5| 8         |
-| 170.5 - 173.5| 6         |
-| ...          | ...       |
-| 182.5 - 185.5| 6         |
+| 164.5 - 167.5| 6  	   |
+| 167.5 - 170.5| 7         |
+| 170.5 - 173.5| 8         |
+| 173.5 - 176.5| 11        |
+| 176.5 - 179.5| 7         |
+| 179.5 - 182.5| 6        |
+| 182.5 - 185.5| 5         |
 
 Gambar 3.2 menampilkan histogram umur baterai.
 """
 
 # ╔═╡ c038acd3-c29f-4e63-b1f6-2e3ba8b708b1
+load(download("https://github.com/ajamj/pkg-homework/blob/main/img/geostat_3_2.png?raw=true"))
 
+# ╔═╡ 1fdbb53f-3046-4a46-b27a-12412c589738
+md"""
+Versi kodingan:
+"""
+
+# ╔═╡ 30a442b9-ff0e-4bd7-94c5-94f49a5fbbd0
+class_width = round(data_range / k_sampel_50)
+
+# ╔═╡ 29bfe83e-ae36-420a-b346-4a4e460b9b0e
+class_boundaries = minimum(sampel_50):class_width:maximum(sampel_50)
+
+# ╔═╡ 69b0e611-edbd-4e47-8139-4a8114e9e2ea
+df = DataFrame(Class = String[], Frequency = Int[])
+
+# ╔═╡ 53227240-8988-41b4-a04f-2df57ea71f0e
+for i in 1:length(class_boundaries)-1
+    lower_bound = class_boundaries[i]
+    upper_bound = class_boundaries[i+1]
+    freq = count(x -> lower_bound ≤ x < upper_bound, sampel_50)
+    push!(df, [string(lower_bound) * " - " * string(upper_bound), freq])
+end
+
+# ╔═╡ 464cb752-363a-4ffd-82c4-0cbe9dc601f7
+df
 
 # ╔═╡ 802ef0a2-3128-4ece-9623-adaa5b791d27
-histogram(sampel_50,bins=7)
+histogram(sampel_50,bins=7) # versi kodingan
+
+# ╔═╡ 8e4cca1b-5386-41aa-87c5-f4e9378bdc38
+md"""
+#### c. Pengembangan Distribusi Frekuensi
+Distribusi frekuensi kumulatif kurang dari adalah distribusi frekuensi yang menunjukkan jumlah kumulatif data yang kurang dari suatu nilai tertentu. Distribusi frekuensi kumulatif lebih dari, di sisi lain, menunjukkan jumlah kumulatif data yang lebih besar dari suatu nilai tertentu.
+"""
+
+# ╔═╡ 3fd45378-5fef-41c1-82ff-4c97d1d5a4b2
+begin
+df_kurang_dari = DataFrame(Class = String[], Frequency = Int[])
+df_lebih_dari = DataFrame(Class = String[], Frequency = Int[])
+total_freq = sum(df.Frequency)
+kurang_dari_freq = 0
+lebih_dari_freq = total_freq
+
+for row in eachrow(df)
+    class_interval = row.Class
+    freq = row.Frequency
+    
+    push!(df_kurang_dari, [class_interval, kurang_dari_freq])
+    push!(df_lebih_dari, [class_interval, lebih_dari_freq])
+    
+    kurang_dari_freq += freq
+    lebih_dari_freq -= freq
+end
+
+# Tambahkan baris terakhir untuk "lebih dari" yang mencakup seluruh rentang data
+push!(df_lebih_dari, ["Total", 0])
+end
+
+# ╔═╡ f898c8c4-2162-468e-a87a-23189b291b5a
+df_kurang_dari
+
+# ╔═╡ c4c173f9-7a66-4849-8553-181d0d7619e7
+df_lebih_dari
+
+# ╔═╡ 5d1d0130-8615-4182-9cf1-eec00623ce40
+
+md"""
+
+Berikut adalah tabel distribusi frekuensi kumulatif kurang dari umur baterai berdasarkan Tabel 3.1:
+
+| Umur Baterai | Frekuensi Kumulatif Kurang dari |
+|--------------|-------------------------------|
+| 164.5 - 167.5| 6                             |
+| 167.5 - 170.5| 13                            |
+| 170.5 - 173.5| 21                            |
+| ...          | ...                           |
+| 182.5 - 185.5| 50                            |
+
+Dan berikut adalah tabel distribusi frekuensi kumulatif lebih dari umur baterai berdasarkan Tabel 3.1:
+
+| Umur Baterai | Frekuensi Kumulatif Lebih dari |
+|--------------|-------------------------------|
+| 164.5 - 167.5| 50                            |
+| 167.5 - 170.5| 44                            |
+| 170.5 - 173.5| 37                            |
+| ...          | ...                           |
+| 182.5 - 185.5| 0                             |
+
+Gambar 3.3 menampilkan grafik Ogive untuk distribusi frekuensi kumulatif kurang dari dan lebih dari umur baterai.
+
+![Ogive Kurang dari Umur Baterai](link-gambar-ogive-kurang-dari)
+![Ogive Lebih dari Umur Baterai](link-gambar-ogive-lebih-dari)
+
+Selanjutnya, distribusi frekuensi relatif (dalam fraksi atau persentase) menggambarkan frekuensi dalam bentuk proporsi atau peluang. Total frekuensi relatif akan menjadi 1 atau 100%.
+
+Berikut adalah tabel distribusi frekuensi relatif umur baterai berdasarkan Tabel 3.1:
+
+| Umur Baterai | Frekuensi Relatif |
+|--------------|------------------|
+| 164.5 - 167.5| 0.12             |
+| 167.5 - 170.5| 0.14             |
+| 170.5 - 173.5| 0.16             |
+| ...          | ...              |
+| 182.5 - 185.5| 0.10             |
+
+Gambar 3.4 menampilkan histogram distribusi frekuensi relatif umur baterai. Bentuk histogramnya sama dengan histogram distribusi frekuensi (Gambar 3.2), hanya nilai frekuensinya yang berbeda.
+
+![Histogram Distribusi Frekuensi Relatif Umur Baterai](link-gambar-histogram-relatif)
+
+Distribusi frekuensi relatif pada dasarnya adalah distribusi peluang (probability distribution) yang total nilainya adalah 1. Histogramnya juga dikenal sebagai fungsi densitas peluang (probability density function, PDF).
+"""
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -286,6 +417,7 @@ DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Images = "916415d5-f1e6-5110-898d-aaa5f9f070e0"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 
 [compat]
 DataFrames = "~1.5.0"
@@ -300,7 +432,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.0"
 manifest_format = "2.0"
-project_hash = "59f12c901ea6b06a9a5ab5bd47ca927e73c68f60"
+project_hash = "cb03eb6088e211b935de16d64d3aad81aee16715"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -1893,7 +2025,7 @@ version = "1.4.1+0"
 # ╟─f9049804-9bb6-4ce4-a055-851cd1cdfdbb
 # ╠═38ab93f1-84bd-45f1-9a6d-3cdd19254206
 # ╠═19212461-c647-4733-b9c7-7bc69b690e22
-# ╠═e6c58801-300b-4ad0-bf27-ab84e81e0a10
+# ╟─e6c58801-300b-4ad0-bf27-ab84e81e0a10
 # ╠═6c02a01d-4be6-4ee8-985d-65da3d9b0210
 # ╠═20b88bf4-099f-477e-b69f-d2fb13d67702
 # ╠═7bbf3082-26d7-4fe0-849e-1ae02c8e7d9b
@@ -1902,8 +2034,23 @@ version = "1.4.1+0"
 # ╟─4efd078d-3f64-4855-ac89-aa1e43467608
 # ╠═824721fb-24e2-4a4b-8b47-cbbcbc76a500
 # ╠═2cfe7bb8-b388-4fc2-9d8e-6fb482b4ea08
-# ╠═16fc3402-665d-4f8e-ad78-6c2a7e730db3
+# ╟─16fc3402-665d-4f8e-ad78-6c2a7e730db3
+# ╠═2f1a33e4-6a06-43bb-877a-c3308b9c2f97
+# ╟─3092d142-e0e5-4b1f-a685-dd15fed5ceb4
+# ╠═159cef77-fe64-4bd3-afbf-0ae1416e2110
+# ╟─468df0cc-5088-4a07-82e8-5cac07017226
 # ╠═c038acd3-c29f-4e63-b1f6-2e3ba8b708b1
+# ╟─1fdbb53f-3046-4a46-b27a-12412c589738
+# ╠═30a442b9-ff0e-4bd7-94c5-94f49a5fbbd0
+# ╠═29bfe83e-ae36-420a-b346-4a4e460b9b0e
+# ╠═69b0e611-edbd-4e47-8139-4a8114e9e2ea
+# ╠═53227240-8988-41b4-a04f-2df57ea71f0e
+# ╠═464cb752-363a-4ffd-82c4-0cbe9dc601f7
 # ╠═802ef0a2-3128-4ece-9623-adaa5b791d27
+# ╟─8e4cca1b-5386-41aa-87c5-f4e9378bdc38
+# ╠═3fd45378-5fef-41c1-82ff-4c97d1d5a4b2
+# ╠═f898c8c4-2162-468e-a87a-23189b291b5a
+# ╠═c4c173f9-7a66-4849-8553-181d0d7619e7
+# ╠═5d1d0130-8615-4182-9cf1-eec00623ce40
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
