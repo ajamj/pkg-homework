@@ -25,7 +25,7 @@ md"""
 ## Instalasi Julia dan Pluto.jl
 Bahasa pemrograman Julia diunduh melalui tautan pada [situs resmi Julia.](https://julialang.org/downloads/) Versi dari Julia yang akan digunakan dalam pengerjaan tugas ini adalah versi terbaru dari yang tersedia, yaitu versi 1.9.0-rc2, yang diinstal pada sistem operasi Windows 10. Saat tulisan ini ditulis, terdapat versi stabil dari Julia, yaitu versi 1.8.5, serta juga terdapat versi dengan dukungan jangka panjang (long term support - LTS) versi 1.6.7.\
 \
-$(LocalResource("terminal_ss.png"))\
+$(LocalResource("img/terminal_ss.png"))\
 """
 
 # ╔═╡ c8fc9aa7-ec37-4797-aa0a-6e1495e3fba8
@@ -40,7 +40,7 @@ Lalu memasukkan perintah:\
 
 Setelah itu, secara otomatis komputer akan membuka aplikasi peramban dan membuka jendela Pluto.jl.\
 \
-$(LocalResource("pluto_ss.png", :width => 500))
+$(LocalResource("img/pluto_ss.png", :width => 500))
 """
 
 # ╔═╡ 81868301-fbfa-482e-b50d-62a4e0d69f60
