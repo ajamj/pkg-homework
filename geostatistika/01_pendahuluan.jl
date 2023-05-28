@@ -5,7 +5,7 @@ using Markdown
 using InteractiveUtils
 
 # ╔═╡ 95484ff5-be27-4470-a526-e0bd0181fd70
-using PlutoUI, Images, DataFrames, Plots, Statistics
+using PlutoUI, Images, DataFrames, Plots, Statistics,StatsPlots, StatsBase
 
 # ╔═╡ b1763ae5-4d44-489d-af8f-4f22abc6974e
 TableOfContents()
@@ -238,21 +238,6 @@ $$k = 1 + 3.322*log_{10}(n)$$
 $$k = 1 + 3.322*log_{10}(50) = 6.644$$
 """
 
-# ╔═╡ 824721fb-24e2-4a4b-8b47-cbbcbc76a500
-"""
-Fungsi untuk mencari banyak sampel data berdasarkan rumus Sturges (1925), yaitu ```k = 1 + 3.322*log_{2}(n)``` dengan n adalah jumlah data keseluruhan.
-
-Input: n = jumlah data.
-
-output: k = banyak interval kelas.
-"""
-function k_sturges(n)
-	return 1 + log2(n)
-end
-
-# ╔═╡ 2cfe7bb8-b388-4fc2-9d8e-6fb482b4ea08
-k_sampel_50 = k_sturges(n)
-
 # ╔═╡ 16fc3402-665d-4f8e-ad78-6c2a7e730db3
 md"""
 Kita bisa pilih banyaknya interval kelas = 6, jadi lebar interval kelasnya = 20/6 = 3.333. 
@@ -304,22 +289,8 @@ md"""
 Versi kodingan:
 """
 
-# ╔═╡ 30a442b9-ff0e-4bd7-94c5-94f49a5fbbd0
-class_width = round(data_range / k_sampel_50)
-
-# ╔═╡ 29bfe83e-ae36-420a-b346-4a4e460b9b0e
-class_boundaries = minimum(sampel_50)-0.5:class_width:minimum(sampel_50)+round(k_sampel_50)*class_width
-
 # ╔═╡ 69b0e611-edbd-4e47-8139-4a8114e9e2ea
 df = DataFrame(Class = String[], Frequency = Int[])
-
-# ╔═╡ 53227240-8988-41b4-a04f-2df57ea71f0e
-for i in 1:length(class_boundaries)-1
-    lower_bound = class_boundaries[i]
-    upper_bound = class_boundaries[i+1]
-    freq = count(x -> lower_bound ≤ x < upper_bound, sampel_50)
-    push!(df, [string(lower_bound) * " - " * string(upper_bound), freq])
-end
 
 # ╔═╡ 464cb752-363a-4ffd-82c4-0cbe9dc601f7
 df
@@ -345,34 +316,17 @@ Gambar 3.3 menampilkan grafik Ogive untuk distribusi frekuensi kumulatif kurang 
 
 Selanjutnya, distribusi frekuensi relatif (dalam fraksi atau persentase) menggambarkan frekuensi dalam bentuk proporsi atau peluang. Total frekuensi relatif akan menjadi 1 atau 100%.
 
-Berikut adalah tabel distribusi frekuensi relatif umur baterai berdasarkan Tabel 3.1:
-
-| Umur Baterai | Frekuensi Relatif |
-|--------------|------------------|
-| 164.5 - 167.5| 0.12             |
-| 167.5 - 170.5| 0.14             |
-| 170.5 - 173.5| 0.16             |
-| ...          | ...              |
-| 182.5 - 185.5| 0.10             |
-
 Gambar 3.4 menampilkan histogram distribusi frekuensi relatif umur baterai. Bentuk histogramnya sama dengan histogram distribusi frekuensi (Gambar 3.2), hanya nilai frekuensinya yang berbeda.
 
-![Histogram Distribusi Frekuensi Relatif Umur Baterai](link-gambar-histogram-relatif)
+![Histogram Distribusi Frekuensi Relatif Umur Baterai](https://github.com/ajamj/pkg-homework/blob/main/img/geostat_3_4.png?raw=true)
 
-Distribusi frekuensi relatif pada dasarnya adalah distribusi peluang (probability distribution) yang total nilainya adalah 1. Histogramnya juga dikenal sebagai fungsi densitas peluang (probability density function, PDF).
+Distribusi frekuensi relatif pada dasarnya adalah distribusi peluang (probability distribution) yang total nilainya adalah 1. Histogramnya juga dikenal sebagai **fungsi densitas peluang (probability density function, PDF)**.
 """
 
-# ╔═╡ bf5e46c1-b082-4b85-b66d-bcec46dcce5b
-begin
-df_ogive_tipe1 = DataFrame(Class = String[], CumulativeFrequency = Int[])
-cumulative_freq_tipe1 = 0
-for row in eachrow(df)
-    class_interval = row.Class
-    freq = row.Frequency
-    cumulative_freq_tipe1 += freq
-    push!(df_ogive_tipe1, [class_interval, cumulative_freq_tipe1])
-end
-end
+# ╔═╡ c4d2d461-bc89-43e3-9c97-1aeff3483221
+md"""
+Versi kodingan
+"""
 
 # ╔═╡ 02a28654-b119-4954-93f2-f80db6cd6c5a
 begin
@@ -385,9 +339,6 @@ for row in eachrow(df)
     cumulative_freq_tipe2 -= freq
 end
 end
-
-# ╔═╡ 93763900-570d-4dff-a146-56ee1ed17659
-df_ogive_tipe1
 
 # ╔═╡ 3dfd9d3b-6e82-49e5-b4bd-18383e442033
 df_ogive_tipe2
@@ -409,6 +360,232 @@ ylabel!("Cumulative Frequency")
 title!("Ogive Tipe II")
 end
 
+# ╔═╡ a9c430fb-7808-47f7-bc46-c35982c8171e
+histogram(sampel_50, weights = fill(1/length(sampel_50), length(sampel_50)), xlabel = "Umur Bateri", ylabel = "Frekuensi Relatif", title = "Histogram Distribusi Frekuensi Relatif Umur Bateri")
+
+# ╔═╡ 411b9beb-1f66-4abb-bf11-c4db4e300b18
+md"""
+## SOAL LATIHAN
+Berikut adalah format markdown lengkap untuk soal-soal yang diberikan:
+
+### SOAL 1
+Suatu data yang dikelompokkan mempunyai nilai tengah xi dan frekuensinya fi seperti yang terlihat dalam tabel dibawah.
+
+| xi  | fi |
+|-----|----|
+| 75  | 1  |
+| 72  | 3  |
+| 69  | 6  |
+| 66  | 12 |
+| 63  | 20 |
+| 60  | 18 |
+| 57  | 11 |
+| 54  | 6  |
+| 51  | 3  |
+| 48  | 2  |
+| 45  | 1  |
+
+a. Buatlah histogram distribusi frekuensinya!
+
+b. Buatlah distribusi frekuensi kurang dari!
+
+c. Berapa persen data yang nilainya kurang dari 55?
+
+d. Berapa persen data yang nilainya antara 50 sampai 65?
+
+### SOAL 2
+Umur 50 orang (dalam tahun) yang diambil secara random dari suatu populasi masyarakat adalah sebagai berikut:
+
+68, 80, 55, 84, 59, 76, 89, 72, 51, 80, 80, 84, 68, 63, 76, 68, 92, 68, 72, 63, 84, 64, 76, 76, 80, 72, 59, 65, 72, 72, 70, 60, 62, 53, 56, 71, 74, 82, 87, 78, 65, 59, 69, 75, 72, 68, 64, 74, 70, 63.
+
+a. Hitunglah banyak interval kelas menurut rumus Sturges!
+
+b. Buatlah distribusi frekuensinya!
+
+c. Hitunglah frekuensi relatif untuk tiap-tiap kelas intervalnya!
+
+### SOAL 3
+Suatu rumah sakit melakukan survei pada jumlah hari pasien yang menjalani rawat inap dan hasilnya adalah sebagai berikut:
+
+| Jumlah Hari | Frekuensi |
+|-------------|-----------|
+| 1-3         | 32        |
+| 4-6         | 108       |
+| 7-9         | 67        |
+| 10-12       | 28        |
+| 13-15       | 14        |
+| 16-18       | 7         |
+| 19-21       | 3         |
+| 22-24       | 1         |
+
+a. Gambarkan histogram distribusi frekuensinya!
+
+b. Buatlah tabel distribusi kumulatif kurang dari!
+
+c. Berapakah jumlah pasien yang menginap di rumah sakit kurang dari 10 hari?
+
+d. Buatlah tabel distribusi frekuensi relatifnya!
+
+e. Berapa persen pasien yang menginap antara 4 sampai 6 hari?
+"""
+
+# ╔═╡ ecd63f07-ea04-4e73-ad2c-92a9f03ed99f
+md"""
+## Jawaban
+"""
+
+# ╔═╡ c044700e-ec82-4257-bf99-dc7c931f03c4
+md"""
+### Soal 1
+"""
+
+# ╔═╡ f7867512-dc39-4551-a56c-96246e72309b
+data1 = DataFrame((x=[75,72,69,66,63,60,57,54,51,48,45]),(f=[1,3,6,12,20,18,11,6,3,2,1]))
+
+# ╔═╡ e6239100-be83-4e9d-bda0-5ced29d145a4
+max1 = maximum(data1.x)
+
+# ╔═╡ f1199f05-2188-406b-857b-6e8751b4fcd4
+min1 = minimum(data1.x)
+
+# ╔═╡ 6ce64de4-dc4b-4df4-902c-4776d4b9275c
+range1 = max1-min1
+
+# ╔═╡ bb562de0-67d1-44d4-88bd-d0b1d7f1116e
+total_data1 = sum(data1.f)
+
+# ╔═╡ 859ccac4-4fc0-46cc-ab08-807b187d53b1
+
+
+# ╔═╡ 10264e4d-04cc-47f7-ba3f-c28507b017ef
+
+
+# ╔═╡ 4d2219f8-63ac-480b-9563-ea113bde4239
+histogram(data1.x,data1.f)
+
+# ╔═╡ 97217e4a-97b0-4186-8961-d75c71f5bcff
+md"""
+## Fungsi-Fungsi
+"""
+
+# ╔═╡ 2fc519f7-d7f6-4f00-b28f-cbb7bdcd0dcd
+"""
+Fungsi untuk mencari banyak sampel data berdasarkan rumus Sturges (1925), yaitu ```k = 1 + 3.322*log_{2}(n)``` dengan n adalah jumlah data keseluruhan.
+
+Input: n = jumlah data.
+
+output: k = banyak interval kelas.
+"""
+function k_sturges(n)
+	return 1 + log2(n)
+end
+
+# ╔═╡ 2cfe7bb8-b388-4fc2-9d8e-6fb482b4ea08
+k_sampel_50 = k_sturges(n)
+
+# ╔═╡ 30a442b9-ff0e-4bd7-94c5-94f49a5fbbd0
+class_width = round(data_range / k_sampel_50)
+
+# ╔═╡ 29bfe83e-ae36-420a-b346-4a4e460b9b0e
+class_boundaries = minimum(sampel_50)-0.5:class_width:minimum(sampel_50)+round(k_sampel_50)*class_width
+
+# ╔═╡ 53227240-8988-41b4-a04f-2df57ea71f0e
+for i in 1:length(class_boundaries)-1
+    lower_bound = class_boundaries[i]
+    upper_bound = class_boundaries[i+1]
+    freq = count(x -> lower_bound ≤ x < upper_bound, sampel_50)
+    push!(df, [string(lower_bound) * " - " * string(upper_bound), freq])
+end
+
+# ╔═╡ b318abb8-846e-4910-a144-49bbaa718a1e
+k1 = round(k_sturges(total_data1))
+
+# ╔═╡ 90a45ccc-6a41-4a15-bd2a-53509d3a5289
+class_width1 = round(total_data1/k1)
+
+# ╔═╡ 8b0fd643-fe62-4f7f-a18a-7b64219aad9d
+"""
+Fungsi membuat tabel ogive tipe 1 (tabel frekuensi kurang dari).
+
+Input: dataframe berisi
+
+Output: dataframe ogive 1
+"""
+function ogive_1(df)
+	df_ogive_tipe1 = DataFrame(Class = String[], CumulativeFrequency = Int[])
+	cumulative_freq_tipe1 = 0
+	for row in eachrow(df)
+    	class_interval = row.Class
+    	freq = row.Frequency
+    	cumulative_freq_tipe1 += freq
+    	push!(df_ogive_tipe1, [class_interval, cumulative_freq_tipe1])
+	end
+	return df_ogive_tipe1
+end
+
+# ╔═╡ d6390110-5514-4a27-a377-99f6db04cced
+ogive_1(df)
+
+# ╔═╡ 4b01494e-07c8-43cc-8a3f-5c9c74537ce0
+ogive_1(data1)
+
+# ╔═╡ 0e71ec1f-8659-4c56-bc5f-ff5345a14364
+"""
+Fungsi membuat tabel ogive tipe 2 (tabel frekuensi lebih dari).
+
+Input: dataframe berisi
+
+Output: dataframe ogive 1
+"""
+function ogive_2(df)
+	df_ogive_tipe2 = DataFrame(Class = String[], CumulativeFrequency = Int[])
+	cumulative_freq_tipe2 = sum(df.Frequency)
+	for row in eachrow(df)
+    	class_interval = row.Class
+    	freq = row.Frequency
+    	push!(df_ogive_tipe2, [class_interval, cumulative_freq_tipe2])
+    	cumulative_freq_tipe2 -= freq
+	end
+	return df_ogive_tipe2
+end
+
+# ╔═╡ 0617e2ba-584e-4391-acf6-efca264af55e
+ogive_2(df)
+
+# ╔═╡ 7c9368b7-108a-4ff4-801f-46d74c9ae2e3
+"""
+Fungsi mengubah array menjadi dataframe (tabel) frekuensi data.
+
+Input: array = [1,2,312,142,12,1,2,312]
+
+Output: dataframe = tabel frekuensi data
+"""
+function arr_to_df(arr)
+	n = length(arr)
+	data_range = maximum(arr) - minimum(arr)
+	k = k_sturges(n)
+	class_width = round(data_range / arr)
+	class_boundaries = minimum(arr)-0.5:class_width:minimum(arr)+round(arr)*class_width
+	df = DataFrame(Class = String[], Frequency = Int[])
+	for i in 1:length(class_boundaries)-1
+    	lower_bound = class_boundaries[I]
+    	upper_bound = class_boundaries[i+1]
+    	freq = count(x -> lower_bound ≤ x < upper_bound, sampel_50)
+    	push!(df, [string(lower_bound) * " - " * string(upper_bound), freq])
+	end
+	return df
+end
+
+# ╔═╡ c8f190dc-8301-4011-b2b9-b054dffda83e
+function create_array(df::DataFrame)
+    values = repeat(df.x, inner = df.f)
+    return values
+end
+
+
+# ╔═╡ f7e9cdce-e33f-4ef9-84e3-a202a3e27600
+create_array(data1)
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -417,12 +594,16 @@ Images = "916415d5-f1e6-5110-898d-aaa5f9f070e0"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
+StatsPlots = "f3b207a7-027a-5e70-b257-86293d7955fd"
 
 [compat]
 DataFrames = "~1.5.0"
 Images = "~0.25.3"
 Plots = "~1.38.13"
 PlutoUI = "~0.7.51"
+StatsBase = "~0.34.0"
+StatsPlots = "~0.15.5"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -431,7 +612,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.0"
 manifest_format = "2.0"
-project_hash = "cb03eb6088e211b935de16d64d3aad81aee16715"
+project_hash = "ee03400be89e6ed912d4c74a994e5b36a0758fc2"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -468,6 +649,18 @@ deps = ["LinearAlgebra", "Random", "StaticArrays"]
 git-tree-sha1 = "62e51b39331de8911e4a7ff6f5aaf38a5f4cc0ae"
 uuid = "ec485272-7323-5ecc-a04f-4719b315124d"
 version = "0.2.0"
+
+[[deps.Arpack]]
+deps = ["Arpack_jll", "Libdl", "LinearAlgebra", "Logging"]
+git-tree-sha1 = "9b9b347613394885fd1c8c7729bfc60528faa436"
+uuid = "7d9fca2a-8960-54d3-9f78-7d1dccf2cb97"
+version = "0.5.4"
+
+[[deps.Arpack_jll]]
+deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "Libdl", "OpenBLAS_jll", "Pkg"]
+git-tree-sha1 = "5ba6c757e8feccf03a1554dfaf3e26b3cfc7fd5e"
+uuid = "68821587-b530-5797-8361-c406ea357684"
+version = "3.5.1+1"
 
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
@@ -508,6 +701,12 @@ deps = ["Artifacts", "Bzip2_jll", "CompilerSupportLibraries_jll", "Fontconfig_jl
 git-tree-sha1 = "4b859a208b2397a7a623a03449e4636bdb17bcf2"
 uuid = "83423d85-b0ee-5818-9007-b63ccbeb887a"
 version = "1.16.1+1"
+
+[[deps.Calculus]]
+deps = ["LinearAlgebra"]
+git-tree-sha1 = "f641eb0a4f00c343bbc32346e1217b86f3ce9dad"
+uuid = "49dc2e85-a5d0-5ad3-a950-438e2897f1b9"
+version = "0.5.1"
 
 [[deps.CatIndices]]
 deps = ["CustomUnitRanges", "OffsetArrays"]
@@ -657,6 +856,20 @@ version = "0.10.8"
 deps = ["Random", "Serialization", "Sockets"]
 uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 
+[[deps.Distributions]]
+deps = ["FillArrays", "LinearAlgebra", "PDMats", "Printf", "QuadGK", "Random", "SparseArrays", "SpecialFunctions", "Statistics", "StatsAPI", "StatsBase", "StatsFuns", "Test"]
+git-tree-sha1 = "c72970914c8a21b36bbc244e9df0ed1834a0360b"
+uuid = "31c24e10-a181-5473-b8eb-7969acd0382f"
+version = "0.25.95"
+
+    [deps.Distributions.extensions]
+    DistributionsChainRulesCoreExt = "ChainRulesCore"
+    DistributionsDensityInterfaceExt = "DensityInterface"
+
+    [deps.Distributions.weakdeps]
+    ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
+    DensityInterface = "b429d917-457f-4dbc-8f4c-0cc954292b1d"
+
 [[deps.DocStringExtensions]]
 deps = ["LibGit2"]
 git-tree-sha1 = "2fb1e02f2b635d0845df5d7c167fec4dd739b00d"
@@ -667,6 +880,12 @@ version = "0.9.3"
 deps = ["ArgTools", "FileWatching", "LibCURL", "NetworkOptions"]
 uuid = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 version = "1.6.0"
+
+[[deps.DualNumbers]]
+deps = ["Calculus", "NaNMath", "SpecialFunctions"]
+git-tree-sha1 = "5837a837389fccf076445fce071c8ddaea35a566"
+uuid = "fa6b7ba4-c1ee-5f82-b5fc-ecf0adba8f74"
+version = "0.6.8"
 
 [[deps.Expat_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -712,6 +931,12 @@ version = "1.16.1"
 
 [[deps.FileWatching]]
 uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
+
+[[deps.FillArrays]]
+deps = ["LinearAlgebra", "Random", "SparseArrays", "Statistics"]
+git-tree-sha1 = "ed569cb9e7e3590d5ba884da7edc50216aac5811"
+uuid = "1a297f60-69ca-5386-bcde-b61e274b549b"
+version = "1.1.0"
 
 [[deps.FixedPointNumbers]]
 deps = ["Statistics"]
@@ -811,6 +1036,12 @@ deps = ["Artifacts", "Cairo_jll", "Fontconfig_jll", "FreeType2_jll", "Glib_jll",
 git-tree-sha1 = "129acf094d168394e80ee1dc4bc06ec835e510a3"
 uuid = "2e76f6c2-a576-52d4-95c1-20adfe4de566"
 version = "2.8.1+1"
+
+[[deps.HypergeometricFunctions]]
+deps = ["DualNumbers", "LinearAlgebra", "OpenLibm_jll", "SpecialFunctions"]
+git-tree-sha1 = "84204eae2dd237500835990bcade263e27674a93"
+uuid = "34004b35-14d8-5ef3-9330-4cdb6864b03a"
+version = "0.3.16"
 
 [[deps.Hyperscript]]
 deps = ["Test"]
@@ -1032,6 +1263,12 @@ git-tree-sha1 = "6f2675ef130a300a112286de91973805fcc5ffbc"
 uuid = "aacddb02-875f-59d6-b918-886e6ef4fbf8"
 version = "2.1.91+0"
 
+[[deps.KernelDensity]]
+deps = ["Distributions", "DocStringExtensions", "FFTW", "Interpolations", "StatsBase"]
+git-tree-sha1 = "90442c50e202a5cdf21a7899c66b240fdef14035"
+uuid = "5ab0869b-81aa-558d-bb23-cbf5423bbe9b"
+version = "0.6.7"
+
 [[deps.LAME_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "f6250b16881adf048549549fba48b1161acdac8c"
@@ -1244,6 +1481,12 @@ version = "0.3.4"
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
 version = "2022.10.11"
 
+[[deps.MultivariateStats]]
+deps = ["Arpack", "LinearAlgebra", "SparseArrays", "Statistics", "StatsAPI", "StatsBase"]
+git-tree-sha1 = "68bf5103e002c44adfd71fea6bd770b3f0586843"
+uuid = "6f286f6a-111f-5878-ab1e-185364afe411"
+version = "0.10.2"
+
 [[deps.NaNMath]]
 deps = ["OpenLibm_jll"]
 git-tree-sha1 = "0877504529a3e5c3343c6f8b4c0381e57e4387e4"
@@ -1265,6 +1508,11 @@ version = "1.1.0"
 [[deps.NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
 version = "1.2.0"
+
+[[deps.Observables]]
+git-tree-sha1 = "6862738f9796b3edc1c09d0890afce4eca9e7e93"
+uuid = "510215fc-4207-5dde-b226-833fc4488ee2"
+version = "0.5.4"
 
 [[deps.OffsetArrays]]
 deps = ["Adapt"]
@@ -1333,6 +1581,12 @@ version = "1.6.0"
 deps = ["Artifacts", "Libdl"]
 uuid = "efcefdf7-47ab-520b-bdef-62a2eaa19f15"
 version = "10.42.0+0"
+
+[[deps.PDMats]]
+deps = ["LinearAlgebra", "SparseArrays", "SuiteSparse"]
+git-tree-sha1 = "67eae2738d63117a196f497d7db789821bce61d1"
+uuid = "90014a1f-27ba-587c-ab20-58faa44d9150"
+version = "0.11.17"
 
 [[deps.PNGFiles]]
 deps = ["Base64", "CEnum", "ImageCore", "IndirectArrays", "OffsetArrays", "libpng_jll"]
@@ -1464,6 +1718,12 @@ git-tree-sha1 = "0c03844e2231e12fda4d0086fd7cbe4098ee8dc5"
 uuid = "ea2cea3b-5b76-57ae-a6ef-0a8af62496e1"
 version = "5.15.3+2"
 
+[[deps.QuadGK]]
+deps = ["DataStructures", "LinearAlgebra"]
+git-tree-sha1 = "6ec7ac8412e83d57e313393220879ede1740f9ee"
+uuid = "1fd47b50-473d-5c70-9696-f719f8f3bcdc"
+version = "2.8.2"
+
 [[deps.Quaternions]]
 deps = ["LinearAlgebra", "Random", "RealDot"]
 git-tree-sha1 = "da095158bdc8eaccb7890f9884048555ab771019"
@@ -1533,6 +1793,18 @@ deps = ["UUIDs"]
 git-tree-sha1 = "838a3a4188e2ded87a4f9f184b4b0d78a1e91cb7"
 uuid = "ae029012-a4dd-5104-9daa-d747884805df"
 version = "1.3.0"
+
+[[deps.Rmath]]
+deps = ["Random", "Rmath_jll"]
+git-tree-sha1 = "f65dcb5fa46aee0cf9ed6274ccbd597adc49aa7b"
+uuid = "79098fc4-a85e-5d69-aa6a-4863f24498fa"
+version = "0.7.1"
+
+[[deps.Rmath_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
+git-tree-sha1 = "6ed52fdd3382cf21947b15e8870ac0ddbff736da"
+uuid = "f50d1b31-88e8-58de-be2c-1cc44531875f"
+version = "0.4.0+0"
 
 [[deps.Rotations]]
 deps = ["LinearAlgebra", "Quaternions", "Random", "StaticArrays"]
@@ -1655,10 +1927,34 @@ git-tree-sha1 = "75ebe04c5bed70b91614d684259b661c9e6274a4"
 uuid = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 version = "0.34.0"
 
+[[deps.StatsFuns]]
+deps = ["HypergeometricFunctions", "IrrationalConstants", "LogExpFunctions", "Reexport", "Rmath", "SpecialFunctions"]
+git-tree-sha1 = "f625d686d5a88bcd2b15cd81f18f98186fdc0c9a"
+uuid = "4c63d2b9-4356-54db-8cca-17b64c39e42c"
+version = "1.3.0"
+
+    [deps.StatsFuns.extensions]
+    StatsFunsChainRulesCoreExt = "ChainRulesCore"
+    StatsFunsInverseFunctionsExt = "InverseFunctions"
+
+    [deps.StatsFuns.weakdeps]
+    ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
+    InverseFunctions = "3587e190-3f89-42d0-90ee-14403ec27112"
+
+[[deps.StatsPlots]]
+deps = ["AbstractFFTs", "Clustering", "DataStructures", "Distributions", "Interpolations", "KernelDensity", "LinearAlgebra", "MultivariateStats", "NaNMath", "Observables", "Plots", "RecipesBase", "RecipesPipeline", "Reexport", "StatsBase", "TableOperations", "Tables", "Widgets"]
+git-tree-sha1 = "14ef622cf28b05e38f8af1de57bc9142b03fbfe3"
+uuid = "f3b207a7-027a-5e70-b257-86293d7955fd"
+version = "0.15.5"
+
 [[deps.StringManipulation]]
 git-tree-sha1 = "46da2434b41f41ac3594ee9816ce5541c6096123"
 uuid = "892a3eda-7b42-436c-8928-eab12a02cf0e"
 version = "0.3.0"
+
+[[deps.SuiteSparse]]
+deps = ["Libdl", "LinearAlgebra", "Serialization", "SparseArrays"]
+uuid = "4607b0f0-06f3-5cda-b6b1-a6196a1729e9"
 
 [[deps.SuiteSparse_jll]]
 deps = ["Artifacts", "Libdl", "Pkg", "libblastrampoline_jll"]
@@ -1669,6 +1965,12 @@ version = "5.10.1+6"
 deps = ["Dates"]
 uuid = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
 version = "1.0.3"
+
+[[deps.TableOperations]]
+deps = ["SentinelArrays", "Tables", "Test"]
+git-tree-sha1 = "e383c87cf2a1dc41fa30c093b2a19877c83e1bc1"
+uuid = "ab02a1b2-a7df-11e8-156e-fb1833f50b87"
+version = "1.2.0"
 
 [[deps.TableTraits]]
 deps = ["IteratorInterfaceExtensions"]
@@ -1777,6 +2079,12 @@ deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "4528479aa01ee1b3b4cd0e6faef0e04cf16466da"
 uuid = "2381bf8a-dfd0-557d-9999-79630e7b1b91"
 version = "1.25.0+0"
+
+[[deps.Widgets]]
+deps = ["Colors", "Dates", "Observables", "OrderedCollections"]
+git-tree-sha1 = "fcdae142c1cfc7d89de2d11e08721d0f2f86c98a"
+uuid = "cc8bc4a8-27d6-5769-a93b-9d913e69aa62"
+version = "0.6.6"
 
 [[deps.WoodburyMatrices]]
 deps = ["LinearAlgebra", "SparseArrays"]
@@ -2031,14 +2339,13 @@ version = "1.4.1+0"
 # ╠═14f12a6e-f88f-46b9-b875-85ef9f71aa2d
 # ╠═a4efd439-06ea-4d72-af87-6a15de067271
 # ╟─4efd078d-3f64-4855-ac89-aa1e43467608
-# ╠═824721fb-24e2-4a4b-8b47-cbbcbc76a500
 # ╠═2cfe7bb8-b388-4fc2-9d8e-6fb482b4ea08
 # ╟─16fc3402-665d-4f8e-ad78-6c2a7e730db3
 # ╠═2f1a33e4-6a06-43bb-877a-c3308b9c2f97
 # ╟─3092d142-e0e5-4b1f-a685-dd15fed5ceb4
 # ╠═159cef77-fe64-4bd3-afbf-0ae1416e2110
 # ╟─468df0cc-5088-4a07-82e8-5cac07017226
-# ╠═c038acd3-c29f-4e63-b1f6-2e3ba8b708b1
+# ╟─c038acd3-c29f-4e63-b1f6-2e3ba8b708b1
 # ╟─1fdbb53f-3046-4a46-b27a-12412c589738
 # ╠═30a442b9-ff0e-4bd7-94c5-94f49a5fbbd0
 # ╠═29bfe83e-ae36-420a-b346-4a4e460b9b0e
@@ -2048,13 +2355,36 @@ version = "1.4.1+0"
 # ╠═802ef0a2-3128-4ece-9623-adaa5b791d27
 # ╟─8e4cca1b-5386-41aa-87c5-f4e9378bdc38
 # ╟─b7c4de9d-2ce9-45fc-940a-f55773443284
-# ╠═4a91b2f6-b19a-4200-9f81-ef9ca0ba30f9
-# ╠═5d1d0130-8615-4182-9cf1-eec00623ce40
-# ╠═bf5e46c1-b082-4b85-b66d-bcec46dcce5b
+# ╟─4a91b2f6-b19a-4200-9f81-ef9ca0ba30f9
+# ╟─5d1d0130-8615-4182-9cf1-eec00623ce40
+# ╟─c4d2d461-bc89-43e3-9c97-1aeff3483221
+# ╠═d6390110-5514-4a27-a377-99f6db04cced
 # ╠═02a28654-b119-4954-93f2-f80db6cd6c5a
-# ╠═93763900-570d-4dff-a146-56ee1ed17659
+# ╠═0617e2ba-584e-4391-acf6-efca264af55e
 # ╠═3dfd9d3b-6e82-49e5-b4bd-18383e442033
 # ╠═ee70462d-bed2-4c28-a475-cfb45570abcc
 # ╠═e35ac2fb-9f5c-4daf-9ace-b75914cbc6c8
+# ╠═a9c430fb-7808-47f7-bc46-c35982c8171e
+# ╟─411b9beb-1f66-4abb-bf11-c4db4e300b18
+# ╟─ecd63f07-ea04-4e73-ad2c-92a9f03ed99f
+# ╟─c044700e-ec82-4257-bf99-dc7c931f03c4
+# ╠═f7867512-dc39-4551-a56c-96246e72309b
+# ╠═e6239100-be83-4e9d-bda0-5ced29d145a4
+# ╠═f1199f05-2188-406b-857b-6e8751b4fcd4
+# ╠═6ce64de4-dc4b-4df4-902c-4776d4b9275c
+# ╠═bb562de0-67d1-44d4-88bd-d0b1d7f1116e
+# ╠═b318abb8-846e-4910-a144-49bbaa718a1e
+# ╠═90a45ccc-6a41-4a15-bd2a-53509d3a5289
+# ╠═859ccac4-4fc0-46cc-ab08-807b187d53b1
+# ╠═10264e4d-04cc-47f7-ba3f-c28507b017ef
+# ╠═4d2219f8-63ac-480b-9563-ea113bde4239
+# ╠═4b01494e-07c8-43cc-8a3f-5c9c74537ce0
+# ╟─97217e4a-97b0-4186-8961-d75c71f5bcff
+# ╠═2fc519f7-d7f6-4f00-b28f-cbb7bdcd0dcd
+# ╠═8b0fd643-fe62-4f7f-a18a-7b64219aad9d
+# ╠═0e71ec1f-8659-4c56-bc5f-ff5345a14364
+# ╠═7c9368b7-108a-4ff4-801f-46d74c9ae2e3
+# ╠═c8f190dc-8301-4011-b2b9-b054dffda83e
+# ╠═f7e9cdce-e33f-4ef9-84e3-a202a3e27600
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
