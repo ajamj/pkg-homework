@@ -5,8 +5,7 @@ using Markdown
 using InteractiveUtils
 
 # ╔═╡ 95484ff5-be27-4470-a526-e0bd0181fd70
-using PlutoUI, Images, DataFrames, Plots, Statistics,StatsPlots
-#using StatsBase
+using PlutoUI, Images, DataFrames, Plots, Statistics, StatsPlots, IterTools
 
 # ╔═╡ b1763ae5-4d44-489d-af8f-4f22abc6974e
 TableOfContents()
@@ -347,38 +346,10 @@ Versi kodingan
 """
 
 # ╔═╡ d6390110-5514-4a27-a377-99f6db04cced
-ogive_1(df)
-
-# ╔═╡ 02a28654-b119-4954-93f2-f80db6cd6c5a
-begin
-df_ogive_tipe2 = DataFrame(Class = String[], CumulativeFrequency = Int[])
-cumulative_freq_tipe2 = sum(df.Frequency)
-for row in eachrow(df)
-    class_interval = row.Class
-    freq = row.Frequency
-    push!(df_ogive_tipe2, [class_interval, cumulative_freq_tipe2])
-    cumulative_freq_tipe2 -= freq
-end
-end
+df_ogive_tipe1 = ogive_1(df)
 
 # ╔═╡ 0617e2ba-584e-4391-acf6-efca264af55e
-ogive_2(df)
-
-# ╔═╡ ee70462d-bed2-4c28-a475-cfb45570abcc
-begin
-plot(df_ogive_tipe1.Class, df_ogive_tipe1.CumulativeFrequency, label = "Ogive Tipe I", marker = :circle)
-xlabel!("Class")
-ylabel!("Cumulative Frequency")
-title!("Ogive Tipe I")
-end
-
-# ╔═╡ e35ac2fb-9f5c-4daf-9ace-b75914cbc6c8
-begin
-plot(df_ogive_tipe2.Class, df_ogive_tipe2.CumulativeFrequency, label = "Ogive Tipe II", marker = :circle)
-xlabel!("Class")
-ylabel!("Cumulative Frequency")
-title!("Ogive Tipe II")
-end
+df_ogive_tipe2 = ogive_2(df)
 
 # ╔═╡ a9c430fb-7808-47f7-bc46-c35982c8171e
 histogram(sampel_50, weights = fill(1/length(sampel_50), length(sampel_50)), xlabel = "Umur Bateri", ylabel = "Frekuensi Relatif", title = "Histogram Distribusi Frekuensi Relatif Umur Bateri")
@@ -462,23 +433,8 @@ md"""
 # ╔═╡ f7867512-dc39-4551-a56c-96246e72309b
 data1 = DataFrame((x=[75,72,69,66,63,60,57,54,51,48,45]),(f=[1,3,6,12,20,18,11,6,3,2,1]))
 
-# ╔═╡ e6239100-be83-4e9d-bda0-5ced29d145a4
-max1 = maximum(data1.x)
-
-# ╔═╡ f1199f05-2188-406b-857b-6e8751b4fcd4
-min1 = minimum(data1.x)
-
-# ╔═╡ 6ce64de4-dc4b-4df4-902c-4776d4b9275c
-range1 = max1-min1
-
 # ╔═╡ bb562de0-67d1-44d4-88bd-d0b1d7f1116e
 total_data1 = sum(data1.f)
-
-# ╔═╡ b318abb8-846e-4910-a144-49bbaa718a1e
-k1 = round(k_sturges(total_data1))
-
-# ╔═╡ 90a45ccc-6a41-4a15-bd2a-53509d3a5289
-class_width1 = round(total_data1/k1)
 
 # ╔═╡ 859ccac4-4fc0-46cc-ab08-807b187d53b1
 
@@ -561,45 +517,86 @@ function arr_to_df(arr)
 	n = length(arr)
 	data_range = maximum(arr) - minimum(arr)
 	k = k_sturges(n)
-	class_width = round(data_range / arr)
-	class_boundaries = minimum(arr)-0.5:class_width:minimum(arr)+round(arr)*class_width
+	class_width = round(data_range /k)
+	class_boundaries = minimum(arr)-0.5:class_width:minimum(arr)+round(k)*class_width
 	df = DataFrame(Class = String[], Frequency = Int[])
 	for i in 1:length(class_boundaries)-1
-    	lower_bound = class_boundaries[I]
+    	lower_bound = class_boundaries[i]
     	upper_bound = class_boundaries[i+1]
-    	freq = count(x -> lower_bound ≤ x < upper_bound, sampel_50)
+    	freq = count(x -> lower_bound ≤ x < upper_bound, arr)
     	push!(df, [string(lower_bound) * " - " * string(upper_bound), freq])
 	end
 	return df
 end
 
-# ╔═╡ c8f190dc-8301-4011-b2b9-b054dffda83e
-#function create_array(df::DataFrame)
-#    values = repeat(df.x, inner = df.f)
-#    return values
-#end
+# ╔═╡ 59fc299a-0281-4e96-a097-b855aff1e303
+function plot_ogive(df_ogive)
+	plot(df_ogive.Class, df_ogive.CumulativeFrequency, label = "Ogive Tipe I", marker = :circle)
+	xlabel!("Class")
+	ylabel!("Cumulative Frequency")
+	title!("Ogive")
+end
+
+# ╔═╡ 644c5787-f966-4cfc-920a-a2ca9f253e9f
+plot_ogive(df_ogive_tipe1)
+
+# ╔═╡ cd799754-7666-451b-a44e-043c1d8b2679
+plot_ogive(df_ogive_tipe2)
+
+# ╔═╡ 0035f4c9-d42b-44a6-91a6-0deafcffb0b3
+function create_array(df::DataFrame)
+    values = vcat([repeat([df.x[i]], inner = df.f[i]) for i in 1:size(df, 1)]...)
+    return values
+end
 
 
-# ╔═╡ f7e9cdce-e33f-4ef9-84e3-a202a3e27600
-#create_array(data1)
+# ╔═╡ 639c3498-c408-41cc-8c37-8e11e773b6df
+arr1 = create_array(data1)
+
+# ╔═╡ b858f894-f922-47cb-973e-4a6c97693bae
+df_freq1 = arr_to_df(arr1)
+
+# ╔═╡ b846202e-555d-4c91-8ed3-1be49d9c865a
+total_data1b = sum(df_freq1[!,2])
+
+# ╔═╡ c82ade35-567f-4be8-bcc1-a843ca94aadb
+function arr_to_df_gpt(arr)
+    n = length(arr)
+    data_range = maximum(arr) - minimum(arr)
+    k = ceil(k_sturges(n))
+    class_width = round(data_range / k)
+    class_boundaries = minimum(arr) - 0.5:class_width:maximum(arr) + k * class_width
+    df = DataFrame(Class = String[], Frequency = Int[])
+    for i in 1:length(class_boundaries)-1
+        lower_bound = class_boundaries[i]
+        upper_bound = class_boundaries[i+1]
+        freq = count(x -> lower_bound ≤ x < upper_bound, arr)
+        push!(df, [string(lower_bound) * " - " * string(upper_bound), freq])
+    end
+    return df
+end
+
+
+# ╔═╡ e828d58b-0857-4d58-9bab-33561c9f1f86
+df_freq12 = arr_to_df_gpt(arr1)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Images = "916415d5-f1e6-5110-898d-aaa5f9f070e0"
+IterTools = "c8e1da08-722c-5040-9ed9-7db0dc04731e"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
-StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 StatsPlots = "f3b207a7-027a-5e70-b257-86293d7955fd"
 
 [compat]
 DataFrames = "~1.5.0"
 Images = "~0.25.3"
+IterTools = "~1.4.0"
 Plots = "~1.38.13"
 PlutoUI = "~0.7.51"
-StatsBase = "~0.34.0"
 StatsPlots = "~0.15.5"
 """
 
@@ -609,7 +606,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.0"
 manifest_format = "2.0"
-project_hash = "ee03400be89e6ed912d4c74a994e5b36a0758fc2"
+project_hash = "c0e6722b59e1b65b24bcf5a114e3bdf661239e6d"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -2356,21 +2353,18 @@ version = "1.4.1+0"
 # ╟─5d1d0130-8615-4182-9cf1-eec00623ce40
 # ╟─c4d2d461-bc89-43e3-9c97-1aeff3483221
 # ╠═d6390110-5514-4a27-a377-99f6db04cced
-# ╠═02a28654-b119-4954-93f2-f80db6cd6c5a
 # ╠═0617e2ba-584e-4391-acf6-efca264af55e
-# ╠═ee70462d-bed2-4c28-a475-cfb45570abcc
-# ╠═e35ac2fb-9f5c-4daf-9ace-b75914cbc6c8
+# ╠═644c5787-f966-4cfc-920a-a2ca9f253e9f
+# ╠═cd799754-7666-451b-a44e-043c1d8b2679
 # ╠═a9c430fb-7808-47f7-bc46-c35982c8171e
 # ╟─411b9beb-1f66-4abb-bf11-c4db4e300b18
 # ╟─ecd63f07-ea04-4e73-ad2c-92a9f03ed99f
 # ╟─c044700e-ec82-4257-bf99-dc7c931f03c4
 # ╠═f7867512-dc39-4551-a56c-96246e72309b
-# ╠═e6239100-be83-4e9d-bda0-5ced29d145a4
-# ╠═f1199f05-2188-406b-857b-6e8751b4fcd4
-# ╠═6ce64de4-dc4b-4df4-902c-4776d4b9275c
+# ╠═639c3498-c408-41cc-8c37-8e11e773b6df
+# ╠═b858f894-f922-47cb-973e-4a6c97693bae
 # ╠═bb562de0-67d1-44d4-88bd-d0b1d7f1116e
-# ╠═b318abb8-846e-4910-a144-49bbaa718a1e
-# ╠═90a45ccc-6a41-4a15-bd2a-53509d3a5289
+# ╠═b846202e-555d-4c91-8ed3-1be49d9c865a
 # ╠═859ccac4-4fc0-46cc-ab08-807b187d53b1
 # ╠═10264e4d-04cc-47f7-ba3f-c28507b017ef
 # ╠═4d2219f8-63ac-480b-9563-ea113bde4239
@@ -2380,7 +2374,9 @@ version = "1.4.1+0"
 # ╠═8b0fd643-fe62-4f7f-a18a-7b64219aad9d
 # ╠═0e71ec1f-8659-4c56-bc5f-ff5345a14364
 # ╠═7c9368b7-108a-4ff4-801f-46d74c9ae2e3
-# ╠═c8f190dc-8301-4011-b2b9-b054dffda83e
-# ╠═f7e9cdce-e33f-4ef9-84e3-a202a3e27600
+# ╠═59fc299a-0281-4e96-a097-b855aff1e303
+# ╠═0035f4c9-d42b-44a6-91a6-0deafcffb0b3
+# ╠═c82ade35-567f-4be8-bcc1-a843ca94aadb
+# ╠═e828d58b-0857-4d58-9bab-33561c9f1f86
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
