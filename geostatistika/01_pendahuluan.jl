@@ -5,7 +5,7 @@ using Markdown
 using InteractiveUtils
 
 # ╔═╡ 95484ff5-be27-4470-a526-e0bd0181fd70
-using PlutoUI, Images, DataFrames, Plots, Statistics, StatsPlots, IterTools
+using PlutoUI, Images, DataFrames, Plots, Statistics, StatsPlots
 
 # ╔═╡ b1763ae5-4d44-489d-af8f-4f22abc6974e
 TableOfContents()
@@ -238,9 +238,6 @@ $$k = 1 + 3.322*log_{10}(n)$$
 $$k = 1 + 3.322*log_{10}(50) = 6.644$$
 """
 
-# ╔═╡ 2cfe7bb8-b388-4fc2-9d8e-6fb482b4ea08
-k_sampel_50 = k_sturges(n)
-
 # ╔═╡ 16fc3402-665d-4f8e-ad78-6c2a7e730db3
 md"""
 Kita bisa pilih banyaknya interval kelas = 6, jadi lebar interval kelasnya = 20/6 = 3.333. 
@@ -292,22 +289,8 @@ md"""
 Versi kodingan:
 """
 
-# ╔═╡ 30a442b9-ff0e-4bd7-94c5-94f49a5fbbd0
-class_width = round(data_range / k_sampel_50)
-
-# ╔═╡ 29bfe83e-ae36-420a-b346-4a4e460b9b0e
-class_boundaries = minimum(sampel_50)-0.5:class_width:minimum(sampel_50)+round(k_sampel_50)*class_width
-
 # ╔═╡ 69b0e611-edbd-4e47-8139-4a8114e9e2ea
 df = DataFrame(Class = String[], Frequency = Int[])
-
-# ╔═╡ 53227240-8988-41b4-a04f-2df57ea71f0e
-for i in 1:length(class_boundaries)-1
-    lower_bound = class_boundaries[i]
-    upper_bound = class_boundaries[i+1]
-    freq = count(x -> lower_bound ≤ x < upper_bound, sampel_50)
-    push!(df, [string(lower_bound) * " - " * string(upper_bound), freq])
-end
 
 # ╔═╡ 464cb752-363a-4ffd-82c4-0cbe9dc601f7
 df
@@ -344,12 +327,6 @@ Distribusi frekuensi relatif pada dasarnya adalah distribusi peluang (probabilit
 md"""
 Versi kodingan
 """
-
-# ╔═╡ d6390110-5514-4a27-a377-99f6db04cced
-df_ogive_tipe1 = ogive_1(df)
-
-# ╔═╡ 0617e2ba-584e-4391-acf6-efca264af55e
-df_ogive_tipe2 = ogive_2(df)
 
 # ╔═╡ a9c430fb-7808-47f7-bc46-c35982c8171e
 histogram(sampel_50, weights = fill(1/length(sampel_50), length(sampel_50)), xlabel = "Umur Bateri", ylabel = "Frekuensi Relatif", title = "Histogram Distribusi Frekuensi Relatif Umur Bateri")
@@ -445,9 +422,6 @@ total_data1 = sum(data1.f)
 # ╔═╡ 4d2219f8-63ac-480b-9563-ea113bde4239
 histogram(data1.x,data1.f)
 
-# ╔═╡ 4b01494e-07c8-43cc-8a3f-5c9c74537ce0
-ogive_1(data1)
-
 # ╔═╡ 97217e4a-97b0-4186-8961-d75c71f5bcff
 md"""
 ## Fungsi-Fungsi
@@ -463,6 +437,23 @@ output: k = banyak interval kelas.
 """
 function k_sturges(n)
 	return 1 + log2(n)
+end
+
+# ╔═╡ 2cfe7bb8-b388-4fc2-9d8e-6fb482b4ea08
+k_sampel_50 = k_sturges(n)
+
+# ╔═╡ 30a442b9-ff0e-4bd7-94c5-94f49a5fbbd0
+class_width = round(data_range / k_sampel_50)
+
+# ╔═╡ 29bfe83e-ae36-420a-b346-4a4e460b9b0e
+class_boundaries = minimum(sampel_50)-0.5:class_width:minimum(sampel_50)+round(k_sampel_50)*class_width
+
+# ╔═╡ 53227240-8988-41b4-a04f-2df57ea71f0e
+for i in 1:length(class_boundaries)-1
+    lower_bound = class_boundaries[i]
+    upper_bound = class_boundaries[i+1]
+    freq = count(x -> lower_bound ≤ x < upper_bound, sampel_50)
+    push!(df, [string(lower_bound) * " - " * string(upper_bound), freq])
 end
 
 # ╔═╡ 8b0fd643-fe62-4f7f-a18a-7b64219aad9d
@@ -485,6 +476,12 @@ function ogive_1(df)
 	return df_ogive_tipe1
 end
 
+# ╔═╡ d6390110-5514-4a27-a377-99f6db04cced
+df_ogive_tipe1 = ogive_1(df)
+
+# ╔═╡ 4b01494e-07c8-43cc-8a3f-5c9c74537ce0
+ogive_1(data1)
+
 # ╔═╡ 0e71ec1f-8659-4c56-bc5f-ff5345a14364
 """
 Fungsi membuat tabel ogive tipe 2 (tabel frekuensi lebih dari).
@@ -504,6 +501,9 @@ function ogive_2(df)
 	end
 	return df_ogive_tipe2
 end
+
+# ╔═╡ 0617e2ba-584e-4391-acf6-efca264af55e
+df_ogive_tipe2 = ogive_2(df)
 
 # ╔═╡ 7c9368b7-108a-4ff4-801f-46d74c9ae2e3
 """
