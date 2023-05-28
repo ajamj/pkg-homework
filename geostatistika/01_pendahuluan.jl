@@ -336,12 +336,12 @@ Distribusi frekuensi kumulatif kurang dari adalah distribusi frekuensi yang menu
 # ╔═╡ b7c4de9d-2ce9-45fc-940a-f55773443284
 load(download("https://github.com/ajamj/pkg-homework/blob/main/img/geostats_t3_2.png?raw=true"))
 
+# ╔═╡ 4a91b2f6-b19a-4200-9f81-ef9ca0ba30f9
+load(download("https://github.com/ajamj/pkg-homework/blob/main/img/geostat_3_3_ogive.png?raw=true"))
+
 # ╔═╡ 5d1d0130-8615-4182-9cf1-eec00623ce40
 md"""
 Gambar 3.3 menampilkan grafik Ogive untuk distribusi frekuensi kumulatif kurang dari dan lebih dari umur baterai.
-
-![Ogive Kurang dari Umur Baterai](link-gambar-ogive-kurang-dari)
-![Ogive Lebih dari Umur Baterai](link-gambar-ogive-lebih-dari)
 
 Selanjutnya, distribusi frekuensi relatif (dalam fraksi atau persentase) menggambarkan frekuensi dalam bentuk proporsi atau peluang. Total frekuensi relatif akan menjadi 1 atau 100%.
 
@@ -2048,6 +2048,7 @@ version = "1.4.1+0"
 # ╠═802ef0a2-3128-4ece-9623-adaa5b791d27
 # ╟─8e4cca1b-5386-41aa-87c5-f4e9378bdc38
 # ╟─b7c4de9d-2ce9-45fc-940a-f55773443284
+# ╠═4a91b2f6-b19a-4200-9f81-ef9ca0ba30f9
 # ╠═5d1d0130-8615-4182-9cf1-eec00623ce40
 # ╠═bf5e46c1-b082-4b85-b66d-bcec46dcce5b
 # ╠═02a28654-b119-4954-93f2-f80db6cd6c5a
