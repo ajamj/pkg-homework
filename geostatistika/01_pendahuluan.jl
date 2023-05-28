@@ -333,30 +333,11 @@ md"""
 Distribusi frekuensi kumulatif kurang dari adalah distribusi frekuensi yang menunjukkan jumlah kumulatif data yang kurang dari suatu nilai tertentu. Distribusi frekuensi kumulatif lebih dari, di sisi lain, menunjukkan jumlah kumulatif data yang lebih besar dari suatu nilai tertentu.
 """
 
+# ╔═╡ b7c4de9d-2ce9-45fc-940a-f55773443284
+load(download("https://github.com/ajamj/pkg-homework/blob/main/img/geostats_t3_2.png?raw=true"))
+
 # ╔═╡ 5d1d0130-8615-4182-9cf1-eec00623ce40
-
 md"""
-
-Berikut adalah tabel distribusi frekuensi kumulatif kurang dari umur baterai berdasarkan Tabel 3.1:
-
-| Umur Baterai | Frekuensi Kumulatif Kurang dari |
-|--------------|-------------------------------|
-| 164.5 - 167.5| 6                             |
-| 167.5 - 170.5| 13                            |
-| 170.5 - 173.5| 21                            |
-| ...          | ...                           |
-| 182.5 - 185.5| 50                            |
-
-Dan berikut adalah tabel distribusi frekuensi kumulatif lebih dari umur baterai berdasarkan Tabel 3.1:
-
-| Umur Baterai | Frekuensi Kumulatif Lebih dari |
-|--------------|-------------------------------|
-| 164.5 - 167.5| 50                            |
-| 167.5 - 170.5| 44                            |
-| 170.5 - 173.5| 37                            |
-| ...          | ...                           |
-| 182.5 - 185.5| 0                             |
-
 Gambar 3.3 menampilkan grafik Ogive untuk distribusi frekuensi kumulatif kurang dari dan lebih dari umur baterai.
 
 ![Ogive Kurang dari Umur Baterai](link-gambar-ogive-kurang-dari)
@@ -2066,6 +2047,7 @@ version = "1.4.1+0"
 # ╠═464cb752-363a-4ffd-82c4-0cbe9dc601f7
 # ╠═802ef0a2-3128-4ece-9623-adaa5b791d27
 # ╟─8e4cca1b-5386-41aa-87c5-f4e9378bdc38
+# ╟─b7c4de9d-2ce9-45fc-940a-f55773443284
 # ╠═5d1d0130-8615-4182-9cf1-eec00623ce40
 # ╠═bf5e46c1-b082-4b85-b66d-bcec46dcce5b
 # ╠═02a28654-b119-4954-93f2-f80db6cd6c5a
