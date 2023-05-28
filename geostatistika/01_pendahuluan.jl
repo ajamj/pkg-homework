@@ -116,7 +116,7 @@ Jadi, intinya bedanya statistika sama geostatistika itu ada di sumber data yang 
 """
 
 # ╔═╡ f6fc1a90-ab96-4427-a4b0-29eb38ce0705
-![alternative text](img/geostat_2.1.png)
+!["alternative text"]("img/geostat_2_1.png")
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
