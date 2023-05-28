@@ -308,7 +308,7 @@ Versi kodingan:
 class_width = round(data_range / k_sampel_50)
 
 # ╔═╡ 29bfe83e-ae36-420a-b346-4a4e460b9b0e
-class_boundaries = minimum(sampel_50):class_width:maximum(sampel_50)
+class_boundaries = minimum(sampel_50)-0.5:class_width:minimum(sampel_50)+round(k_sampel_50)*class_width
 
 # ╔═╡ 69b0e611-edbd-4e47-8139-4a8114e9e2ea
 df = DataFrame(Class = String[], Frequency = Int[])
@@ -332,35 +332,6 @@ md"""
 #### c. Pengembangan Distribusi Frekuensi
 Distribusi frekuensi kumulatif kurang dari adalah distribusi frekuensi yang menunjukkan jumlah kumulatif data yang kurang dari suatu nilai tertentu. Distribusi frekuensi kumulatif lebih dari, di sisi lain, menunjukkan jumlah kumulatif data yang lebih besar dari suatu nilai tertentu.
 """
-
-# ╔═╡ 3fd45378-5fef-41c1-82ff-4c97d1d5a4b2
-begin
-df_kurang_dari = DataFrame(Class = String[], Frequency = Int[])
-df_lebih_dari = DataFrame(Class = String[], Frequency = Int[])
-total_freq = sum(df.Frequency)
-kurang_dari_freq = 0
-lebih_dari_freq = total_freq
-
-for row in eachrow(df)
-    class_interval = row.Class
-    freq = row.Frequency
-    
-    push!(df_kurang_dari, [class_interval, kurang_dari_freq])
-    push!(df_lebih_dari, [class_interval, lebih_dari_freq])
-    
-    kurang_dari_freq += freq
-    lebih_dari_freq -= freq
-end
-
-# Tambahkan baris terakhir untuk "lebih dari" yang mencakup seluruh rentang data
-push!(df_lebih_dari, ["Total", 0])
-end
-
-# ╔═╡ f898c8c4-2162-468e-a87a-23189b291b5a
-df_kurang_dari
-
-# ╔═╡ c4c173f9-7a66-4849-8553-181d0d7619e7
-df_lebih_dari
 
 # ╔═╡ 5d1d0130-8615-4182-9cf1-eec00623ce40
 
@@ -409,6 +380,53 @@ Gambar 3.4 menampilkan histogram distribusi frekuensi relatif umur baterai. Bent
 
 Distribusi frekuensi relatif pada dasarnya adalah distribusi peluang (probability distribution) yang total nilainya adalah 1. Histogramnya juga dikenal sebagai fungsi densitas peluang (probability density function, PDF).
 """
+
+# ╔═╡ bf5e46c1-b082-4b85-b66d-bcec46dcce5b
+begin
+df_ogive_tipe1 = DataFrame(Class = String[], CumulativeFrequency = Int[])
+cumulative_freq_tipe1 = 0
+for row in eachrow(df)
+    class_interval = row.Class
+    freq = row.Frequency
+    cumulative_freq_tipe1 += freq
+    push!(df_ogive_tipe1, [class_interval, cumulative_freq_tipe1])
+end
+end
+
+# ╔═╡ 02a28654-b119-4954-93f2-f80db6cd6c5a
+begin
+df_ogive_tipe2 = DataFrame(Class = String[], CumulativeFrequency = Int[])
+cumulative_freq_tipe2 = sum(df.Frequency)
+for row in eachrow(df)
+    class_interval = row.Class
+    freq = row.Frequency
+    push!(df_ogive_tipe2, [class_interval, cumulative_freq_tipe2])
+    cumulative_freq_tipe2 -= freq
+end
+end
+
+# ╔═╡ 93763900-570d-4dff-a146-56ee1ed17659
+df_ogive_tipe1
+
+# ╔═╡ 3dfd9d3b-6e82-49e5-b4bd-18383e442033
+df_ogive_tipe2
+
+
+# ╔═╡ ee70462d-bed2-4c28-a475-cfb45570abcc
+begin
+plot(df_ogive_tipe1.Class, df_ogive_tipe1.CumulativeFrequency, label = "Ogive Tipe I", marker = :circle)
+xlabel!("Class")
+ylabel!("Cumulative Frequency")
+title!("Ogive Tipe I")
+end
+
+# ╔═╡ e35ac2fb-9f5c-4daf-9ace-b75914cbc6c8
+begin
+plot(df_ogive_tipe2.Class, df_ogive_tipe2.CumulativeFrequency, label = "Ogive Tipe II", marker = :circle)
+xlabel!("Class")
+ylabel!("Cumulative Frequency")
+title!("Ogive Tipe II")
+end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -2048,9 +2066,12 @@ version = "1.4.1+0"
 # ╠═464cb752-363a-4ffd-82c4-0cbe9dc601f7
 # ╠═802ef0a2-3128-4ece-9623-adaa5b791d27
 # ╟─8e4cca1b-5386-41aa-87c5-f4e9378bdc38
-# ╠═3fd45378-5fef-41c1-82ff-4c97d1d5a4b2
-# ╠═f898c8c4-2162-468e-a87a-23189b291b5a
-# ╠═c4c173f9-7a66-4849-8553-181d0d7619e7
 # ╠═5d1d0130-8615-4182-9cf1-eec00623ce40
+# ╠═bf5e46c1-b082-4b85-b66d-bcec46dcce5b
+# ╠═02a28654-b119-4954-93f2-f80db6cd6c5a
+# ╠═93763900-570d-4dff-a146-56ee1ed17659
+# ╠═3dfd9d3b-6e82-49e5-b4bd-18383e442033
+# ╠═ee70462d-bed2-4c28-a475-cfb45570abcc
+# ╠═e35ac2fb-9f5c-4daf-9ace-b75914cbc6c8
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
