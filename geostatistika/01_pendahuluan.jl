@@ -115,6 +115,9 @@ Coba liat gambar 2.1, tuh, itu contoh data geostatistika yang gampang dipahamin.
 Jadi, intinya bedanya statistika sama geostatistika itu ada di sumber data yang dipakai, bro. Statistika pake data dari ruang sampel, sedangkan geostatistika pake data langsung dari ruang fisik yang sebenarnya.
 """
 
+# ╔═╡ f6fc1a90-ab96-4427-a4b0-29eb38ce0705
+![alternative text](img/geostat_2.1.png)
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -1066,5 +1069,6 @@ version = "17.4.0+0"
 # ╟─6f1d5682-e9d5-42f0-84f4-7ed483648fab
 # ╟─8d01ca3a-1622-491d-81db-1bc4c0eaca5d
 # ╟─30318226-b5ca-4b8d-aa38-39d80ba55c09
+# ╠═f6fc1a90-ab96-4427-a4b0-29eb38ce0705
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
