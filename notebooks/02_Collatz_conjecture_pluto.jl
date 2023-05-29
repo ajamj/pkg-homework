@@ -218,6 +218,9 @@ collatz_conjecture(-11/3)
 # ╔═╡ b87fdd17-4e32-4f61-9300-bb6e16141be0
 collatz_conjecture("A") 
 
+# ╔═╡ 7ddb7e3d-a2c8-4a71-9575-0446dad358d7
+collatz_conjecture("/")
+
 # ╔═╡ a0186ab1-db04-49bc-ba6e-b69192f8d138
 md"""
 ## Visualisasi
@@ -252,6 +255,9 @@ collatz_conjecture(number)
 
 # ╔═╡ e9af8d2c-7f98-4cdc-8cd0-b3e98475803f
 plot_cc(number)
+
+# ╔═╡ f78e4872-0835-4213-a53e-487de859544c
+plot_cc(5)
 
 # ╔═╡ 1332ddb3-055c-469e-bf5c-ff24143f226b
 md"""
@@ -1297,11 +1303,13 @@ version = "1.4.1+0"
 # ╠═b0966aa0-66a3-41cb-b3d8-103bf97bca22
 # ╠═aebf286c-2f2b-4586-8b92-ea8981943bfd
 # ╠═b87fdd17-4e32-4f61-9300-bb6e16141be0
+# ╠═7ddb7e3d-a2c8-4a71-9575-0446dad358d7
 # ╟─a0186ab1-db04-49bc-ba6e-b69192f8d138
 # ╠═f857f3d4-8cb1-40f0-95d2-8a96726362a1
 # ╠═096a2dcc-1df4-475e-9a35-737a9883834b
 # ╠═9be99f42-cf79-46a4-8d13-651b2c9864c9
 # ╠═e9af8d2c-7f98-4cdc-8cd0-b3e98475803f
+# ╠═f78e4872-0835-4213-a53e-487de859544c
 # ╟─1332ddb3-055c-469e-bf5c-ff24143f226b
 # ╠═b0f66da7-7b12-43ad-a681-b829ff0f222b
 # ╟─00000000-0000-0000-0000-000000000001
