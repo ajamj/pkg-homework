@@ -5,7 +5,13 @@ using Markdown
 using InteractiveUtils
 
 # ╔═╡ ed5ecf4c-faf8-11ed-25a8-07845f0dd9a9
-using BenchmarkTools, PlutoUI, PyCall, Plots, Conda, Statistics,CxxWrap
+using BenchmarkTools, PlutoUI, PyCall, Plots, Conda, Statistics
+
+# ╔═╡ 1031596a-c7b8-4170-8c9a-311c6b50deea
+using .Threads
+
+# ╔═╡ d6d5f79b-d860-469d-ac18-4ea573c6a3ca
+using Distributed
 
 # ╔═╡ b881e423-cc41-407d-973f-9d6cae8c742f
 begin
@@ -81,7 +87,7 @@ TableOfContents()
 dict = Dict()
 
 # ╔═╡ e5672408-2cf4-451c-a292-2ba15ac3e739
-num = 10 # Set a value for num
+num = 100 # Set a value for num
 
 # ╔═╡ 4af0edf5-66d5-4834-b117-11b0a73193b2
 md"""
@@ -208,6 +214,12 @@ begin
     collatz_conjecture_numpy = py"collatz_conjecture_numpy"
 end
 
+# ╔═╡ 6d1ac8d6-9020-4d40-92e4-3718d5824d2b
+bench_numpy = @benchmark collatz_conjecture_numpy(num)
+
+# ╔═╡ e14b3606-2c7c-4bff-8d5d-730e45039fb5
+dict["Python numpy"] = minimum(bench_numpy.times)/1e6 #in miliseconds
+
 # ╔═╡ e22fcf3e-f8ed-47a2-b2a9-3bece3415b3b
 md"""
 ## 4. Julia
@@ -271,8 +283,6 @@ function to_int(n)
 end
 
 # ╔═╡ c3da1561-ef2d-4733-ab51-9484e2b92eb7
-# ╠═╡ disabled = true
-#=╠═╡
 """
     Collatz Conjecture Function
     Input: n = bilangan bulat positif
@@ -305,12 +315,9 @@ function j_collatz_conjecture(n)
     end
 end
 
-  ╠═╡ =#
 
 # ╔═╡ d0ba0dbd-6ee3-4e66-8114-6f3693713dde
-#=╠═╡
 j_collatz_conjecture(num)
-  ╠═╡ =#
 
 # ╔═╡ 4ba70637-3d8d-45ac-8d84-c61725153361
 bench_julia = @benchmark j_collatz_conjecture(num)
@@ -324,8 +331,6 @@ md"""
 """
 
 # ╔═╡ 2bfa81e2-504f-4e0f-a515-60d135db8c0d
-# ╠═╡ disabled = true
-#=╠═╡
 """
     Collatz Conjecture Function
     Input: n = bilangan bulat positif
@@ -358,22 +363,51 @@ function collatz_conjecture_inbounds(n)
     end
 end
 
-  ╠═╡ =#
 
 # ╔═╡ 9b7ce149-97c2-4954-a2a1-86a00b15d5cb
-#=╠═╡
 collatz_conjecture_inbounds(num)
-  ╠═╡ =#
 
 # ╔═╡ 7df7913f-01b9-4bf0-8ab9-1e89d5be633f
-#=╠═╡
 bench_julia_inbounds = @benchmark collatz_conjecture_inbounds(num)
-  ╠═╡ =#
 
 # ╔═╡ 254b09ac-e797-4ab4-8e81-13d7d1cbe19b
-#=╠═╡
 dict["Julia inbounds"] = minimum(bench_julia_inbounds.times)/1e6 #in miliseconds
-  ╠═╡ =#
+
+# ╔═╡ cc6b329e-6843-45b1-8248-312732ae937a
+dict["Julia Aromic"] = minimum(bench_julia_inbounds.times)/1e6 #in miliseconds
+
+# ╔═╡ ef3d160c-ec6b-4e2d-b67f-7cf2ccd23496
+md"""
+# Perbandingan
+"""
+
+# ╔═╡ ffdee078-192d-43ff-9b1c-07eb0e4c8ad3
+dict
+
+# ╔═╡ 2bae9580-5fec-43d6-b5ef-c36281ceded8
+sorted_dict = sort(collect(dict), by = x -> x[2])
+
+# ╔═╡ 90b17307-a6b2-44c7-8d2b-22f29f8f33ce
+for (index, (kunci, nilai)) in enumerate(collect(sorted_dict))
+    println("$index. $kunci: $nilai ms")
+end
+
+# ╔═╡ 612b3836-51a2-4860-b8a6-aca6b9a081f4
+
+
+# ╔═╡ 6c0e979f-fb23-46f2-bef5-36e123a8615c
+md"""
+#Visualisasi
+"""
+
+# ╔═╡ 8a2af82b-e46b-4fd1-84b7-ee54258e0325
+keys = [pair.first for pair in sorted_dict]
+
+# ╔═╡ 13140b94-7807-474a-8025-1ba65676b1b4
+values = [pair.second for pair in sorted_dict]
+
+# ╔═╡ 863a2b78-f4a9-4aea-bc6b-fd11684b37a5
+bar(keys, values, legend=false, xlabel="Language", ylabel="Execution Time", title="Comparison", yscale=:log10)
 
 # ╔═╡ 96da97cc-235c-4874-b7a9-7b2a8cd7f3f0
 md"""
@@ -381,70 +415,68 @@ md"""
 """
 
 
-# ╔═╡ d5dc8266-ff0d-4a5e-889a-847259d184b1
+# ╔═╡ eab26fdd-e214-4649-9c12-91eb7c7794ba
 # ╠═╡ disabled = true
 #=╠═╡
 begin
-const libcollatz = "./collatz.so"
+	const Clib3 = tempname() # create a temporary file
+F_code = """
+subroutine collatz_sequence(i)
+    implicit none
+    integer, intent(in) :: i
+    integer :: current
 
-function fortran_collatz_conjecture(n::Int, sequence::Vector{Int32}, length::Ref{Int32})
-    ccall((:fortran_collatz_conjecture_, libcollatz), Cvoid,
-        (Cint, Ptr{Int32}, Ref{Int32}), n, sequence, length)
+    current = i
+    write(*,*) current
+    do while (current /= 1)
+        if (mod(current, 2) == 0) then
+            current = current / 2
+        else
+            current = 3 * current + 1
+        end if
+        write(*,*) current
+    end do
+end subroutine collatz_sequence
+
+
+"""
+
+# Compile Fortran code to a shared library using GCC
+open(`gfortran -fPIC -shared -xc -o $(Clib3 * "." * Libdl.dlext) -`, "w") do f
+    print(f, F_code)
 end
 
-n = 27
-sequence = Vector{Int32}(undef, 1000000)
-length = Ref{Int32}(0)
-
-fortran_collatz_conjecture(n, sequence, length)
-
-println("Collatz sequence:")
-for i in 1:length[]
-    println(sequence[i])
+# Define the CResult struct using Ref
+struct CResult2
+    number::Cint
+    steps::Cint
+    sequence::Ptr{Cint}
 end
 
+function f_lang(n)
+    c_result = ccall((:collatz_sequence, Clib3), CResult2, (Cint,), n)
+    sequence = unsafe_wrap(Vector{Cint}, c_result.sequence, c_result.steps)
+    result_dict = Dict(
+        "number" => c_result.number,
+        "steps" => c_result.steps,
+        "sequence" => Vector{Int}(sequence)
+    )
+    ccall(:free, Cvoid, (Ptr{Cint},), c_result.sequence)
+    return result_dict
+end
 
 end
   ╠═╡ =#
 
-# ╔═╡ 11e5222a-8146-4dd2-afce-154fb1f36c29
-begin
-const libcollatz = "./collatz.so"
-
-# Compile the Fortran code using gfortran
-run(`gfortran -shared -fPIC -o $libcollatz collatz.f90`)
-
-# Load the shared library
-lib = (libcollatz)
-
-# Define the Julia function that calls the Fortran function
-function fortran_collatz_conjecture(n::Cint, sequence::Ptr{Cint}, length::Ref{Cint})
-    ccall(:fortran_collatz_conjecture_, Cvoid, (Cint, Ptr{Cint}, Ref{Cint}), n, sequence, length)
-end
-
-# Use the fortran_collatz_conjecture function
-n = Cint(27)
-sequence = Array{Cint}(undef, 1000000)
-length = Ref{Cint}(0)
-fortran_collatz_conjecture(n, pointer(sequence), length)
-
-# Print the results
-println("Collatz sequence:")
-for i in 1:length[]
-    println(sequence[i])
-end
-
-
-
-
-end
+# ╔═╡ 799b870d-fa0e-4e2b-a69a-593dd2f187c1
+dict
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
 Conda = "8f4d0f93-b110-5947-807f-2305c1781a2d"
-CxxWrap = "1f15a43c-97ca-5a2a-ae31-89f07a497df4"
+Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 Libdl = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
@@ -454,7 +486,6 @@ Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 [compat]
 BenchmarkTools = "~1.3.2"
 Conda = "~1.8.0"
-CxxWrap = "~0.13.4"
 Plots = "~1.38.12"
 PlutoUI = "~0.7.51"
 PyCall = "~1.95.1"
@@ -466,7 +497,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.0"
 manifest_format = "2.0"
-project_hash = "160b457ad0a617b3c73bbd1768df3162ddfbc952"
+project_hash = "aa4be185e5c7e3dcafc5ed761291b625aa89e168"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -569,12 +600,6 @@ git-tree-sha1 = "d05d9e7b7aedff4e5b51a029dced05cfb6125781"
 uuid = "d38c429a-6771-53c6-b99e-75d170b6e991"
 version = "0.6.2"
 
-[[deps.CxxWrap]]
-deps = ["Libdl", "MacroTools", "libcxxwrap_julia_jll"]
-git-tree-sha1 = "bf6b3005bf7435544f7cac0f0ec13e1fef67b190"
-uuid = "1f15a43c-97ca-5a2a-ae31-89f07a497df4"
-version = "0.13.4"
-
 [[deps.DataAPI]]
 git-tree-sha1 = "8da84edb865b0b5b0100c0666a9bc9a0b71c553c"
 uuid = "9a962f9c-6df0-11e9-0e5d-c546b8b5ee8a"
@@ -595,6 +620,10 @@ deps = ["Mmap"]
 git-tree-sha1 = "9e2f36d3c96a820c678f2f1f1782582fcf685bae"
 uuid = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 version = "1.9.1"
+
+[[deps.Distributed]]
+deps = ["Random", "Serialization", "Sockets"]
+uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 
 [[deps.DocStringExtensions]]
 deps = ["LibGit2"]
@@ -1445,12 +1474,6 @@ deps = ["Artifacts", "Libdl"]
 uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
 version = "5.7.0+0"
 
-[[deps.libcxxwrap_julia_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "db6cccc5c48abdb41795a3b6556e32a548143c66"
-uuid = "3eaa8342-bff7-56a5-9981-c04077f7cee7"
-version = "0.9.7+1"
-
 [[deps.libfdk_aac_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "daacc84a041563f965be61859a36e17c4e4fcd55"
@@ -1501,6 +1524,8 @@ version = "1.4.1+0"
 # ╔═╡ Cell order:
 # ╟─8e4c31ad-71c4-4a5d-9952-8fc91239f6f4
 # ╠═ed5ecf4c-faf8-11ed-25a8-07845f0dd9a9
+# ╠═1031596a-c7b8-4170-8c9a-311c6b50deea
+# ╠═d6d5f79b-d860-469d-ac18-4ea573c6a3ca
 # ╠═934d5b5c-3b62-4e9c-a49a-669de1cbf15a
 # ╠═33fddbdf-8754-4d6b-bf0e-e8a2af64a1d3
 # ╠═e5672408-2cf4-451c-a292-2ba15ac3e739
@@ -1517,6 +1542,8 @@ version = "1.4.1+0"
 # ╠═717b37fb-2981-4da5-9adb-856938ea56af
 # ╠═11ad8cbd-8f2c-4377-aa22-eb2e8f373b90
 # ╠═751cc0bd-50b5-46dd-9a01-6ff0cff7d4a2
+# ╠═6d1ac8d6-9020-4d40-92e4-3718d5824d2b
+# ╠═e14b3606-2c7c-4bff-8d5d-730e45039fb5
 # ╠═e22fcf3e-f8ed-47a2-b2a9-3bece3415b3b
 # ╠═31a070c9-375f-4f15-8778-469a80a47712
 # ╠═c3da1561-ef2d-4733-ab51-9484e2b92eb7
@@ -1528,8 +1555,18 @@ version = "1.4.1+0"
 # ╠═9b7ce149-97c2-4954-a2a1-86a00b15d5cb
 # ╠═7df7913f-01b9-4bf0-8ab9-1e89d5be633f
 # ╠═254b09ac-e797-4ab4-8e81-13d7d1cbe19b
+# ╠═cc6b329e-6843-45b1-8248-312732ae937a
+# ╟─ef3d160c-ec6b-4e2d-b67f-7cf2ccd23496
+# ╠═ffdee078-192d-43ff-9b1c-07eb0e4c8ad3
+# ╠═2bae9580-5fec-43d6-b5ef-c36281ceded8
+# ╠═90b17307-a6b2-44c7-8d2b-22f29f8f33ce
+# ╠═612b3836-51a2-4860-b8a6-aca6b9a081f4
+# ╟─6c0e979f-fb23-46f2-bef5-36e123a8615c
+# ╠═8a2af82b-e46b-4fd1-84b7-ee54258e0325
+# ╠═13140b94-7807-474a-8025-1ba65676b1b4
+# ╠═863a2b78-f4a9-4aea-bc6b-fd11684b37a5
 # ╟─96da97cc-235c-4874-b7a9-7b2a8cd7f3f0
-# ╠═d5dc8266-ff0d-4a5e-889a-847259d184b1
-# ╠═11e5222a-8146-4dd2-afce-154fb1f36c29
+# ╠═eab26fdd-e214-4649-9c12-91eb7c7794ba
+# ╠═799b870d-fa0e-4e2b-a69a-593dd2f187c1
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

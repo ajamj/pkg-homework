@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.26
+# v0.19.25
 
 using Markdown
 using InteractiveUtils
@@ -429,6 +429,16 @@ $$u_{\text{out}}(i, j) = 0.25 \left[ u(i-1, j) + u(i+1, j) + u(i, j-1) + u(i, j+
 Dalam Julia, kita bisa buat:
 """
 
+# ╔═╡ 231b2af3-1738-43eb-880c-520d959a418f
+function lap2d!(u, new)
+	M,N = size(u)
+	for j in 2:N-1
+		for i in 2:M-1
+			@inbounds unew[i,j]=0.25*(u[i-1,j]+u[i+1,j]+u[i,j-1]+u[i,j+1])
+		end
+	end
+end
+
 # ╔═╡ 684d5c57-cd81-4a86-8e0c-b0aadc0fa67a
 md"""
 Kita bakal ikutin konvensi di Julia nih. Biasanya, fungsi yang mengubah argumen-argumennya bakal ditambahin tanda seru (!) di belakangnya.
@@ -444,16 +454,6 @@ begin
 	#set boundary conditions
 	u[1,:] = u[end,:] = u[:,1] = u[:,end] .= 10.0
 	unew = copy(u)
-end
-
-# ╔═╡ 231b2af3-1738-43eb-880c-520d959a418f
-function lap2d!(u, new)
-	M,N = size(u)
-	for j in 2:N-1
-		for i in 2:M-1
-			@inbounds unew[i,j]=0.25*(u[i-1,j]+u[i+1,j]+u[i,j-1]+u[i,j+1])
-		end
-	end
 end
 
 # ╔═╡ d191e4ac-9b76-4d0c-b8c2-6e8d09afc59d
