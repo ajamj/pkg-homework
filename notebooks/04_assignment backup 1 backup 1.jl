@@ -270,9 +270,41 @@ function to_int(n)
 	end
 end
 
+# ╔═╡ 41d16e67-5698-4c5a-8450-363c95cb3610
+md"""
+## 5. Julia with `@inbounds`
+"""
+
+# ╔═╡ 96da97cc-235c-4874-b7a9-7b2a8cd7f3f0
+md"""
+## 6. Fortran
+"""
+
+
+# ╔═╡ d5dc8266-ff0d-4a5e-889a-847259d184b1
+begin
+const libcollatz = "./collatz.so"
+
+function fortran_collatz_conjecture(n::Int, sequence::Vector{Int32}, length::Ref{Int32})
+    ccall((:fortran_collatz_conjecture_, libcollatz), Cvoid,
+        (Cint, Ptr{Int32}, Ref{Int32}), n, sequence, length)
+end
+
+n = 27
+sequence = Vector{Int32}(undef, 1000000)
+length = Ref{Int32}(0)
+
+fortran_collatz_conjecture(n, sequence, length)
+
+println("Collatz sequence:")
+for i in 1:length[]
+    println(sequence[i])
+end
+
+
+end
+
 # ╔═╡ c3da1561-ef2d-4733-ab51-9484e2b92eb7
-# ╠═╡ disabled = true
-#=╠═╡
 """
     Collatz Conjecture Function
     Input: n = bilangan bulat positif
@@ -305,12 +337,9 @@ function j_collatz_conjecture(n)
     end
 end
 
-  ╠═╡ =#
 
 # ╔═╡ d0ba0dbd-6ee3-4e66-8114-6f3693713dde
-#=╠═╡
 j_collatz_conjecture(num)
-  ╠═╡ =#
 
 # ╔═╡ 4ba70637-3d8d-45ac-8d84-c61725153361
 bench_julia = @benchmark j_collatz_conjecture(num)
@@ -318,14 +347,7 @@ bench_julia = @benchmark j_collatz_conjecture(num)
 # ╔═╡ 524a22f9-03cb-4c31-9d26-c402c85a217c
 dict["Julia"] = minimum(bench_julia.times)/1e6 #in miliseconds
 
-# ╔═╡ 41d16e67-5698-4c5a-8450-363c95cb3610
-md"""
-## 5. Julia with `@inbounds`
-"""
-
 # ╔═╡ 2bfa81e2-504f-4e0f-a515-60d135db8c0d
-# ╠═╡ disabled = true
-#=╠═╡
 """
     Collatz Conjecture Function
     Input: n = bilangan bulat positif
@@ -358,86 +380,18 @@ function collatz_conjecture_inbounds(n)
     end
 end
 
-  ╠═╡ =#
 
 # ╔═╡ 9b7ce149-97c2-4954-a2a1-86a00b15d5cb
-#=╠═╡
 collatz_conjecture_inbounds(num)
-  ╠═╡ =#
 
 # ╔═╡ 7df7913f-01b9-4bf0-8ab9-1e89d5be633f
-#=╠═╡
 bench_julia_inbounds = @benchmark collatz_conjecture_inbounds(num)
-  ╠═╡ =#
 
 # ╔═╡ 254b09ac-e797-4ab4-8e81-13d7d1cbe19b
-#=╠═╡
 dict["Julia inbounds"] = minimum(bench_julia_inbounds.times)/1e6 #in miliseconds
-  ╠═╡ =#
-
-# ╔═╡ 96da97cc-235c-4874-b7a9-7b2a8cd7f3f0
-md"""
-## 6. Fortran
-"""
-
-
-# ╔═╡ d5dc8266-ff0d-4a5e-889a-847259d184b1
-# ╠═╡ disabled = true
-#=╠═╡
-begin
-const libcollatz = "./collatz.so"
-
-function fortran_collatz_conjecture(n::Int, sequence::Vector{Int32}, length::Ref{Int32})
-    ccall((:fortran_collatz_conjecture_, libcollatz), Cvoid,
-        (Cint, Ptr{Int32}, Ref{Int32}), n, sequence, length)
-end
-
-n = 27
-sequence = Vector{Int32}(undef, 1000000)
-length = Ref{Int32}(0)
-
-fortran_collatz_conjecture(n, sequence, length)
-
-println("Collatz sequence:")
-for i in 1:length[]
-    println(sequence[i])
-end
-
-
-end
-  ╠═╡ =#
 
 # ╔═╡ 11e5222a-8146-4dd2-afce-154fb1f36c29
-begin
-const libcollatz = "./collatz.so"
 
-# Compile the Fortran code using gfortran
-run(`gfortran -shared -fPIC -o $libcollatz collatz.f90`)
-
-# Load the shared library
-lib = (libcollatz)
-
-# Define the Julia function that calls the Fortran function
-function fortran_collatz_conjecture(n::Cint, sequence::Ptr{Cint}, length::Ref{Cint})
-    ccall(:fortran_collatz_conjecture_, Cvoid, (Cint, Ptr{Cint}, Ref{Cint}), n, sequence, length)
-end
-
-# Use the fortran_collatz_conjecture function
-n = Cint(27)
-sequence = Array{Cint}(undef, 1000000)
-length = Ref{Cint}(0)
-fortran_collatz_conjecture(n, pointer(sequence), length)
-
-# Print the results
-println("Collatz sequence:")
-for i in 1:length[]
-    println(sequence[i])
-end
-
-
-
-
-end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1530,6 +1484,7 @@ version = "1.4.1+0"
 # ╠═254b09ac-e797-4ab4-8e81-13d7d1cbe19b
 # ╟─96da97cc-235c-4874-b7a9-7b2a8cd7f3f0
 # ╠═d5dc8266-ff0d-4a5e-889a-847259d184b1
+# ╠═427c5e2e-7c72-433c-a535-6167d5c2e159
 # ╠═11e5222a-8146-4dd2-afce-154fb1f36c29
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

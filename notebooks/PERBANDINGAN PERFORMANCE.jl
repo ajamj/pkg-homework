@@ -10,93 +10,9 @@ using BenchmarkTools
 # ╔═╡ 9c4122d0-73d4-4023-ad4e-637cf938e320
 using LinearAlgebra
 
-# ╔═╡ 031e3ce7-33f5-4f2f-9582-2c6f55357890
-# ╠═╡ disabled = true
-#=╠═╡
-begin
-using Libdl
-const Clib2 = tempname() # create a temporary file
-
-C_code = """
-#include <stdio.h>
-#include <stdlib.h>
-
-struct CResult {
-    int number;
-    int steps;
-    int* sequence;
-};
-
-struct CResult c_collatz_conjecture(int n) {
-    struct CResult result;
-    result.sequence = (int*)malloc((n + 1) * sizeof(int));
-    int index = 0;
-    result.sequence[index++] = n;
-
-    while (n > 1) {
-        if (n % 2 == 1) {
-            n = 3 * n + 1;
-        } else {
-            n = n / 2;
-        }
-        result.sequence[index++] = n;
-    }
-
-    result.number = result.sequence[0];
-    result.steps = index;
-
-    return result;
-}
-"""
-
-# Compile C code to a shared library using GCC with -ffast-math
-open(`gcc -fPIC -O3 -msse3 -xc -shared -ffast-math -o $(Clib2 * "." * Libdl.dlext) -`, "w") do f
-    print(f, C_code)
-end
-
-# Define the CResult struct using Ref
-struct CResult
-    number::Cint
-    steps::Cint
-    sequence::Ptr{Cint}
-end
-
-function c_lang(n)
-    c_result = ccall((:c_collatz_conjecture, Clib2), CResult, (Cint,), n)
-    sequence = unsafe_wrap(Vector{Cint}, c_result.sequence, c_result.steps)
-    result_dict = Dict(
-        "number" => c_result.number,
-        "steps" => c_result.steps,
-        "sequence" => Vector{Int}(sequence)
-    )
-    ccall(:free, Cvoid, (Ptr{Cint},), c_result.sequence)
-    return result_dict
-end
-end
-
-  ╠═╡ =#
-
 # ╔═╡ 5a0f9470-fd68-11ed-2803-bb5d9ca81a3f
 md"""# Tugas Perbandingan Performance
 """
-
-# ╔═╡ 7d164836-862c-44a7-8bca-1eaa90b1d310
-function julia_collatz_conjecture(n)
-    if n > 0
-        sequence = [n]
-        while n > 1
-            if isodd(n)
-                n = 3*n + 1
-            else
-                n = n÷2
-            end
-            push!(sequence, n)
-        end
-        return Dict("number" => sequence[1], "steps" => length(sequence), "sequence" => sequence)
-    else
-        println("ERROR: Masukan harus berupa bilangan bulat positif atau yang semisal.")
-    end
-end
 
 # ╔═╡ 37377e32-1ae2-4b5f-bdda-a7d4d18c6205
 function julia_optimized_collatz_conjecture(n)
@@ -119,6 +35,81 @@ function julia_optimized_collatz_conjecture(n)
         println("ERROR: Masukan harus berupa bilangan bulat positif atau yang semisal.")
     end
 end
+
+# ╔═╡ ad7366a2-a105-4ae3-ac9d-3f413a37bd57
+function python_collatz_conjecture(n)
+    py"""
+    def py_collatz_conjecture(n):
+        sequence = [n]
+        while n > 1:
+            if n % 2 == 0:
+                n = n // 2
+            else:
+                n = 3 * n + 1
+            sequence.append(n)
+        return {"number": sequence[0], "steps": len(sequence), "sequence": sequence}
+    """
+    return py"py_collatz_conjecture"(n)
+end
+
+# ╔═╡ 9fa7822b-144c-4554-bd25-8b30c9013f9f
+nl = 10
+
+# ╔═╡ 8844cb9a-db74-4170-ad6a-e610935e2e59
+@benchmark julia_optimized_collatz_conjecture(n
+
+# ╔═╡ 9f455182-4ea5-400c-815d-038cac54d8d1
+begin
+const libcollatz = "./collatz.so"
+
+function fortran_collatz_conjecture(n::Int, sequence::Vector{Int32}, length::Ref{Int32})
+    ccall((:fortran_collatz_conjecture_, libcollatz), Cvoid,
+        (Cint, Ptr{Int32}, Ref{Int32}), n, sequence, length)
+end
+
+n = 27
+sequence = Vector{Int32}(undef, 1000000)
+length = Ref{Int32}(0)
+
+fortran_collatz_conjecture(n, sequence, length)
+
+println("Collatz sequence:")
+for i in 1:length[]
+    println(sequence[i])
+end
+
+
+end
+
+# ╔═╡ 7d164836-862c-44a7-8bca-1eaa90b1d310
+function julia_collatz_conjecture(n)
+    if n > 0
+        sequence = [n]
+        while n > 1
+            if isodd(n)
+                n = 3*n + 1
+            else
+                n = n÷2
+            end
+            push!(sequence, n)
+        end
+        return Dict("number" => sequence[1], "steps" => length(sequence), "sequence" => sequence)
+    else
+        println("ERROR: Masukan harus berupa bilangan bulat positif atau yang semisal.")
+    end
+end
+
+# ╔═╡ b04ac2ef-0c99-4505-a5a1-ee8d0a12e868
+@benchmark julia_collatz_conjecture(n)
+
+# ╔═╡ 4740b32d-ef78-415b-9439-c5a31e06509c
+@benchmark c_collatz_conjecture(n)
+
+# ╔═╡ a2494d67-f3f7-4f92-a951-36d583033860
+@benchmark c_collatz_conjecture_ffastmath(n)
+
+# ╔═╡ 63b1863d-e0d0-4220-a413-33acc5babfa1
+@benchmark fortran_collatz_conjecture(n)
 
 # ╔═╡ a7eb93eb-a3a3-49f5-84d1-c0155b60db3e
 # ╠═╡ disabled = true
@@ -185,39 +176,68 @@ end
 end
   ╠═╡ =#
 
-# ╔═╡ ad7366a2-a105-4ae3-ac9d-3f413a37bd57
-function python_collatz_conjecture(n)
-    py"""
-    def py_collatz_conjecture(n):
-        sequence = [n]
-        while n > 1:
-            if n % 2 == 0:
-                n = n // 2
-            else:
-                n = 3 * n + 1
-            sequence.append(n)
-        return {"number": sequence[0], "steps": len(sequence), "sequence": sequence}
-    """
-    return py"py_collatz_conjecture"(n)
+# ╔═╡ 031e3ce7-33f5-4f2f-9582-2c6f55357890
+begin
+using Libdl
+const Clib2 = tempname() # create a temporary file
+
+C_code = """
+#include <stdio.h>
+#include <stdlib.h>
+
+struct CResult {
+    int number;
+    int steps;
+    int* sequence;
+};
+
+struct CResult c_collatz_conjecture(int n) {
+    struct CResult result;
+    result.sequence = (int*)malloc((n + 1) * sizeof(int));
+    int index = 0;
+    result.sequence[index++] = n;
+
+    while (n > 1) {
+        if (n % 2 == 1) {
+            n = 3 * n + 1;
+        } else {
+            n = n / 2;
+        }
+        result.sequence[index++] = n;
+    }
+
+    result.number = result.sequence[0];
+    result.steps = index;
+
+    return result;
+}
+"""
+
+# Compile C code to a shared library using GCC with -ffast-math
+open(`gcc -fPIC -O3 -msse3 -xc -shared -ffast-math -o $(Clib2 * "." * Libdl.dlext) -`, "w") do f
+    print(f, C_code)
 end
 
-# ╔═╡ 9fa7822b-144c-4554-bd25-8b30c9013f9f
-n = 10
+# Define the CResult struct using Ref
+struct CResult
+    number::Cint
+    steps::Cint
+    sequence::Ptr{Cint}
+end
 
-# ╔═╡ b04ac2ef-0c99-4505-a5a1-ee8d0a12e868
-@benchmark julia_collatz_conjecture(n)
+function c_lang(n)
+    c_result = ccall((:c_collatz_conjecture, Clib2), CResult, (Cint,), n)
+    sequence = unsafe_wrap(Vector{Cint}, c_result.sequence, c_result.steps)
+    result_dict = Dict(
+        "number" => c_result.number,
+        "steps" => c_result.steps,
+        "sequence" => Vector{Int}(sequence)
+    )
+    ccall(:free, Cvoid, (Ptr{Cint},), c_result.sequence)
+    return result_dict
+end
+end
 
-# ╔═╡ 4740b32d-ef78-415b-9439-c5a31e06509c
-@benchmark c_collatz_conjecture(n)
-
-# ╔═╡ a2494d67-f3f7-4f92-a951-36d583033860
-@benchmark c_collatz_conjecture_ffastmath(n)
-
-# ╔═╡ 63b1863d-e0d0-4220-a413-33acc5babfa1
-@benchmark fortran_collatz_conjecture(n)
-
-# ╔═╡ 8844cb9a-db74-4170-ad6a-e610935e2e59
-@benchmark julia_optimized_collatz_conjecture(n
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -451,5 +471,6 @@ version = "17.4.0+0"
 # ╠═a2494d67-f3f7-4f92-a951-36d583033860
 # ╠═63b1863d-e0d0-4220-a413-33acc5babfa1
 # ╠═8844cb9a-db74-4170-ad6a-e610935e2e59
+# ╠═9f455182-4ea5-400c-815d-038cac54d8d1
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
