@@ -87,11 +87,11 @@ TableOfContents()
 dict = Dict()
 
 # ╔═╡ e5672408-2cf4-451c-a292-2ba15ac3e739
-num = 100 # Set a value for num
+num = 79554743 # 79 jt
 
 # ╔═╡ 4af0edf5-66d5-4834-b117-11b0a73193b2
 md"""
-## 1. C
+## 1. The C Language
 """
 
 # ╔═╡ ab2845b5-0ce9-4739-92d1-332e503fb0f6
@@ -373,9 +373,6 @@ bench_julia_inbounds = @benchmark collatz_conjecture_inbounds(num)
 # ╔═╡ 254b09ac-e797-4ab4-8e81-13d7d1cbe19b
 dict["Julia inbounds"] = minimum(bench_julia_inbounds.times)/1e6 #in miliseconds
 
-# ╔═╡ cc6b329e-6843-45b1-8248-312732ae937a
-dict["Julia Aromic"] = minimum(bench_julia_inbounds.times)/1e6 #in miliseconds
-
 # ╔═╡ ef3d160c-ec6b-4e2d-b67f-7cf2ccd23496
 md"""
 # Perbandingan
@@ -392,16 +389,13 @@ for (index, (kunci, nilai)) in enumerate(collect(sorted_dict))
     println("$index. $kunci: $nilai ms")
 end
 
-# ╔═╡ 612b3836-51a2-4860-b8a6-aca6b9a081f4
-
-
 # ╔═╡ 6c0e979f-fb23-46f2-bef5-36e123a8615c
 md"""
-#Visualisasi
+# Visualisasi
 """
 
 # ╔═╡ 8a2af82b-e46b-4fd1-84b7-ee54258e0325
-keys = [pair.first for pair in sorted_dict]
+keys = [pair.first for pair in sorted_dict] 
 
 # ╔═╡ 13140b94-7807-474a-8025-1ba65676b1b4
 values = [pair.second for pair in sorted_dict]
@@ -412,64 +406,8 @@ bar(keys, values, legend=false, xlabel="Language", ylabel="Execution Time", titl
 # ╔═╡ 96da97cc-235c-4874-b7a9-7b2a8cd7f3f0
 md"""
 ## 6. Fortran
+Sayangnya, kode dalam Fortran tidak berjalan dengan baik.
 """
-
-
-# ╔═╡ eab26fdd-e214-4649-9c12-91eb7c7794ba
-# ╠═╡ disabled = true
-#=╠═╡
-begin
-	const Clib3 = tempname() # create a temporary file
-F_code = """
-subroutine collatz_sequence(i)
-    implicit none
-    integer, intent(in) :: i
-    integer :: current
-
-    current = i
-    write(*,*) current
-    do while (current /= 1)
-        if (mod(current, 2) == 0) then
-            current = current / 2
-        else
-            current = 3 * current + 1
-        end if
-        write(*,*) current
-    end do
-end subroutine collatz_sequence
-
-
-"""
-
-# Compile Fortran code to a shared library using GCC
-open(`gfortran -fPIC -shared -xc -o $(Clib3 * "." * Libdl.dlext) -`, "w") do f
-    print(f, F_code)
-end
-
-# Define the CResult struct using Ref
-struct CResult2
-    number::Cint
-    steps::Cint
-    sequence::Ptr{Cint}
-end
-
-function f_lang(n)
-    c_result = ccall((:collatz_sequence, Clib3), CResult2, (Cint,), n)
-    sequence = unsafe_wrap(Vector{Cint}, c_result.sequence, c_result.steps)
-    result_dict = Dict(
-        "number" => c_result.number,
-        "steps" => c_result.steps,
-        "sequence" => Vector{Int}(sequence)
-    )
-    ccall(:free, Cvoid, (Ptr{Cint},), c_result.sequence)
-    return result_dict
-end
-
-end
-  ╠═╡ =#
-
-# ╔═╡ 799b870d-fa0e-4e2b-a69a-593dd2f187c1
-dict
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1534,39 +1472,36 @@ version = "1.4.1+0"
 # ╠═ab2845b5-0ce9-4739-92d1-332e503fb0f6
 # ╠═1398c72a-f0a4-4b7f-a8f4-2564e88ed164
 # ╠═15001aa4-1a13-4b47-ac3a-a495343d61c3
-# ╠═3f28eb36-90e4-4f35-a6ab-9e260a0aff16
+# ╟─3f28eb36-90e4-4f35-a6ab-9e260a0aff16
 # ╠═a94cb180-5e87-4553-a58f-eda1549cc87d
 # ╠═312f66dd-69fb-4110-b5de-df67411068cc
 # ╠═b8f31b60-4ec6-4f75-b384-f3a1d2ab5f80
 # ╠═410d97e4-690f-429b-b4e6-5610f8b46831
 # ╠═717b37fb-2981-4da5-9adb-856938ea56af
-# ╠═11ad8cbd-8f2c-4377-aa22-eb2e8f373b90
+# ╟─11ad8cbd-8f2c-4377-aa22-eb2e8f373b90
 # ╠═751cc0bd-50b5-46dd-9a01-6ff0cff7d4a2
 # ╠═6d1ac8d6-9020-4d40-92e4-3718d5824d2b
 # ╠═e14b3606-2c7c-4bff-8d5d-730e45039fb5
-# ╠═e22fcf3e-f8ed-47a2-b2a9-3bece3415b3b
+# ╟─e22fcf3e-f8ed-47a2-b2a9-3bece3415b3b
 # ╠═31a070c9-375f-4f15-8778-469a80a47712
 # ╠═c3da1561-ef2d-4733-ab51-9484e2b92eb7
 # ╠═d0ba0dbd-6ee3-4e66-8114-6f3693713dde
 # ╠═4ba70637-3d8d-45ac-8d84-c61725153361
 # ╠═524a22f9-03cb-4c31-9d26-c402c85a217c
-# ╠═41d16e67-5698-4c5a-8450-363c95cb3610
+# ╟─41d16e67-5698-4c5a-8450-363c95cb3610
 # ╠═2bfa81e2-504f-4e0f-a515-60d135db8c0d
 # ╠═9b7ce149-97c2-4954-a2a1-86a00b15d5cb
 # ╠═7df7913f-01b9-4bf0-8ab9-1e89d5be633f
 # ╠═254b09ac-e797-4ab4-8e81-13d7d1cbe19b
-# ╠═cc6b329e-6843-45b1-8248-312732ae937a
 # ╟─ef3d160c-ec6b-4e2d-b67f-7cf2ccd23496
 # ╠═ffdee078-192d-43ff-9b1c-07eb0e4c8ad3
 # ╠═2bae9580-5fec-43d6-b5ef-c36281ceded8
 # ╠═90b17307-a6b2-44c7-8d2b-22f29f8f33ce
-# ╠═612b3836-51a2-4860-b8a6-aca6b9a081f4
 # ╟─6c0e979f-fb23-46f2-bef5-36e123a8615c
 # ╠═8a2af82b-e46b-4fd1-84b7-ee54258e0325
 # ╠═13140b94-7807-474a-8025-1ba65676b1b4
 # ╠═863a2b78-f4a9-4aea-bc6b-fd11684b37a5
 # ╟─96da97cc-235c-4874-b7a9-7b2a8cd7f3f0
 # ╠═eab26fdd-e214-4649-9c12-91eb7c7794ba
-# ╠═799b870d-fa0e-4e2b-a69a-593dd2f187c1
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
