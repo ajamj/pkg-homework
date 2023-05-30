@@ -5,7 +5,13 @@ using Markdown
 using InteractiveUtils
 
 # ╔═╡ ed5ecf4c-faf8-11ed-25a8-07845f0dd9a9
-using BenchmarkTools, PlutoUI, PyCall, Plots, Conda, Statistics,CxxWrap
+using BenchmarkTools, PlutoUI, PyCall, Plots, Conda, Statistics
+
+# ╔═╡ 1031596a-c7b8-4170-8c9a-311c6b50deea
+using .Threads
+
+# ╔═╡ d6d5f79b-d860-469d-ac18-4ea573c6a3ca
+using Distributed
 
 # ╔═╡ b881e423-cc41-407d-973f-9d6cae8c742f
 begin
@@ -74,18 +80,26 @@ md"""
 # Perbandingan Kecepatan Dalam Melakukan Operasi Collatz Conjecture Dalam Bahasa C, Python, Julia, dan Fortran
 """
 
-# ╔═╡ 934d5b5c-3b62-4e9c-a49a-669de1cbf15a
+# ╔═╡ d5357ef2-02b2-444f-b07e-0b6cb46c4681
+md"""
+Ajam Jamaludin\
+19/445602/PA/19426\
+Pemrograman Komputer Geofisika\
+[https://ajamj.github.io/pkg-homework](https://ajamj.github.io/pkg-homework)
+"""
+
+# ╔═╡ 132e107c-503d-41d5-b00c-5e46407f30d9
 TableOfContents()
 
 # ╔═╡ 33fddbdf-8754-4d6b-bf0e-e8a2af64a1d3
 dict = Dict()
 
 # ╔═╡ e5672408-2cf4-451c-a292-2ba15ac3e739
-num = 10 # Set a value for num
+num = 79554743 # 79 jt
 
 # ╔═╡ 4af0edf5-66d5-4834-b117-11b0a73193b2
 md"""
-## 1. C
+## 1. The C Language
 """
 
 # ╔═╡ ab2845b5-0ce9-4739-92d1-332e503fb0f6
@@ -208,6 +222,12 @@ begin
     collatz_conjecture_numpy = py"collatz_conjecture_numpy"
 end
 
+# ╔═╡ 6d1ac8d6-9020-4d40-92e4-3718d5824d2b
+bench_numpy = @benchmark collatz_conjecture_numpy(num)
+
+# ╔═╡ e14b3606-2c7c-4bff-8d5d-730e45039fb5
+dict["Python numpy"] = minimum(bench_numpy.times)/1e6 #in miliseconds
+
 # ╔═╡ e22fcf3e-f8ed-47a2-b2a9-3bece3415b3b
 md"""
 ## 4. Julia
@@ -270,40 +290,6 @@ function to_int(n)
 	end
 end
 
-# ╔═╡ 41d16e67-5698-4c5a-8450-363c95cb3610
-md"""
-## 5. Julia with `@inbounds`
-"""
-
-# ╔═╡ 96da97cc-235c-4874-b7a9-7b2a8cd7f3f0
-md"""
-## 6. Fortran
-"""
-
-
-# ╔═╡ d5dc8266-ff0d-4a5e-889a-847259d184b1
-begin
-const libcollatz = "./collatz.so"
-
-function fortran_collatz_conjecture(n::Int, sequence::Vector{Int32}, length::Ref{Int32})
-    ccall((:fortran_collatz_conjecture_, libcollatz), Cvoid,
-        (Cint, Ptr{Int32}, Ref{Int32}), n, sequence, length)
-end
-
-n = 27
-sequence = Vector{Int32}(undef, 1000000)
-length = Ref{Int32}(0)
-
-fortran_collatz_conjecture(n, sequence, length)
-
-println("Collatz sequence:")
-for i in 1:length[]
-    println(sequence[i])
-end
-
-
-end
-
 # ╔═╡ c3da1561-ef2d-4733-ab51-9484e2b92eb7
 """
     Collatz Conjecture Function
@@ -346,6 +332,11 @@ bench_julia = @benchmark j_collatz_conjecture(num)
 
 # ╔═╡ 524a22f9-03cb-4c31-9d26-c402c85a217c
 dict["Julia"] = minimum(bench_julia.times)/1e6 #in miliseconds
+
+# ╔═╡ 41d16e67-5698-4c5a-8450-363c95cb3610
+md"""
+## 5. Julia with `@inbounds`
+"""
 
 # ╔═╡ 2bfa81e2-504f-4e0f-a515-60d135db8c0d
 """
@@ -390,15 +381,163 @@ bench_julia_inbounds = @benchmark collatz_conjecture_inbounds(num)
 # ╔═╡ 254b09ac-e797-4ab4-8e81-13d7d1cbe19b
 dict["Julia inbounds"] = minimum(bench_julia_inbounds.times)/1e6 #in miliseconds
 
-# ╔═╡ 11e5222a-8146-4dd2-afce-154fb1f36c29
+# ╔═╡ a4dbc079-25a5-4a47-a4e5-88a1fbbbaba1
+md"""
+## 6. Julia `@simd`
+"""
 
+# ╔═╡ 306b40f1-b122-48ec-bcd1-48c6f0d528ca
+"""
+    Collatz Conjecture Function
+    Input: n = bilangan bulat positif
+    Output: dictionary dengan keys: number, steps, dan sequence.
+
+    Jika n ganjil, kali 3 dan tambah 1 -> n = 3n+1
+    Jika n genap, bagi 2 -> n = n/2
+
+    Contoh: n = 5
+    Sequence: 5, 16, 8, 4, 2, 1
+    Total steps: 5
+"""
+function collatz_conjecture_simd(n)
+    if typeof(n) != Int
+        n = to_int(n)
+    end
+    if n > 0
+        sequence = [n]
+        @simd for i in 1:99999
+            if isodd(n)
+                n = 3*n + 1
+            else
+                n = n÷2
+            end
+            push!(sequence, n)
+			if n == 1
+				return Dict("number" => sequence[1], "steps" => length(sequence), "sequence" => sequence)
+			end
+        end
+    else
+        error("ERROR: Masukan harus berupa bilangan bulat positif atau yang semisal.")
+    end
+end
+
+
+# ╔═╡ 8280ce00-6e2a-4da1-a82b-f9691b1126ab
+collatz_conjecture_simd(num)
+
+# ╔═╡ 43b163a3-b5c6-4a4d-8136-019dc6a9df1b
+bench_julia_simd = @benchmark collatz_conjecture_simd(num)
+
+# ╔═╡ 1d2866f4-c28d-46a9-ab0d-1355d081670a
+dict["Julia simd"] = minimum(bench_julia_simd.times)/1e6 #in miliseconds
+
+# ╔═╡ ef3d160c-ec6b-4e2d-b67f-7cf2ccd23496
+md"""
+# Perbandingan
+"""
+
+# ╔═╡ ffdee078-192d-43ff-9b1c-07eb0e4c8ad3
+dict
+
+# ╔═╡ 2bae9580-5fec-43d6-b5ef-c36281ceded8
+sorted_dict = sort(collect(dict), by = x -> x[2])
+
+# ╔═╡ 90b17307-a6b2-44c7-8d2b-22f29f8f33ce
+for (index, (kunci, nilai)) in enumerate(collect(sorted_dict))
+    println("$index. $kunci: $nilai ms")
+end
+
+# ╔═╡ 6c0e979f-fb23-46f2-bef5-36e123a8615c
+md"""
+# Visualisasi
+"""
+
+# ╔═╡ 8a2af82b-e46b-4fd1-84b7-ee54258e0325
+keys = [pair.first for pair in sorted_dict] 
+
+# ╔═╡ 13140b94-7807-474a-8025-1ba65676b1b4
+values = [pair.second for pair in sorted_dict]
+
+# ╔═╡ 863a2b78-f4a9-4aea-bc6b-fd11684b37a5
+bar(keys, values, legend=false, xlabel="Language", ylabel="Execution Time", title="Comparison", yscale=:log10)
+
+# ╔═╡ 96da97cc-235c-4874-b7a9-7b2a8cd7f3f0
+md"""
+## Fortran
+Sayangnya, kode dalam Fortran tidak berjalan dengan baik.
+"""
+
+# ╔═╡ eab26fdd-e214-4649-9c12-91eb7c7794ba
+# ╠═╡ disabled = true
+#=╠═╡
+begin
+	const Clib3 = tempname() # create a temporary file
+F_code = """
+subroutine fortran_cc(n, arr)
+  implicit none
+  integer, intent(in) :: n
+  integer, intent(out), allocatable :: arr(:)
+  integer :: len, i
+
+  if (n > 0) then
+    len = 1
+    allocate(arr(len))
+    arr(len) = n
+
+    do while (n > 1)
+      if (mod(n, 2) == 0) then
+        n = n / 2
+      else
+        n = n * 3 + 1
+      end if
+
+      len = len + 1
+      allocate(arr(len))
+      arr(len) = n
+    end do
+  else
+    print *, "ERROR: Masukan harus berupa bilangan bulat positif atau yang semisal."
+    allocate(arr(0))
+  end if
+
+end subroutine fortran_cc
+
+
+"""
+
+# Compile Fortran code to a shared library using GCC
+open(`gfortran -fPIC -shared -xc -o $(Clib3 * "." * Libdl.dlext) -`, "w") do f
+    print(f, F_code)
+end
+
+# Define the CResult struct using Ref
+struct CResult2
+    number::Cint
+    steps::Cint
+    sequence::Ptr{Cint}
+end
+
+function f_lang(n)
+    c_result = ccall((:collatz_sequence, Clib3), CResult2, (Cint,), n)
+    sequence = unsafe_wrap(Vector{Cint}, c_result.sequence, c_result.steps)
+    result_dict = Dict(
+        "number" => c_result.number,
+        "steps" => c_result.steps,
+        "sequence" => Vector{Int}(sequence)
+    )
+    ccall(:free, Cvoid, (Ptr{Cint},), c_result.sequence)
+    return result_dict
+end
+
+end
+  ╠═╡ =#
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
 Conda = "8f4d0f93-b110-5947-807f-2305c1781a2d"
-CxxWrap = "1f15a43c-97ca-5a2a-ae31-89f07a497df4"
+Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 Libdl = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
@@ -408,7 +547,6 @@ Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 [compat]
 BenchmarkTools = "~1.3.2"
 Conda = "~1.8.0"
-CxxWrap = "~0.13.4"
 Plots = "~1.38.12"
 PlutoUI = "~0.7.51"
 PyCall = "~1.95.1"
@@ -420,7 +558,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.0"
 manifest_format = "2.0"
-project_hash = "160b457ad0a617b3c73bbd1768df3162ddfbc952"
+project_hash = "aa4be185e5c7e3dcafc5ed761291b625aa89e168"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -523,12 +661,6 @@ git-tree-sha1 = "d05d9e7b7aedff4e5b51a029dced05cfb6125781"
 uuid = "d38c429a-6771-53c6-b99e-75d170b6e991"
 version = "0.6.2"
 
-[[deps.CxxWrap]]
-deps = ["Libdl", "MacroTools", "libcxxwrap_julia_jll"]
-git-tree-sha1 = "bf6b3005bf7435544f7cac0f0ec13e1fef67b190"
-uuid = "1f15a43c-97ca-5a2a-ae31-89f07a497df4"
-version = "0.13.4"
-
 [[deps.DataAPI]]
 git-tree-sha1 = "8da84edb865b0b5b0100c0666a9bc9a0b71c553c"
 uuid = "9a962f9c-6df0-11e9-0e5d-c546b8b5ee8a"
@@ -549,6 +681,10 @@ deps = ["Mmap"]
 git-tree-sha1 = "9e2f36d3c96a820c678f2f1f1782582fcf685bae"
 uuid = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 version = "1.9.1"
+
+[[deps.Distributed]]
+deps = ["Random", "Serialization", "Sockets"]
+uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 
 [[deps.DocStringExtensions]]
 deps = ["LibGit2"]
@@ -1399,12 +1535,6 @@ deps = ["Artifacts", "Libdl"]
 uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
 version = "5.7.0+0"
 
-[[deps.libcxxwrap_julia_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "db6cccc5c48abdb41795a3b6556e32a548143c66"
-uuid = "3eaa8342-bff7-56a5-9981-c04077f7cee7"
-version = "0.9.7+1"
-
 [[deps.libfdk_aac_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "daacc84a041563f965be61859a36e17c4e4fcd55"
@@ -1454,8 +1584,11 @@ version = "1.4.1+0"
 
 # ╔═╡ Cell order:
 # ╟─8e4c31ad-71c4-4a5d-9952-8fc91239f6f4
+# ╟─d5357ef2-02b2-444f-b07e-0b6cb46c4681
+# ╠═132e107c-503d-41d5-b00c-5e46407f30d9
 # ╠═ed5ecf4c-faf8-11ed-25a8-07845f0dd9a9
-# ╠═934d5b5c-3b62-4e9c-a49a-669de1cbf15a
+# ╠═1031596a-c7b8-4170-8c9a-311c6b50deea
+# ╠═d6d5f79b-d860-469d-ac18-4ea573c6a3ca
 # ╠═33fddbdf-8754-4d6b-bf0e-e8a2af64a1d3
 # ╠═e5672408-2cf4-451c-a292-2ba15ac3e739
 # ╟─4af0edf5-66d5-4834-b117-11b0a73193b2
@@ -1463,28 +1596,41 @@ version = "1.4.1+0"
 # ╠═ab2845b5-0ce9-4739-92d1-332e503fb0f6
 # ╠═1398c72a-f0a4-4b7f-a8f4-2564e88ed164
 # ╠═15001aa4-1a13-4b47-ac3a-a495343d61c3
-# ╠═3f28eb36-90e4-4f35-a6ab-9e260a0aff16
+# ╟─3f28eb36-90e4-4f35-a6ab-9e260a0aff16
 # ╠═a94cb180-5e87-4553-a58f-eda1549cc87d
 # ╠═312f66dd-69fb-4110-b5de-df67411068cc
 # ╠═b8f31b60-4ec6-4f75-b384-f3a1d2ab5f80
 # ╠═410d97e4-690f-429b-b4e6-5610f8b46831
 # ╠═717b37fb-2981-4da5-9adb-856938ea56af
-# ╠═11ad8cbd-8f2c-4377-aa22-eb2e8f373b90
+# ╟─11ad8cbd-8f2c-4377-aa22-eb2e8f373b90
 # ╠═751cc0bd-50b5-46dd-9a01-6ff0cff7d4a2
-# ╠═e22fcf3e-f8ed-47a2-b2a9-3bece3415b3b
+# ╠═6d1ac8d6-9020-4d40-92e4-3718d5824d2b
+# ╠═e14b3606-2c7c-4bff-8d5d-730e45039fb5
+# ╟─e22fcf3e-f8ed-47a2-b2a9-3bece3415b3b
 # ╠═31a070c9-375f-4f15-8778-469a80a47712
 # ╠═c3da1561-ef2d-4733-ab51-9484e2b92eb7
 # ╠═d0ba0dbd-6ee3-4e66-8114-6f3693713dde
 # ╠═4ba70637-3d8d-45ac-8d84-c61725153361
 # ╠═524a22f9-03cb-4c31-9d26-c402c85a217c
-# ╠═41d16e67-5698-4c5a-8450-363c95cb3610
-# ╠═2bfa81e2-504f-4e0f-a515-60d135db8c0d
+# ╟─41d16e67-5698-4c5a-8450-363c95cb3610
+# ╟─2bfa81e2-504f-4e0f-a515-60d135db8c0d
 # ╠═9b7ce149-97c2-4954-a2a1-86a00b15d5cb
 # ╠═7df7913f-01b9-4bf0-8ab9-1e89d5be633f
 # ╠═254b09ac-e797-4ab4-8e81-13d7d1cbe19b
+# ╟─a4dbc079-25a5-4a47-a4e5-88a1fbbbaba1
+# ╠═306b40f1-b122-48ec-bcd1-48c6f0d528ca
+# ╠═8280ce00-6e2a-4da1-a82b-f9691b1126ab
+# ╠═43b163a3-b5c6-4a4d-8136-019dc6a9df1b
+# ╠═1d2866f4-c28d-46a9-ab0d-1355d081670a
+# ╟─ef3d160c-ec6b-4e2d-b67f-7cf2ccd23496
+# ╠═ffdee078-192d-43ff-9b1c-07eb0e4c8ad3
+# ╠═2bae9580-5fec-43d6-b5ef-c36281ceded8
+# ╠═90b17307-a6b2-44c7-8d2b-22f29f8f33ce
+# ╟─6c0e979f-fb23-46f2-bef5-36e123a8615c
+# ╠═8a2af82b-e46b-4fd1-84b7-ee54258e0325
+# ╠═13140b94-7807-474a-8025-1ba65676b1b4
+# ╠═863a2b78-f4a9-4aea-bc6b-fd11684b37a5
 # ╟─96da97cc-235c-4874-b7a9-7b2a8cd7f3f0
-# ╠═d5dc8266-ff0d-4a5e-889a-847259d184b1
-# ╠═427c5e2e-7c72-433c-a535-6167d5c2e159
-# ╠═11e5222a-8146-4dd2-afce-154fb1f36c29
+# ╠═eab26fdd-e214-4649-9c12-91eb7c7794ba
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
