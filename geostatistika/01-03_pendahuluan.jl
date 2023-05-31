@@ -401,8 +401,69 @@ md"""
 ### Soal 1
 """
 
+# ╔═╡ 06ec3b5a-b2b7-4f3b-98ca-7b4c4c072b3a
+md"""
+#### Tabel Data
+"""
+
 # ╔═╡ f7867512-dc39-4551-a56c-96246e72309b
 data1 = DataFrame((x=[75,72,69,66,63,60,57,54,51,48,45]),(f=[1,3,6,12,20,18,11,6,3,2,1]))
+
+# ╔═╡ fc44edaa-18f4-4352-8861-c93d6f833a31
+md""" #### Tabel Distribusi Frekuensi"""
+
+# ╔═╡ 6a90b3a8-79d4-4255-9daa-18fc3b38456d
+md""" #### Distribusi Frekuensi Kurang dari (Ogive 1)"""
+
+# ╔═╡ 2471671d-12de-412b-995f-1c2fa0de83f9
+md""" #### Distribusi Frekuensi Lebih Dari (Ogive 2)"""
+
+# ╔═╡ 247d7148-9003-48dc-95e6-3e3bae01c2d1
+md""" #### Histogram Distribusi Frekuensi"""
+
+# ╔═╡ b6d104a4-6e51-41db-8899-917d906d0f51
+md""" 
+Berapa persen data yang nilainya kurang dari 55?"""
+
+# ╔═╡ e9753183-b0d7-4e42-8633-75ddbe283ad9
+md"""
+Berapa persen data yang nilainya antara 50 sampai 65?
+"""
+
+# ╔═╡ 31460813-7793-428d-b800-7ed8b49496ca
+md""" --- """
+
+# ╔═╡ a35baab2-12a8-400a-9f2d-0fd2222cb41d
+md"""
+### Soal 2
+"""
+
+# ╔═╡ b24bc311-6993-4be9-8d47-117cfee651de
+data_soal2 = [68, 80, 55, 84, 59, 76, 89, 72, 51, 80, 80, 84, 68, 63, 76, 68, 92, 68, 72, 63, 84, 64, 76, 76, 80, 72, 59, 65, 72, 72, 70, 60, 62, 53, 56, 71, 74, 82, 87, 78, 65, 59, 69, 75, 72, 68, 64, 74, 70, 63]
+
+# ╔═╡ 8c81d8a3-0fb4-4fcd-b696-23a461dba6af
+md""" Hitunglah banyak interval kelas menurut rumus Sturges!"""
+
+# ╔═╡ 21ffcc05-ccfa-4264-8c16-dec3b9d48c7b
+md"""Buatlah distribusi frekuensinya!\
+Hitunglah frekuensi relatif untuk tiap-tiap kelas intervalnya!"""
+
+# ╔═╡ 04237085-2b6f-4c5d-9656-808b3bc264c7
+md"""
+### Soal 3
+"""
+
+# ╔═╡ 2f39dc44-de3c-4a09-98fe-9ad7a51569b9
+hari = ["1-3", "4-6", "7-9", "10-12", "13-15", "16-18", "19-21", "22-24"]
+
+# ╔═╡ fcb63866-95ca-46db-9ec5-851f241163f0
+frekuensi = [32, 108, 67, 28, 14, 7, 3, 1]
+
+# ╔═╡ 2d95f9f4-79dc-4b35-93ea-9f22fc5435bf
+df3 = DataFrame(Class = hari, Frequency = frekuensi)
+
+# ╔═╡ 087fe264-514f-4551-9bed-ec5e4c57d281
+md"""Gambarkan histogram distribusi frekuensinya!"""
 
 # ╔═╡ 97217e4a-97b0-4186-8961-d75c71f5bcff
 md"""
@@ -512,6 +573,32 @@ end
 # ╔═╡ aff674cd-0c0c-4fea-abda-69101aa45471
 df_pengantar = arr_to_df(sampel_50)
 
+# ╔═╡ 3723a2c9-bbcf-4897-89e8-eacef9b40d10
+function df_obj(arr)
+	n = length(arr)
+    data_range = maximum(arr) - minimum(arr)
+    k = ceil(k_sturges(n))
+    class_width = ceil(data_range / k)
+    class_boundaries = minimum(arr) - 0.5:class_width:maximum(arr) + class_width/2  # Menyesuaikan batas atas kelas terakhir
+    df_final = DataFrame(Class = String[], Frequency = Int[])
+    for i in 1:length(class_boundaries)-1
+        lower_bound = class_boundaries[i]
+        upper_bound = class_boundaries[i+1]
+        freq = count(x -> lower_bound ≤ x < upper_bound, arr)
+        push!(df_final, [string(lower_bound) * " - " * string(upper_bound), freq])
+    end
+    return Dict("data range" => data_range, "k sturges" => k, "class width" => class_width, "class boundaries" => class_boundaries, "tabel" => df_final)
+end
+
+# ╔═╡ 2936decb-93e0-45ac-8f6c-010501bf0c70
+df2 = df_obj(data_soal2)
+
+# ╔═╡ c4821931-2b68-46cf-937c-466c356581e6
+df2["k sturges"]
+
+# ╔═╡ e9041fa9-3a9f-41b7-9b94-2e07ae926fb0
+df2["tabel"]
+
 # ╔═╡ 59fc299a-0281-4e96-a097-b855aff1e303
 function plot_ogive(df_ogive)
 	plot(df_ogive.Class, df_ogive.CumulativeFrequency, label = "Ogive Tipe I", marker = :circle)
@@ -551,6 +638,18 @@ plot_ogive(ogive_1(df_freq1))
 # ╔═╡ 89eaf2c1-27b4-4147-b2a0-2dc5a2f54f48
 plot_ogive(ogive_2(df_freq1))
 
+# ╔═╡ b7d8ff46-b547-4bdf-a0ce-103639c939f0
+arr_less55 = [less for less in arr1 if less < 55]
+
+# ╔═╡ 6e9e0bf5-0436-41c6-bfe6-8990c33b2ba5
+(length(arr_less55)/length(arr1))*100 # %
+
+# ╔═╡ bce11bde-5a43-4971-8a31-06db9ab71ccd
+arr_btw_50_65 = [btw for btw in arr1 if (btw > 50 && btw < 65)]
+
+# ╔═╡ 76a19f0f-34fb-4bc0-bd46-01ad79730a7f
+(length(arr_btw_50_65)/length(arr1))*100 # %
+
 # ╔═╡ e828d58b-0857-4d58-9bab-33561c9f1f86
 function plot_histogram(df)
     @df df bar(:Class, :Frequency, xlabel = "Kelas Interval", ylabel = "Frekuensi", title = "Histogram Distribusi Frekuensi", legend = false, bar_width = 1, size = (800, 600))
@@ -561,6 +660,9 @@ plot_histogram(df)
 
 # ╔═╡ 4d2219f8-63ac-480b-9563-ea113bde4239
 plot_histogram(df_freq1)
+
+# ╔═╡ a6cf406f-4452-44b0-acca-e09e3dfaf39f
+plot_histogram(df3)
 
 # ╔═╡ 0e8e7be9-79bf-4e33-a9b4-e792a018b3e5
 
@@ -2350,19 +2452,45 @@ version = "1.4.1+0"
 # ╟─411b9beb-1f66-4abb-bf11-c4db4e300b18
 # ╟─ecd63f07-ea04-4e73-ad2c-92a9f03ed99f
 # ╟─c044700e-ec82-4257-bf99-dc7c931f03c4
+# ╟─06ec3b5a-b2b7-4f3b-98ca-7b4c4c072b3a
 # ╠═f7867512-dc39-4551-a56c-96246e72309b
 # ╠═639c3498-c408-41cc-8c37-8e11e773b6df
+# ╟─fc44edaa-18f4-4352-8861-c93d6f833a31
 # ╠═b858f894-f922-47cb-973e-4a6c97693bae
+# ╟─6a90b3a8-79d4-4255-9daa-18fc3b38456d
 # ╠═859ccac4-4fc0-46cc-ab08-807b187d53b1
+# ╟─2471671d-12de-412b-995f-1c2fa0de83f9
 # ╠═10264e4d-04cc-47f7-ba3f-c28507b017ef
 # ╠═38b2733d-08d7-4b32-b942-0a1ab61989b4
 # ╠═89eaf2c1-27b4-4147-b2a0-2dc5a2f54f48
+# ╟─247d7148-9003-48dc-95e6-3e3bae01c2d1
 # ╠═4d2219f8-63ac-480b-9563-ea113bde4239
+# ╟─b6d104a4-6e51-41db-8899-917d906d0f51
+# ╠═b7d8ff46-b547-4bdf-a0ce-103639c939f0
+# ╠═6e9e0bf5-0436-41c6-bfe6-8990c33b2ba5
+# ╟─e9753183-b0d7-4e42-8633-75ddbe283ad9
+# ╠═bce11bde-5a43-4971-8a31-06db9ab71ccd
+# ╠═76a19f0f-34fb-4bc0-bd46-01ad79730a7f
+# ╟─31460813-7793-428d-b800-7ed8b49496ca
+# ╟─a35baab2-12a8-400a-9f2d-0fd2222cb41d
+# ╠═b24bc311-6993-4be9-8d47-117cfee651de
+# ╠═2936decb-93e0-45ac-8f6c-010501bf0c70
+# ╟─8c81d8a3-0fb4-4fcd-b696-23a461dba6af
+# ╠═c4821931-2b68-46cf-937c-466c356581e6
+# ╟─21ffcc05-ccfa-4264-8c16-dec3b9d48c7b
+# ╠═e9041fa9-3a9f-41b7-9b94-2e07ae926fb0
+# ╟─04237085-2b6f-4c5d-9656-808b3bc264c7
+# ╠═2f39dc44-de3c-4a09-98fe-9ad7a51569b9
+# ╠═fcb63866-95ca-46db-9ec5-851f241163f0
+# ╠═2d95f9f4-79dc-4b35-93ea-9f22fc5435bf
+# ╟─087fe264-514f-4551-9bed-ec5e4c57d281
+# ╠═a6cf406f-4452-44b0-acca-e09e3dfaf39f
 # ╟─97217e4a-97b0-4186-8961-d75c71f5bcff
 # ╠═2fc519f7-d7f6-4f00-b28f-cbb7bdcd0dcd
 # ╠═8b0fd643-fe62-4f7f-a18a-7b64219aad9d
 # ╠═0e71ec1f-8659-4c56-bc5f-ff5345a14364
 # ╠═7c9368b7-108a-4ff4-801f-46d74c9ae2e3
+# ╠═3723a2c9-bbcf-4897-89e8-eacef9b40d10
 # ╠═59fc299a-0281-4e96-a097-b855aff1e303
 # ╠═0035f4c9-d42b-44a6-91a6-0deafcffb0b3
 # ╠═e828d58b-0857-4d58-9bab-33561c9f1f86
