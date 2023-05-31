@@ -1,0 +1,23 @@
+/* Add your CSS code here.    For example:  .example {      color: red;  }    For brushing up on your CSS knowledge, check out http://www.w3schools.com/css/css_syntax.asp    End of comment */
+.fade {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+#quote {
+  font-size: 30px; /* Ubah ukuran huruf sesuai kebutuhan */
+  font-family: lobster, sans-serif; /* Ubah jenis huruf sesuai kebutuhan */
+  text-align: center; /* Posisikan teks ke tengah layar */
+}
+#author {
+  font-size: 16px; /* Ubah ukuran huruf sesuai kebutuhan */
+  font-family: lobster, sans-serif; /* Ubah jenis huruf sesuai kebutuhan */
+  text-align: center; /* Posisikan teks ke tengah layar */
+}
+#atas {
+  height: 25vh;
+}
+@media (max-width: 767px) {
+  #atas {
+    height: 35vh; /* Tinggi untuk perangkat mobile */
+  }
+}
