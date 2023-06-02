@@ -82,6 +82,12 @@ Nah, gimanapun rumusnya, tinggal lu masukin nilai-nilai densitas tersebut dan ju
 Jadi, gitu deh cara ngitung mean buat data yang nggak dikelompokkan. Semoga paham ya!
 """
 
+# ╔═╡ c558c796-a2ff-4f36-939a-658198c177ab
+data_ex = [2.65, 2.7, 2.68, 2.73, 2.67]
+
+# ╔═╡ 1b5efa7e-b348-4c44-b5ab-c5d8c597130b
+mean(data_ex)
+
 # ╔═╡ e8a3c3eb-dc24-43cb-b030-b7551a77ec38
 md"""
 ##### ii. Mean beberapa kelompok data
@@ -134,8 +140,113 @@ Jadi, bro, kita bisa hitung IP mahasiswa tersebut dengan rumus itu, menggunakan 
 
 Jadi, gitu deh, bro! Kalo kita punya data yang gak sama pentingnya, kita bisa pake mean terbobot buat ngitung rata-ratanya. Semoga jelas ya, bro! Jangan lupa, kasih bobot yang tepat untuk setiap data biar hasilnya akurat!"""
 
-# ╔═╡ 67cb85a9-5cbb-4fdd-beab-f786b87c4eb2
+# ╔═╡ 3a8be0bd-c66b-4055-8056-37331376f4bf
+nilai = [4, 3, 2, 1]
 
+# ╔═╡ 487327af-6025-4968-b23d-33f960d377dd
+sks = [6, 9, 3, 2]
+
+# ╔═╡ bffefe9a-f336-4159-b6f5-0b366f1b1558
+ip = sum(nilai.*sks)/sum(sks)
+
+# ╔═╡ 67cb85a9-5cbb-4fdd-beab-f786b87c4eb2
+md"""
+#### Median
+Median itu adalah nilai yang berada di tengah-tengah saat kita urutin data dari yang terkecil sampe yang terbesar.
+##### i. Median untuk data yang tidak dikelompokkan
+Median tetap mengacu pada nilai yang berada di tengah-tengah saat kita urutin data dari yang terkecil sampe yang terbesar, tapi kali ini kita ngeliatin data yang gak dikelompokkan.
+
+Misalnya, kita punya data tinggi badan 5 orang dewasa: 170, 171, 167, 165, dan 168 cm. Nah, kita urutin data ini dari yang terkecil sampe yang terbesar: 165, 167, 168, 170, 171. Nah, median dari data ini adalah nilai yang ada di tengah-tengahnya, yaitu 168.
+
+Kalo kita punya jumlah data genap, contohnya berat badan 6 orang dewasa: 57, 58, 60, 65, 61, dan 55 kg. Nah, kita urutin lagi data ini dari yang terkecil sampe yang terbesar: 55, 57, 58, 60, 61, 65. Nah, dalam kasus ini, gak ada satu nilai yang tepat berada di tengah-tengah. Jadi, yang kita lakuin adalah ambil dua nilai yang berada di tengah-tengah, yaitu 58 dan 60. Terus, kita ambil rata-ratanya, jadi median kita adalah (58 + 60) / 2 = 59.
+
+Median untuk data yang tidak dikelompokkan tetap mengacu pada nilai di tengah-tengah saat kita urutin data. Kalo jumlah data ganjil, ambil nilai di tengahnya. Kalo jumlah data genap, ambil dua nilai di tengah, terus ambil rata-ratanya."""
+
+# ╔═╡ 3bc45de4-e4d7-4de4-998c-b43cde7f04e2
+data_ex2 = [170, 171, 167, 165, 168]
+
+# ╔═╡ aaa11ea2-b3cc-460d-99db-a4bba337c189
+median(data_ex2)
+
+# ╔═╡ b9ead3c3-8e9f-4ba0-976c-33de0f716835
+md"""
+##### ii. Median untuk data yang tidak dikelompokkan
+Nah, untuk menghitung median dalam kasus ini, kita pake cara interpolasi, dengan asumsi bahwa data dalam suatu interval kelas tersebar secara merata di interval tersebut. Kita pake rumus interpolasi berikut:
+
+$$md = L_{md} + \frac{n/2 - F }{f_{md}}\cdot C$$
+
+Dalam rumus ini, ada beberapa variabel yang harus kita pahami:
+- Lmd: Batas bawah interval median
+- n: Banyaknya data
+- F: Jumlah frekuensi interval-interval sebelum interval median
+- fmd: Frekuensi interval median
+- C: Lebar interval
+
+Pertama, kita tentuin interval median, yaitu interval dimana median berada. Kita hitung nomor n/2 berdasarkan urutan frekuensinya dari atas ke bawah atau sebaliknya. Misalnya, kita punya data distribusi frekuensi seperti ini:
+
+| Interval kelas | Frequensi |
+|----------------|-----------|
+| 164.5 – 167.5  |     6     |
+| 167.5 – 170.5  |     7     |
+| 170.5 – 173.5  |     8     |
+| 173.5 – 176.5  |    11     |
+| 176.5 – 179.5  |     7     |
+| 179.5 – 182.5  |     6     |
+| 182.5 – 185.5  |     5     |
+| Jumlah Data    |    50     |
+
+
+Urutan frekuensi dari atas ke bawah adalah: 6, 7, 8, 11, dan seterusnya. Nah, kita liat n/2 = 25 jatuh di antara 21 dan 32. Itu berarti median berada dalam interval ke-4 dengan nilai intervalnya adalah 173.5 – 176.5 dan frekuensinya adalah 11.
+
+Selanjutnya, kita masukin nilai-nilai ini ke dalam rumus. Misalnya, Batas bawah interval median (Lmd) adalah 173.5, banyaknya data (n) adalah 50, jumlah frekuensi interval sebelumnya (F) adalah 21, frekuensi interval median (fmd) adalah 11, dan lebar interval (C) adalah 3.
+
+Dengan begitu, kita bisa hitung median distribusi frekuensi ini menggunakan rumus tersebut.
+
+$$md = 173.5 + \frac{25 - 21 }{11}\cdot 3=174.59$$
+
+Jadi, gitu deh, bro! Median untuk data yang tidak dikelompokkan dalam bentuk distribusi frekuensi menggunakan rumus interpolasi seperti itu. Semoga jelas ya, bro!
+"""
+
+# ╔═╡ 15dfd537-9b70-47a7-af42-2da957639ed3
+intervals = ["164.5 – 167.5", "167.5 – 170.5", "170.5 – 173.5", "173.5 – 176.5", "176.5 – 179.5", "179.5 – 182.5", "182.5 – 185.5"]
+
+# ╔═╡ 1c3b2da4-0ffa-4ece-b017-cc985c0b2731
+intervals_numeric = map(x -> mean(parse.(Float64, split(x, " – "))), intervals)
+
+
+# ╔═╡ 8d81cb93-c773-4eac-be16-bc7be16c4c49
+frequencies = [6, 7, 8, 11, 7, 6, 5]
+
+
+# ╔═╡ 356407b1-d3ff-4ad6-82ba-baea491f22fc
+total_frequency = sum(frequencies)
+
+# ╔═╡ 72f401d8-6fd7-46dc-8f0f-b04a12f040e6
+cumulative_frequencies = cumsum(frequencies)
+
+# ╔═╡ 50e9f415-617e-43e5-b4de-e3a2d0c4c7e2
+df_ii = DataFrame(Intervals = intervals, Frequencies = frequencies)
+
+
+# ╔═╡ 0ff9cebd-0f31-4b14-9fad-884243406884
+md""" # Fungsi-Fungsi"""
+
+# ╔═╡ 495eb409-cd1b-42a7-a558-0bc1177a36e8
+function df_obj(arr)
+	n = length(arr)
+    data_range = maximum(arr) - minimum(arr)
+    k = ceil(k_sturges(n))
+    class_width = ceil(data_range / k)
+    class_boundaries = minimum(arr) - 0.5:class_width:maximum(arr) + class_width/2  # Menyesuaikan batas atas kelas terakhir
+    df_final = DataFrame(Class = String[], Frequency = Int[])
+    for i in 1:length(class_boundaries)-1
+        lower_bound = class_boundaries[i]
+        upper_bound = class_boundaries[i+1]
+        freq = count(x -> lower_bound ≤ x < upper_bound, arr)
+        push!(df_final, [string(lower_bound) * " - " * string(upper_bound), freq])
+    end
+    return Dict("data range" => data_range, "k sturges" => k, "class width" => class_width, "class boundaries" => class_boundaries, "tabel" => df_final)
+end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1877,9 +1988,25 @@ version = "1.4.1+0"
 # ╠═2f4a2280-2b7e-4bbf-a6f4-43f0405c9bb8
 # ╟─7d09c2ba-2aa4-4b96-9795-d15ba01cdd5f
 # ╟─e5f544fd-820c-4a4a-af34-b71ba7bc1295
-# ╠═e8a3c3eb-dc24-43cb-b030-b7551a77ec38
-# ╠═25157634-a1f8-4847-8961-d6d53200ed84
-# ╠═ad6480d0-4bfb-4b17-b4ea-9649e13566a5
-# ╠═67cb85a9-5cbb-4fdd-beab-f786b87c4eb2
+# ╠═c558c796-a2ff-4f36-939a-658198c177ab
+# ╠═1b5efa7e-b348-4c44-b5ab-c5d8c597130b
+# ╟─e8a3c3eb-dc24-43cb-b030-b7551a77ec38
+# ╟─25157634-a1f8-4847-8961-d6d53200ed84
+# ╟─ad6480d0-4bfb-4b17-b4ea-9649e13566a5
+# ╠═3a8be0bd-c66b-4055-8056-37331376f4bf
+# ╠═487327af-6025-4968-b23d-33f960d377dd
+# ╠═bffefe9a-f336-4159-b6f5-0b366f1b1558
+# ╟─67cb85a9-5cbb-4fdd-beab-f786b87c4eb2
+# ╠═3bc45de4-e4d7-4de4-998c-b43cde7f04e2
+# ╠═aaa11ea2-b3cc-460d-99db-a4bba337c189
+# ╟─b9ead3c3-8e9f-4ba0-976c-33de0f716835
+# ╠═15dfd537-9b70-47a7-af42-2da957639ed3
+# ╠═1c3b2da4-0ffa-4ece-b017-cc985c0b2731
+# ╠═8d81cb93-c773-4eac-be16-bc7be16c4c49
+# ╠═356407b1-d3ff-4ad6-82ba-baea491f22fc
+# ╠═72f401d8-6fd7-46dc-8f0f-b04a12f040e6
+# ╠═50e9f415-617e-43e5-b4de-e3a2d0c4c7e2
+# ╟─0ff9cebd-0f31-4b14-9fad-884243406884
+# ╠═495eb409-cd1b-42a7-a558-0bc1177a36e8
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
