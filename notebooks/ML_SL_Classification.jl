@@ -169,7 +169,7 @@ begin
 	p2 = histogram(iris[:,2], title="SepalWidth")
 	p3 = histogram(iris[:,3], title="PetalLength")
 	p4 = histogram(iris[:,4], title="PetalWidth")
-	plot(p1, p2, p3, p4, layout=(2, 2), legend=false)
+	Plots.plot(p1, p2, p3, p4, layout=(2, 2), legend=false)
 end 
 
 # ╔═╡ facfa26e-b5be-44d9-930b-a974f0c0a313
@@ -197,7 +197,7 @@ begin
 	colors = [inv_name_dict[item] for item in iris.Species]
 
 	# Plot scatter
-	scatter(iris.SepalLength, iris.SepalWidth, group = colors, xlabel = "sepal length (cm)", ylabel = "sepal width (cm)", legend = :topleft)
+	Plots.scatter(iris.SepalLength, iris.SepalWidth, group = colors, xlabel = "sepal length (cm)", ylabel = "sepal width (cm)", legend = :topleft)
 end
 
 # ╔═╡ 4158b26b-0b9d-405b-a8af-00e390530805
@@ -212,7 +212,7 @@ begin
 	colors_petal = [petal_name_dict[item] for item in iris.Species]
 
 	# Plot scatter
-	scatter(iris.PetalLength, iris.PetalWidth, group = colors_petal, xlabel = "petal length (cm)", ylabel = "petal width (cm)", legend = :topleft)
+	Plots.scatter(iris.PetalLength, iris.PetalWidth, group = colors_petal, xlabel = "petal length (cm)", ylabel = "petal width (cm)", legend = :topleft)
 end
 
 # ╔═╡ cd90839c-1e54-4c0a-b44b-13c9cbd26429
@@ -565,8 +565,14 @@ knn_final.predict(new_data_reshaped)
 # ╔═╡ 32887089-c21c-4c71-9d20-d05cb9ff0502
 md"""
 ## Probability Prediction with New Data
-Let's collect more data: three plants of iris share the same petal width, 2.25cm, but are different in the length of the petal: 5.03 cm, 3.85 cm, and 1.77 cm, respectively. We store the new data into a 2D array as follows:
+Kita lagi mau ngomongin nih tentang data tanaman iris yang seru banget. Ada tiga tanaman iris yang kita bahas, dan semua tanamannya punya lebar kelopak yang sama, yaitu 2.25cm. Tapi bedanya tuh ada di panjang kelopaknya, nih. Ada satu tanaman dengan panjang kelopak 5.03 cm, ada juga yang 3.85 cm, dan satu lagi cuma 1.77 cm.
 """
+
+# ╔═╡ 78efc5c5-81d0-469b-a8b6-c6702ac1680d
+data_new = [3.76 1.2; 5.25 1.2; 1.58 1.2] 
+
+# ╔═╡ 67c1704d-91e5-4a93-b93b-eb15af5f32c6
+ScikitLearn.predict(knn_final, data_new)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -2386,5 +2392,7 @@ version = "1.4.1+0"
 # ╠═85418996-359f-421f-8fd0-e61f6272f75f
 # ╠═7f42a7c4-bdfe-425c-8ab8-f7a4281b0b01
 # ╟─32887089-c21c-4c71-9d20-d05cb9ff0502
+# ╠═78efc5c5-81d0-469b-a8b6-c6702ac1680d
+# ╠═67c1704d-91e5-4a93-b93b-eb15af5f32c6
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

@@ -66,7 +66,7 @@ md"""
 #### a. Mean
 Mean (atau nilai rata-rata) sekumpulan data adalah jumlah nilai seluruh data
 dibagi dengan banyaknya data.
-##### Mean untuk data yang tidak dikelompokkan
+##### i. Mean untuk data yang tidak dikelompokkan
 Jadi, buat ngitung mean (rata-rata) dari data yang nggak dikelompokkan, caranya gini nih. Kalo lu punya data kayak gini: x1, x2, x3, ...... xn. Nah, mean nya diitung pake rumus ini:
 
 $$\text{mean} = \bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i$$
@@ -81,6 +81,61 @@ Nah, gimanapun rumusnya, tinggal lu masukin nilai-nilai densitas tersebut dan ju
 
 Jadi, gitu deh cara ngitung mean buat data yang nggak dikelompokkan. Semoga paham ya!
 """
+
+# ╔═╡ e8a3c3eb-dc24-43cb-b030-b7551a77ec38
+md"""
+##### ii. Mean beberapa kelompok data
+Kalo kita punya beberapa kelompok data, dan setiap kelompoknya punya jumlah data dan nilai mean tertentu, kita bisa hitung rata-rata (mean) buat setiap kelompok dengan rumus ini:
+
+Rumus untuk menghitung mean kelompok adalah:
+
+
+$$\text{{Mean}}_i = \frac{{\sum \text{{data}}_i}}{{\text{{jumlah data}}_i}}$$
+
+
+Dalam rumus ini, $$(\text{{Mean}}_i)$$ itu nilai mean buat kelompok yang ke-i. $$(\text{{sum data}}_i)$$ itu jumlah dari semua data yang ada di kelompok yang ke-i. $$(\text{{jumlah data}}_i)$$ itu jumlah data yang ada di kelompok yang ke-i. Nah, k itu jumlah total kelompok yang ada.
+
+Jadi, bro, kita bisa hitung mean buat setiap kelompok dengan rumus itu. Semoga paham ya, bro! Jangan lupa hitung mean-nya dengan cermat dan jangan sampai kelupaan!"""
+
+# ╔═╡ 25157634-a1f8-4847-8961-d6d53200ed84
+md""" ##### iii. Mean data yang dikelompokkan
+Nah, bro, dengerin baik-baik ya! Sekarang kita lagi bahas tentang mean data yang dikelompokkan, nih. Jadi, data yang dikelompokkan itu adalah data yang diatur dalam distribusi frekuensi, yang biasanya sering dipake, gitu loh. Nah, buat ngitung mean dari data yang dikelompokkan, kita pake rumus ini:
+
+Rumus untuk menghitung mean dari data yang dikelompokkan adalah:
+
+$$\text{{Mean}} = \frac{{\sum (f_i \cdot x_i)}}{{n}}$$
+
+Dalam rumus ini, $$(f_i)$$ itu frekuensi atau jumlah data pada interval kelas ke-i. $$(x_i)$$ itu nilai titik tengah interval kelas ke-i. Dan $$(n)$$ itu jumlah interval kelas.
+
+Jadi, bro, kita bisa menghitung mean dari data yang dikelompokkan dengan rumus itu. Tapi, perlu diingat, nilai mean dari data yang dikelompokkan ini mungkin gak akan persis sama dengan nilai mean jika data gak dikelompokkan (meskipun selisihnya biasanya kecil banget), jadi nilainya itu lebih ke pendekatan, bro.
+
+Contohnya, nih, kita punya data porositas batuan dari 50 sampel batuan inti yang dikelompokkan menjadi 7 interval kelas. Kita bisa mengembangkan tabel distribusi frekuensinya, dan dari situ kita bisa dengan mudah menghitung mean data yang dikelompokkan ini, bro.
+
+Jadi, gitu deh, bro! Semoga jelas ya! Jangan lupa, mean data yang dikelompokkan ini hasilnya itu nilai pendekatan, bukan nilai yang persis sama kalo data gak dikelompokkan. Keep calculating the mean, bro!"""
+
+# ╔═╡ ad6480d0-4bfb-4b17-b4ea-9649e13566a5
+md"""
+##### iv. Mean terbobot
+Nah, bro, sekarang kita bahas tentang mean terbobot (weighted mean atau weighted average), nih. Jadi, pada perhitungan mean terbobot, gak semua nilai data dianggap sama pentingnya, bro. Setiap data diberi bobot yang berbeda-beda, tergantung seberapa pentingnya data tersebut. Makin penting data, makin besar bobot yang kita berikan.
+
+Rumus untuk menghitung mean terbobot adalah:
+
+$$\text{{Mean Terbobot}} = \frac{{w_1 \cdot x_1 + w_2 \cdot x_2 + w_3 \cdot x_3 + \ldots + w_n \cdot x_n}}{{w_1 + w_2 + w_3 + \ldots + w_n}}$$
+
+Dalam rumus ini, $$(x_1, x_2, x_3, \ldots, x_n)$$ adalah nilai dari masing-masing data, dan $$(w_1, w_2, w_3, \ldots, w_n)$$ adalah bobot yang diberikan kepada masing-masing data. Jadi, setiap data punya bobot yang beda-beda, bro.
+
+Misalnya, nih, dalam satu semester, seorang mahasiswa dapet nilai A (= 4) sebanyak 6 sks, nilai B (= 3) sebanyak 9 sks, nilai C (= 2) sebanyak 3 sks, dan nilai D (= 1) sebanyak 2 sks. Nah, kita mau hitung Indeks Prestasi (IP) mahasiswa tersebut berdasarkan nilai dan jumlah sks.
+
+Rumus untuk menghitung IP adalah:
+
+$$\text{{IP}} = \frac{{(4 \cdot 6) + (3 \cdot 9) + (2 \cdot 3) + (1 \cdot 2)}}{{6 + 9 + 3 + 2}}=2.95$$
+
+Jadi, bro, kita bisa hitung IP mahasiswa tersebut dengan rumus itu, menggunakan nilai bobot yang sesuai dengan pentingnya masing-masing nilai.
+
+Jadi, gitu deh, bro! Kalo kita punya data yang gak sama pentingnya, kita bisa pake mean terbobot buat ngitung rata-ratanya. Semoga jelas ya, bro! Jangan lupa, kasih bobot yang tepat untuk setiap data biar hasilnya akurat!"""
+
+# ╔═╡ 67cb85a9-5cbb-4fdd-beab-f786b87c4eb2
+
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1822,5 +1877,9 @@ version = "1.4.1+0"
 # ╠═2f4a2280-2b7e-4bbf-a6f4-43f0405c9bb8
 # ╟─7d09c2ba-2aa4-4b96-9795-d15ba01cdd5f
 # ╟─e5f544fd-820c-4a4a-af34-b71ba7bc1295
+# ╠═e8a3c3eb-dc24-43cb-b030-b7551a77ec38
+# ╠═25157634-a1f8-4847-8961-d6d53200ed84
+# ╠═ad6480d0-4bfb-4b17-b4ea-9649e13566a5
+# ╠═67cb85a9-5cbb-4fdd-beab-f786b87c4eb2
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
