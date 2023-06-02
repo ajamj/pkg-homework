@@ -127,7 +127,7 @@ a real corgi.
 pixelated_corgi = load(download("https://i.redd.it/99lhfbnwpgd31.png"))
 
 # ╔═╡ 0ebb538b-1c72-4d0c-af8b-de9277e35ed5
-
+halal_cat = load(download("https://github.com/ajamj/pkg-homework/blob/main/img/halal_cat.jpg?raw=true"))
 
 # ╔═╡ 516e73e2-74fb-11eb-213e-9dbd9472e0db
 philip =  load(download("https://user-images.githubusercontent.com/6933510/107239146-dcc3fd00-6a28-11eb-8c7b-41aaf6618935.png"))
@@ -138,8 +138,14 @@ philip =  load(download("https://user-images.githubusercontent.com/6933510/10723
 # ╔═╡ 754c3704-74fb-11eb-1199-2b9798d7251f
 downsample_philip = philip[1:r:end, 1:r:end]
 
+# ╔═╡ 9a042ecf-81e5-4ff1-a2df-965dbd277319
+downsample_cat = halal_cat[1:r:end, 1:r:end]
+
 # ╔═╡ 9eb917ba-74fb-11eb-0527-15e981ce9c6a
 upsample_philip = kron(downsample_philip, fill(1,r,r))
+
+# ╔═╡ af8f6829-b8af-477d-b472-3f855f052ce1
+upsample_cat = kron(downsample_cat, fill(1,r,r))
 
 # ╔═╡ 486d3022-74ff-11eb-1865-e15436bd9aad
 md"""
@@ -1897,7 +1903,9 @@ version = "1.4.1+0"
 # ╠═516e73e2-74fb-11eb-213e-9dbd9472e0db
 # ╠═b5d0ef90-74fb-11eb-3126-792f954c7be7
 # ╠═754c3704-74fb-11eb-1199-2b9798d7251f
+# ╠═9a042ecf-81e5-4ff1-a2df-965dbd277319
 # ╠═9eb917ba-74fb-11eb-0527-15e981ce9c6a
+# ╠═af8f6829-b8af-477d-b472-3f855f052ce1
 # ╟─486d3022-74ff-11eb-1865-e15436bd9aad
 # ╟─b9da7332-74ff-11eb-241b-fb87e77d646a
 # ╟─339ccfca-74b1-11eb-0c35-774da6b189ed
