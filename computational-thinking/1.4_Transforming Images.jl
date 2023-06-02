@@ -1,561 +1,497 @@
 ### A Pluto.jl notebook ###
 # v0.19.26
 
+#> [frontmatter]
+#> chapter = 1
+#> video = "https://www.youtube.com/watch?v=uZYVjDDZW9A"
+#> image = "https://user-images.githubusercontent.com/6933510/136196626-194e81c9-00f7-49f6-90c3-09945723b6a3.png"
+#> section = 4
+#> order = 4
+#> title = "Transformations with Images"
+#> layout = "layout.jlhtml"
+#> youtube_id = "uZYVjDDZW9A"
+#> description = ""
+#> tags = ["lecture", "module1"]
+
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ 6b9987e0-ff94-11ed-3d77-9595d9455b4b
-using PlutoUI, Images, DataFrames, Plots, Statistics, StatsPlots
-
-# ╔═╡ 2f4a2280-2b7e-4bbf-a6f4-43f0405c9bb8
-TableOfContents()
-
-# ╔═╡ 7d09c2ba-2aa4-4b96-9795-d15ba01cdd5f
-md"""
-# GEOSTATISTIKA II
-## IV. UKURAN PUSAT DAN UKURAN DISPERSI
-### 1. Ukuran Pusat (Tengah) Suatu Distribusi Data
-Ukuran pusat atau ukuran tengah dari data tuh nilai yang bisa ngegambarin data secara *representatif* gitu, jadi mewakili keseluruhan nilainya. Ini diitung dari semua data, jadi nilai nya ada di tengah-tengah atau pusat gitu. Biasanya juga disebut *ukuran tendensi sentral* atau *ukuran nilai sentral*. Meskipun namanya tengah, tapi sebenernya bisa aja nggak pas di tengah-tengah, tapi punya hubungan sama nilai-nilai data yang ada di sekitar situ.
-
-Ada beberapa ukuran pusat yang sering digunakan, kayak **mean** (rata-rata), **median**, *kuartil*, *desil*, *percentil*, dan *modus*.
-
-Tapi ada catatan penting nih:
-Karena nilai-nilai mean, median, dan sejenisnya ini diitung berdasarkan distribusi data, jadi kita perlu ngerti cara tampilin datanya. Biasanya ada 2 cara:
-1. Data yang nggak dikelompokkan, jadi datanya ditulis satu-satu gitu tanpa aturan tertentu, bisa acak atau urut nilainya. Contohnya, kita punya data porositas batupasir dalam % di reservoir RSH, yang diukur dari 50 contoh inti batuan.
-
-   `16 7 20 5 8 11 17 16 10 15 9 11 11 16 6 19 21 14 7 12 10 9 15 18 11 8 18 23 14 6 21 12 17 22 17 19 23 25 25 13 19 20 24 10 14 15 16 15 22 10`
-
-
-2. Data yang dikelompokkan, jadi nilainya dikumpulin dalam interval-interval kelas dengan lebar interval tertentu. Biasanya datanya ditampilin dalam bentuk tabel. Contohnya, kita punya data porositas batupasir di reservoir RSH dari 50 contoh inti batuan yang dikumpulin dalam 7 interval kelas dengan lebar interval 3.
-
-Contoh data yang dikelompokkan:
-
-| Interval Kelas | Frekuensi |
-|:--------------:|:---------:|
-|     4.5 - 7.5  |    6      |
-|     7.5 - 10.5 |     7     |
-|    10.5 - 13.5 |     8     |
-|    13.5 - 16.5 |     11    |
-|    16.5 - 19.5 |      7    |
-|    19.5 - 22.5 |      6    |
-|    22.5 - 25.5 |      5    |
-
-atau
-
-| Titik tengah interval kelas | Frekuensi |
-|:--------------:|:---------:|
-|     6     |    6           |
-|     9     |     7          |
-|    12     |     8          |
-|    15     |     11         |
-|    18     |      7         |
-|    21     |      6         |
-|    24     |      5         |
-
-Jadi, kalo datanya dikelompokkan, data di kolom *interval kelas* bisa diwakilin sama nilai interval kelas (kiri) atau titik tengah interval kelas (kanan).
-
-Jadi, tergantung pada apakah data dikelompokkan atau nggak, kita bisa pake dua format data yang beda. Kalo data nya nggak dikelompokkan, bisa pake daftar nilai tunggal. Kalo data nya dikelompokkan, biasanya ditampilin dalam bentuk tabel dengan kolom interval kelas dan frekuensi.
-
-Tapi ini penting nih, karena nilai-nilai kayak mean, median, dan sejenisnya diitung berdasarkan distribusi data yang ditampilkan. Jadi, kalo kita punya data yang nggak dikelompokkan, kita bisa pake metode tertentu untuk ngitung ukuran pusatnya. Tapi kalo kita punya data yang dikelompokkan, kita perlu memperhatikan mau pake nilai interval kelas atau titik tengah interval kelas dalam ngitung ukuran pusatnya.
-
-Jadi, penting banget deh pake format data yang bener supaya kita bisa paham dan menganalisis data dengan lebih baik, serta pilih metode yang sesuai untuk ngitung ukuran pusat yang relevan sesuai dengan konteks data yang ada. Jadi, jangan lupa perhatiin cara tampilin data nya ya!
-"""
-
-# ╔═╡ e5f544fd-820c-4a4a-af34-b71ba7bc1295
-md"""
-#### a. Mean
-Mean (atau nilai rata-rata) sekumpulan data adalah jumlah nilai seluruh data
-dibagi dengan banyaknya data.
-##### i. Mean untuk data yang tidak dikelompokkan
-Jadi, buat ngitung mean (rata-rata) dari data yang nggak dikelompokkan, caranya gini nih. Kalo lu punya data kayak gini: x1, x2, x3, ...... xn. Nah, mean nya diitung pake rumus ini:
-
-$$\text{mean} = \bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i$$
-
-Nah, $$x_1$$, $$x_2$$, $$x_3$$, ...... $$x_n$$ tuh nilai-nilai dari data yang ada, trus n itu jumlah datanya.
-
-Misalnya nih, lu ngukur densitas dari 5 sampel batuan yang diambil dari suatu intrusi, dan dapet nilainya ρ: 2.65, 2.70, 2.68, 2.73, dan 2.67 g/cm3.
-
-$$\text{mean}= {\bar{\rho}} =\frac{1}{5} \sum_{i=1}^{5} x_i = \frac{1}{5} (2.65 + 2.70 + 2.68 + 2.73 + 2.67) = 2.69$$
-
-Nah, gimanapun rumusnya, tinggal lu masukin nilai-nilai densitas tersebut dan jumlah data nya, trus lu bisa dapetin mean densitas (rata-rata densitas) nya.
-
-Jadi, gitu deh cara ngitung mean buat data yang nggak dikelompokkan. Semoga paham ya!
-"""
-
-# ╔═╡ c558c796-a2ff-4f36-939a-658198c177ab
-data_ex = [2.65, 2.7, 2.68, 2.73, 2.67]
-
-# ╔═╡ 1b5efa7e-b348-4c44-b5ab-c5d8c597130b
-mean(data_ex)
-
-# ╔═╡ e8a3c3eb-dc24-43cb-b030-b7551a77ec38
-md"""
-##### ii. Mean beberapa kelompok data
-Kalo kita punya beberapa kelompok data, dan setiap kelompoknya punya jumlah data dan nilai mean tertentu, kita bisa hitung rata-rata (mean) buat setiap kelompok dengan rumus ini:
-
-Rumus untuk menghitung mean kelompok adalah:
-
-
-$$\text{{Mean}}_i = \frac{{\sum \text{{data}}_i}}{{\text{{jumlah data}}_i}}$$
-
-
-Dalam rumus ini, $$(\text{{Mean}}_i)$$ itu nilai mean buat kelompok yang ke-i. $$(\text{{sum data}}_i)$$ itu jumlah dari semua data yang ada di kelompok yang ke-i. $$(\text{{jumlah data}}_i)$$ itu jumlah data yang ada di kelompok yang ke-i. Nah, k itu jumlah total kelompok yang ada.
-
-Jadi, bro, kita bisa hitung mean buat setiap kelompok dengan rumus itu. Semoga paham ya, bro! Jangan lupa hitung mean-nya dengan cermat dan jangan sampai kelupaan!"""
-
-# ╔═╡ 25157634-a1f8-4847-8961-d6d53200ed84
-md""" ##### iii. Mean data yang dikelompokkan
-Nah, bro, dengerin baik-baik ya! Sekarang kita lagi bahas tentang mean data yang dikelompokkan, nih. Jadi, data yang dikelompokkan itu adalah data yang diatur dalam distribusi frekuensi, yang biasanya sering dipake, gitu loh. Nah, buat ngitung mean dari data yang dikelompokkan, kita pake rumus ini:
-
-Rumus untuk menghitung mean dari data yang dikelompokkan adalah:
-
-$$\text{{Mean}} = \frac{{\sum (f_i \cdot x_i)}}{{n}}$$
-
-Dalam rumus ini, $$(f_i)$$ itu frekuensi atau jumlah data pada interval kelas ke-i. $$(x_i)$$ itu nilai titik tengah interval kelas ke-i. Dan $$(n)$$ itu jumlah interval kelas.
-
-Jadi, bro, kita bisa menghitung mean dari data yang dikelompokkan dengan rumus itu. Tapi, perlu diingat, nilai mean dari data yang dikelompokkan ini mungkin gak akan persis sama dengan nilai mean jika data gak dikelompokkan (meskipun selisihnya biasanya kecil banget), jadi nilainya itu lebih ke pendekatan, bro.
-
-Contohnya, nih, kita punya data porositas batuan dari 50 sampel batuan inti yang dikelompokkan menjadi 7 interval kelas. Kita bisa mengembangkan tabel distribusi frekuensinya, dan dari situ kita bisa dengan mudah menghitung mean data yang dikelompokkan ini, bro.
-
-Jadi, gitu deh, bro! Semoga jelas ya! Jangan lupa, mean data yang dikelompokkan ini hasilnya itu nilai pendekatan, bukan nilai yang persis sama kalo data gak dikelompokkan. Keep calculating the mean, bro!"""
-
-# ╔═╡ ad6480d0-4bfb-4b17-b4ea-9649e13566a5
-md"""
-##### iv. Mean terbobot
-Nah, bro, sekarang kita bahas tentang mean terbobot (weighted mean atau weighted average), nih. Jadi, pada perhitungan mean terbobot, gak semua nilai data dianggap sama pentingnya, bro. Setiap data diberi bobot yang berbeda-beda, tergantung seberapa pentingnya data tersebut. Makin penting data, makin besar bobot yang kita berikan.
-
-Rumus untuk menghitung mean terbobot adalah:
-
-$$\text{{Mean Terbobot}} = \frac{{w_1 \cdot x_1 + w_2 \cdot x_2 + w_3 \cdot x_3 + \ldots + w_n \cdot x_n}}{{w_1 + w_2 + w_3 + \ldots + w_n}}$$
-
-Dalam rumus ini, $$(x_1, x_2, x_3, \ldots, x_n)$$ adalah nilai dari masing-masing data, dan $$(w_1, w_2, w_3, \ldots, w_n)$$ adalah bobot yang diberikan kepada masing-masing data. Jadi, setiap data punya bobot yang beda-beda, bro.
-
-Misalnya, nih, dalam satu semester, seorang mahasiswa dapet nilai A (= 4) sebanyak 6 sks, nilai B (= 3) sebanyak 9 sks, nilai C (= 2) sebanyak 3 sks, dan nilai D (= 1) sebanyak 2 sks. Nah, kita mau hitung Indeks Prestasi (IP) mahasiswa tersebut berdasarkan nilai dan jumlah sks.
-
-Rumus untuk menghitung IP adalah:
-
-$$\text{{IP}} = \frac{{(4 \cdot 6) + (3 \cdot 9) + (2 \cdot 3) + (1 \cdot 2)}}{{6 + 9 + 3 + 2}}=2.95$$
-
-Jadi, bro, kita bisa hitung IP mahasiswa tersebut dengan rumus itu, menggunakan nilai bobot yang sesuai dengan pentingnya masing-masing nilai.
-
-Jadi, gitu deh, bro! Kalo kita punya data yang gak sama pentingnya, kita bisa pake mean terbobot buat ngitung rata-ratanya. Semoga jelas ya, bro! Jangan lupa, kasih bobot yang tepat untuk setiap data biar hasilnya akurat!"""
-
-# ╔═╡ 3a8be0bd-c66b-4055-8056-37331376f4bf
-nilai = [4, 3, 2, 1]
-
-# ╔═╡ 487327af-6025-4968-b23d-33f960d377dd
-sks = [6, 9, 3, 2]
-
-# ╔═╡ bffefe9a-f336-4159-b6f5-0b366f1b1558
-ip = sum(nilai.*sks)/sum(sks)
-
-# ╔═╡ 67cb85a9-5cbb-4fdd-beab-f786b87c4eb2
-md"""
-#### b. Median
-Median itu adalah nilai yang berada di tengah-tengah saat kita urutin data dari yang terkecil sampe yang terbesar.
-##### i. Median untuk data yang tidak dikelompokkan
-Median tetap mengacu pada nilai yang berada di tengah-tengah saat kita urutin data dari yang terkecil sampe yang terbesar, tapi kali ini kita ngeliatin data yang gak dikelompokkan.
-
-Misalnya, kita punya data tinggi badan 5 orang dewasa: 170, 171, 167, 165, dan 168 cm. Nah, kita urutin data ini dari yang terkecil sampe yang terbesar: 165, 167, 168, 170, 171. Nah, median dari data ini adalah nilai yang ada di tengah-tengahnya, yaitu 168.
-
-Kalo kita punya jumlah data genap, contohnya berat badan 6 orang dewasa: 57, 58, 60, 65, 61, dan 55 kg. Nah, kita urutin lagi data ini dari yang terkecil sampe yang terbesar: 55, 57, 58, 60, 61, 65. Nah, dalam kasus ini, gak ada satu nilai yang tepat berada di tengah-tengah. Jadi, yang kita lakuin adalah ambil dua nilai yang berada di tengah-tengah, yaitu 58 dan 60. Terus, kita ambil rata-ratanya, jadi median kita adalah (58 + 60) / 2 = 59.
-
-Median untuk data yang tidak dikelompokkan tetap mengacu pada nilai di tengah-tengah saat kita urutin data. Kalo jumlah data ganjil, ambil nilai di tengahnya. Kalo jumlah data genap, ambil dua nilai di tengah, terus ambil rata-ratanya."""
-
-# ╔═╡ 3bc45de4-e4d7-4de4-998c-b43cde7f04e2
-data_ex2 = [170, 171, 167, 165, 168]
-
-# ╔═╡ aaa11ea2-b3cc-460d-99db-a4bba337c189
-median(data_ex2)
-
-# ╔═╡ b9ead3c3-8e9f-4ba0-976c-33de0f716835
-md"""
-##### ii. Median untuk data yang tidak dikelompokkan
-Nah, untuk menghitung median dalam kasus ini, kita pake cara interpolasi, dengan asumsi bahwa data dalam suatu interval kelas tersebar secara merata di interval tersebut. Kita pake rumus interpolasi berikut:
-
-$$md = L_{md} + \frac{n/2 - F }{f_{md}}\cdot C$$
-
-Dalam rumus ini, ada beberapa variabel yang harus kita pahami:
-- Lmd: Batas bawah interval median
-- n: Banyaknya data
-- F: Jumlah frekuensi interval-interval sebelum interval median
-- fmd: Frekuensi interval median
-- C: Lebar interval
-
-Pertama, kita tentuin interval median, yaitu interval dimana median berada. Kita hitung nomor n/2 berdasarkan urutan frekuensinya dari atas ke bawah atau sebaliknya. Misalnya, kita punya data distribusi frekuensi seperti ini:
-
-| Interval kelas | Frequensi |
-|----------------|-----------|
-| 164.5 – 167.5  |     6     |
-| 167.5 – 170.5  |     7     |
-| 170.5 – 173.5  |     8     |
-| 173.5 – 176.5  |    11     |
-| 176.5 – 179.5  |     7     |
-| 179.5 – 182.5  |     6     |
-| 182.5 – 185.5  |     5     |
-| Jumlah Data    |    50     |
-
-
-Urutan frekuensi dari atas ke bawah adalah: 6, 7, 8, 11, dan seterusnya. Nah, kita liat n/2 = 25 jatuh di antara 21 dan 32. Itu berarti median berada dalam interval ke-4 dengan nilai intervalnya adalah 173.5 – 176.5 dan frekuensinya adalah 11.
-
-Selanjutnya, kita masukin nilai-nilai ini ke dalam rumus. Misalnya, Batas bawah interval median (Lmd) adalah 173.5, banyaknya data (n) adalah 50, jumlah frekuensi interval sebelumnya (F) adalah 21, frekuensi interval median (fmd) adalah 11, dan lebar interval (C) adalah 3.
-
-Dengan begitu, kita bisa hitung median distribusi frekuensi ini menggunakan rumus tersebut.
-
-$$md = 173.5 + \frac{25 - 21 }{11}\cdot 3=174.59$$
-
-Jadi, gitu deh, bro! Median untuk data yang tidak dikelompokkan dalam bentuk distribusi frekuensi menggunakan rumus interpolasi seperti itu. Semoga jelas ya, bro!
-"""
-
-# ╔═╡ 46497747-ed46-4a0b-85bb-e80684ae7e5f
-md"""
-#### c. Kuartil
-Kuartil itu kayak pembagi-pembagi gitu buat data yang udah diurutin berdasarkan ukurannya. Nah, pembagiannya itu dijadiin 4 bagian yang sama banyaknya. Jadi, data-data itu dibagi jadi 4 kelompok yang isinya jumlahnya sama.
-##### i. Kuartil untuk data yang tidak dikelompokkan
-Kuartil untuk data yang tidak dikelompokkan tuh nilai-nilai yang ada di tengah-tengah data setelah diurutin, bro. Jadi, kita bagi data tersebut jadi 4 bagian yang jumlahnya sama.
-
-Contoh pertama, kita punya data tinggi badan 5 orang: 165, 167, 168, 170, 171 (udah diurutin). Nah, kalo kita cari kuartilnya, kita lihat nilai yang ada di tengah-tengah data. Karena jumlah datanya ganjil, kita ambil nilai di tengahnya aja. Jadi, Kuartil I (K1) itu nilai yang ada di tengah-tengah pertama, Kuartil II (K2) itu median, dan Kuartil III (K3) itu nilai yang ada di tengah-tengah ketiga.
-
-Jadi, kuartilnya untuk contoh ini: K1 = 166, K2 = 168 (median), K3 = 170.5.
-
-Contoh kedua, kita punya data berat badan 6 orang: 55, 57, 58, 60, 60, 65 (udah diurutin). Nah, kalo kita cari kuartilnya, kita juga lihat nilai yang ada di tengah-tengah data. Karena jumlah datanya genap, kita ambil rata-rata dari 2 nilai yang ada di tengahnya. Jadi, K1 itu nilai di tengah-tengah pertama, K2 itu median, dan K3 itu nilai di tengah-tengah ketiga.
-
-Jadi, kuartilnya untuk contoh ini: K1 = 57, K2 = 59 (median), K3 = 60.
-
-Gitulah cara nyarinya, bro!
-"""
-
-# ╔═╡ 2e9bcffd-0af6-455d-b04e-a34f699ec08b
-md"""
-##### ii. Kuartil untuk data yang dikelompokkan
-Untuk menghitung median dari suatu distribusi frekuensi digunakan cara interpolasi, dengan anggapan bahwa data pada suatu interval kelas letaknya tersebar secara merata dalam interval tersebut. Rumus interpolasi yang dipakai adalah:
-
-$$K_1 = L_{k1} + \frac{n/4 - F }{f_{k1}}\cdot C$$
-$$K_2 = M_D = L_{MD} + \frac{n/2 - F }{f_{md}}\cdot C$$
-$$K_3 = L_{k3} + \frac{3n/4 - F }{f_{k3}}\cdot C$$
-
-dengan:\
-$$L_{k1}$$ = batas bawah interval kuartil I,\
-$$L_{MD}$$ = batas bawah interval kuartil median,\
-$$L_{k3}$$ = batas bawah interval kuartil III,\
-$$n$$ = banyak data,\
-$$F$$ = jumlah frekuensi interval-interval sebelum interval kuartil,\
-$$f_{k1}$$ = frekuensi interval kuartil I,\
-$$f_{md}$$ = frekuensi interval kuartil median,\
-$$f_{k3}$$ = frekuensi interval kuartil III, dan\
-$$C$$ = lebar interval\
-
-
-Berikut adalah contoh perhitungan nilai-nilai kuartil untuk data yang dikelompokkan dalam bentuk distribusi frekuensi:
-
-| Interval Kelas | Frequensi |
-|----------------|-----------|
-| 164.5 - 167.5  |     6     |
-| 167.5 - 170.5  |     7     |
-| 170.5 - 173.5  |     8     |
-| 173.5 - 176.5  |     11    |
-| 176.5 - 179.5  |     7     |
-| 179.5 - 182.5  |     6     |
-| 182.5 - 185.5  |     5     |
-| Jumlah Data | 50 |
-
-Dalam kasus ini, nilai kuartil I (K1) terletak di tengah pertama dari data. Untuk mencarinya, kita perlu mengetahui jumlah frekuensi interval sebelumnya. Jadi, jumlah frekuensi interval 1 dan 2 adalah 6 + 7 = 13. Karena nilai n/4 = 50/4 = 12.5, maka K1 akan berada di interval ke-2, yaitu 167.5 - 170.5 dengan frekuensi 7. Dengan menggunakan rumus-rumus yang diberikan, kita dapat menghitung nilai-nilai berikut:
-
-$$L_{k1}= 167.5$$
-$$n= 50$$
-$$F= 6$$
-$$f_{k1}= 7$$
-$$C = 3$$
-
-Sehingga nilai kuartil pertama (K1) dapat dihitung:
-
-K1 = LK1 + ((n/4) - F) * C / fK1\
-   = 167.5 + ((50/4) - 6) * 3 / 7\
-   = 167.5 + (12.5 - 6) * 3 / 7\
-   = 167.5 + 6.5 * 3 / 7\
-   = 167.5 + 19.5 / 7\
-   = 167.5 + 2.79\
-   = 170.29\
-
-
-Selanjutnya, untuk nilai kuartil kedua (K2) yang merupakan median, kita tidak perlu menghitung karena sudah diketahui dari contoh sebelumnya.
-
-Kemudian, untuk nilai kuartil ketiga (K3), kita perlu mencari jumlah frekuensi interval sebelumnya. Jadi, jumlah frekuensi interval 1 sampai 5 adalah 6 + 7 + 8 + 11 + 7 = 39. Nilai 3n/4 = 3 * 50/4 = 37.5. Dengan demikian, K3 akan berada di interval ke-5, yaitu 176.5 - 179.5 dengan frekuensi 7. Menggunakan rumus-rumus yang diberikan, kita dapat menghitung nilai-nilai berikut:
-
-LK3 = 176.5, n = 50, F = 32, fK3 = 7, C = 3
-
-Sehingga nilai kuartil ketiga (K3) dapat dihitung:
-
-K3 = LK3 + ((3n/4) - F) * C / fK3\
-   = 176.5 + (37.5 - 32) * 3 / 7\
-   = 176.5 + 5.5 * 3 / 7\
-	= 176.5 + 16.5 / 7\
-   = 176.5 + 2.36\
-   = 178.86\
-
-Jadi, nilai kuartil ketiga (K3) untuk data yang dikelompokkan adalah 178.86.
-"""
-
-# ╔═╡ 0ccdd099-d011-4a04-9b02-c37400084ca2
-md"""
-#### d. Persentil
-
-##### i. Persentil untuk Data yang Tidak Dikelompokkan
-
-Persentil dalam data yang nggak dikelompokkan itu adalah angka-angka yang membagi 100 persen dengan rata-rata setelah data diurutkan dari yang paling kecil sampe yang paling gede. Persentil ini berguna buat nunjukin posisi nilai tertentu dalam kumpulan data.
-
-Misalnya, kita mau ngitung persentil ke-25 (P25) dari sekumpulan data. Pertama, kita harus ngurutin data dari yang paling kecil sampe yang paling gede. Terus, P25 bakal jadi angka yang ada di posisi ke-25% dari total data yang ada.
-
-Contoh perhitungan manual:
-Tinggi badan 10 orang dewasa (dalam cm): 160, 165, 168, 170, 172, 175, 178, 180, 182, 185
-
-Jumlah data: 10
-
-P25 = (25/100) * (10) = 2.5
-
-Karena persentil jatuh di posisi desimal, kita bisa pakai interpolasi linier buat dapetin persentil yang pasti.
-
-Pada contoh ini, P25 bakal ada antara nilai ke-2 dan ke-3 dalam data yang udah diurutin. Jadi, kita bisa pake interpolasi linier buat ngitung nilai persentilnya.
-
-P25 = 165 + (2.5 - 2) * (168 - 165) = 166.5
-
-"""
-
-# ╔═╡ 746927a5-1ca6-49dd-8e92-51a34e3eb6f7
-md"""
-##### ii. Persentil untuk Data yang Dikelompokkan
-
-Dalam data yang dikelompokkan, kita pake metode interpolasi buat ngitung persentil. Rumus yang dipake adalah:
-
-
-$$P_i = L_{Pi} + \left(\frac{{in}}{{100}} - F\right) \times \frac{C}{{f}_{Pi}}$$
-
-
-di mana:\
-$$P_i=$$ itu persentil yang mau dihitung,\
-$$L_{Pi}=$$ itu batas bawah interval persentil,\
-$$i=$$ bilangan bulat (0-100),\
-$$n=$$ itu jumlah total data,\
-$$F=$$ itu jumlah frekuensi interval sebelum interval persentil,\
-$$f_{Pi}=$$ itu frekuensi interval persentil, dan\
-$$C=$$ itu lebar interval.\
-
-
-Contoh perhitungan manual:
-Data yang dikelompokkan:
-
-|Interval kelas | Frekuensi|
-|---------------|----------|
-|150-160 | 5|
-|160-170 | 8|
-|170-180 | 12|
-|180-190 | 10|
-|Jumlah data| 35|
-
-Penghitungan persentil:
-$$P25 = L1 + \left(\frac{{in}}{{100}} - F1\right) \times \frac{C}{{f1}}$$
-
-Di sini, kita ingin ngitung P25, jadi p = 25/100 = 0.25. Kita perlu tau nilai-nilai yang lain juga, seperti L1, F1, C, sama f1.
-
-Misalnya, $$L1$$ itu batas bawah interval persentil pertama, yang di sini intervalnya 150-160. $$F1$$ itu jumlah frekuensi interval sebelum interval persentil pertama, yang di sini adalah 5 karena kita belum punya data sebelum interval pertama. $$C$$ adalah lebar interval, di sini intervalnya 10. Dan $$f1$$ adalah frekuensi interval pertama, yang di sini 5.
-
-Jadi kita bisa substitusikan nilai-nilai ini ke dalam rumus:
-
-$$P25 = 150 + \left(\frac{{0.25 \times 35}}{{100}} - 5\right) \times \frac{{10}}{{5}}$$
-
-Sekarang kita bisa menghitung nilai persentil:
-
-$$P25 = 150 + \left(\frac{{8.75 - 5}}{{5}}\right) \times 2$$
-
-$$P25 = 150 + (1.75) \times 2$$
-
-$$P25 = 150 + 3.5$$
-
-$$P25 = 153.5$$
-
-Jadi, persentil ke-25 (P25) dari data yang dikelompokkan adalah 153.5.
-
-"""
-
-# ╔═╡ f87d0b0c-e06e-463b-950a-770e067db417
-md"""
-##### Contoh Perhitungan dengan Julia
-
-Mari kita lakukan contoh perhitungan persentil dengan menggunakan bahasa pemrograman Julia.
-
-```julia
-data = [160, 165, 168, 170, 172, 175, 178, 180, 182, 185]
-sorted_data = sort(data)
-
-n = length(data)
-p25 = 0.25
-
-index = Int(ceil(p25 * n))
-fraction = p25 * n - floor(p25 * n)
-
-p25_value = sorted_data[index] + fraction * (sorted_data[index+1] - sorted_data[index])
-```
-
-Dalam contoh ini, kita mengurutkan data, kemudian mencari indeks yang sesuai untuk P25. Selanjutnya, kita menggunakan interpolasi linier untuk mendapatkan nilai persentil yang tepat."""
-
-# ╔═╡ 324d2e0d-5dca-4a10-99c9-c266e2b1cb54
-data_persentil = [160, 165, 168, 170, 172, 175, 178, 180, 182, 185]
-
-# ╔═╡ 7b12b0c1-3e8d-48db-9f00-5cb116f7ea16
-n_persentil = length(data_persentil)
-
-# ╔═╡ 10799197-9c6f-44eb-948a-01127ec0d7b2
-p25 = 0.25
-
-# ╔═╡ 8e972138-046c-4583-b4db-2ba15a186612
-index_persentil = Int(ceil(p25 * n_persentil))
-
-# ╔═╡ 7271f4d9-254b-435b-8e36-594ee5f9397a
-fraction = p25 * n_persentil - floor(p25 * n_persentil)
-
-# ╔═╡ 44213409-2b8d-4c0d-af97-d734177990da
-p25_value = data_persentil[index_persentil] + fraction * (data_persentil[index_persentil+1] - data_persentil[index_persentil])
-
-# ╔═╡ e81b77ae-cdb4-41bd-ba72-1810fbe8be12
-md"""
-#### e. Modus
-Oke, bro! Jadi, modus itu tuh kayak "pilihan favorit" atau "yang paling ngetrend" dalam suatu set data. Misalnya, kita punya data tinggi badan beberapa orang.
-
-| Data Tinggi Badan |
-|------------------|
-|      165         |
-|      170         |
-|      170         |
-|      168         |
-|      165         |
-|      172         |
-|      170         |
-|      175         |
-
-Di sini, kita lihat ada beberapa nilai tinggi badan, kan? Nah, kita cari nilai yang paling sering muncul. Dalam kasus ini, nilai 170 tuh yang paling sering muncul, bro. Jadi, modus dari data ini adalah 170. Dalam notasi matematika, kita tulis modus sebagai $\text{modus} = 170$.
-
-Tapi, cek juga nih data yang lain:
-
-| Data Tinggi Badan |
-|------------------|
-|      165         |
-|      170         |
-|      170         |
-|      168         |
-|      165         |
-|      172         |
-|      172         |
-|      175         |
-
-Kalo di data ini, nilai 170 sama 172 muncul sama seringnya. Jadi, ada 2 modus di sini. Kita bisa tulis sebagai $\text{modus} = 170, 172$.
-
-Tapi bro, gimana kalo datanya banyak banget dan agak ribet? Misalnya, kita punya data tinggi badan yang dikelompokkan dalam interval kelas. Cek nih tabelnya:
-
-| Interval Kelas | Frekuensi |
-|----------------|-----------|
-| 160 - 165      |     10    |
-| 165 - 170      |     20    |
-| 170 - 175      |     15    |
-| 175 - 180      |     12    |
-| 180 - 185      |     8     |
-
-Di sini, kita harus cari interval kelas yang punya frekuensi paling besar. Nah, interval kelas 165-170 tuh yang paling sering muncul, bro. Jadi, modusnya adalah interval kelas 165-170. Kita tulis sebagai $\text{modus} = 165 - 170$.
-
-Tapi, kalo ada lebih dari satu interval kelas dengan frekuensi terbesar, artinya ada beberapa modus. Contohnya:
-
-| Interval Kelas | Frekuensi |
-|----------------|-----------|
-| 160 - 165      |     10    |
-| 165 - 170      |     20    |
-| 170 - 175      |     20    |
-| 175 - 180      |     12    |
-| 180 - 185      |     8     |
-
-Di sini, interval kelas 165-170 dan 170-175 sama-sama punya frekuensi terbesar yaitu 20. Jadi, modusnya ada 2, yaitu interval kelas 165-170 dan 170-175. Kita tulis sebagai $\text{modus} = 165 - 170, 170 - 175$.
-
-Jadi, bro, modus itu adalah nilai atau interval kelas yang paling sering muncul dalam data. Kalo datanya simpel, bisa langsung dihitung manual. Tapi kalo datanya ribet atau dikelompokkan, lebih baik pake metode yang tepat dan lebih efisien, kayak nih:
-
-i. Modus untuk data tidak dikelompokkan:
-
-1. Pertama, urutin data dari yang terkecil sampe yang terbesar. Misalnya, data tinggi badan kita kayak gini:
-   - 165 cm
-   - 170 cm
-   - 170 cm
-   - 168 cm
-   - 165 cm
-   - 172 cm
-   - 170 cm
-   - 175 cm
-   
-2. Nah, kita lihatin data ini dan cari nilai yang paling sering muncul. Dalam kasus ini, kita lihat ada 3 kali angka 170 dan 2 kali angka 165. Jadi, modusnya adalah 170 dan 165. 
-
-ii. Modus untuk data yang dikelompokkan:
-
-1. Pertama, kita punya tabel yang nunjukin interval kelas sama frekuensi masing-masing interval. Contohnya:
-   
-   | Interval Kelas | Frekuensi |
-   |----------------|-----------|
-   | 160 - 165      |     10    |
-   | 165 - 170      |     20    |
-   | 170 - 175      |     15    |
-   | 175 - 180      |     12    |
-   | 180 - 185      |     8     |
-   
-2. Kita lihatin tabel ini dan cari interval kelas dengan frekuensi paling tinggi. Nah, interval kelas 165-170 tuh punya frekuensi terbanyak, yaitu 20. Jadi, modusnya adalah interval kelas 165-170.
-
-Jadi, intinya modus itu nilai atau interval kelas yang paling sering muncul dalam data. Kalo datanya simpel, bisa dihitung manual. Tapi kalo datanya kompleks atau dikelompokkan, lebih baik pake metode yang sesuai biar hasilnya lebih akurat."""
-
-# ╔═╡ 0ff9cebd-0f31-4b14-9fad-884243406884
-md""" # Fungsi-Fungsi"""
-
-# ╔═╡ 495eb409-cd1b-42a7-a558-0bc1177a36e8
-function df_obj(arr)
-	n = length(arr)
-    data_range = maximum(arr) - minimum(arr)
-    k = ceil(k_sturges(n))
-    class_width = ceil(data_range / k)
-    class_boundaries = minimum(arr) - 0.5:class_width:maximum(arr) + class_width/2  # Menyesuaikan batas atas kelas terakhir
-    df_final = DataFrame(Class = String[], Frequency = Int[])
-    for i in 1:length(class_boundaries)-1
-        lower_bound = class_boundaries[i]
-        upper_bound = class_boundaries[i+1]
-        freq = count(x -> lower_bound ≤ x < upper_bound, arr)
-        push!(df_final, [string(lower_bound) * " - " * string(upper_bound), freq])
+# This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
+macro bind(def, element)
+    quote
+        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
+        local el = $(esc(element))
+        global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
+        el
     end
-    return Dict("data range" => data_range, "k sturges" => k, "class width" => class_width, "class boundaries" => class_boundaries, "tabel" => df_final)
 end
 
-# ╔═╡ 046df35d-6153-4570-aff7-6af9068898b0
-function calculate_quartile(L_md, q, n, F, f_md, C)
-    md = L_md + ((q*n/4 - F) / f_md) * C
-    return md
+# ╔═╡ 86f770fe-74a1-11eb-01f7-5b3ecf057124
+begin
+	using PlutoUI 
+	using Colors, ColorVectorSpace, ImageShow, FileIO, ImageIO
+	using Unitful 
+	using ImageFiltering
+	using OffsetArrays
+	using Plots
+
+	# Small patch to make images look more crisp:
+	# https://github.com/JuliaImages/ImageShow.jl/pull/50
+	Base.showable(::MIME"text/html", ::AbstractMatrix{<:Colorant}) = false
 end
 
-# ╔═╡ 823150e8-5b8a-4ac1-865b-497bb876bd03
-q1 = calculate_quartile(167.5, 1, 50, 6, 7, 3)
+# ╔═╡ 8d389d80-74a1-11eb-3452-f38eff03483b
+PlutoUI.TableOfContents(aside=true)
 
-# ╔═╡ b079cb75-cb83-41cc-a048-f8127b3755bd
-q2 = calculate_quartile(173.5, 2, 50, 21, 11, 3)
+# ╔═╡ 9f1a72da-7532-11eb-079c-b7baccc6614a
+md"""
+#### Initializing packages
 
-# ╔═╡ 684fa0a2-049e-4f5f-83d8-e93ad7eba035
-q3 = calculate_quartile(176.5, 3, 50, 32, 7, 3)
+_When running this notebook for the first time, this could take up to 15 minutes. Hang in there!_
+"""
+
+# ╔═╡ 4d332c7e-74f8-11eb-1f49-a518246d1db8
+md"""
+# Announcement: Lectures will be nearly an hour
+"""
+
+# ╔═╡ f7689472-74a8-11eb-32a1-8379ae5c88e1
+rotabook = PlutoUI.Resource("https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1348902666l/1646354.jpg")
+
+# ╔═╡ 0f2f9004-74a8-11eb-01a2-973dbe80f166
+md"""
+##  **Never run overtime** (a microcentury with UnitFul)
+
+Running overtime is the one unforgivable error a lecturer can make.
+After fifty minutes (one microcentury as von Neumann used to say)
+everybody's attention will turn elsewhere even if we are trying to prove
+the Riemann hypothesis. One minute overtime can destroy the best of
+lectures. (from "Indiscrete Thoughts" by Rota, Chpt 18, 10 Lessons I Wish I Had Been Taught)
+"""
+
+# ╔═╡ 962143a8-74a7-11eb-26c3-c10548f326ee
+century = 100u"yr" #  a u"yr" is a special kind of string denoting a unit of a year
+
+# ╔═╡ c2964c80-74f8-11eb-3a74-b1bdd9e4ae02
+century * 2
+
+# ╔═╡ caf488d8-74f8-11eb-0075-0586d66c23c1
+century/200
+
+# ╔═╡ 02dd4a02-74f9-11eb-3d1e-53d83cee8062
+century^2
+
+# ╔═╡ 10ef13d2-74f9-11eb-2849-fb9f83db6ae9
+g = 9.8u"m"/u"s"^2
+
+# ╔═╡ b76a56f4-74a9-11eb-1739-fbfc5e4958e8
+
+uconvert(u"minute", century * 1e-6 ) # convert into minutes the value of a microcentury
+
+
+# ╔═╡ 77fbf18a-74f9-11eb-1d9e-3f9d2097388f
+PotentialEnergy = (10u"kg") * g * (50u"m")
+
+# ╔═╡ bcb69db6-74f9-11eb-100a-29d1d23963ab
+uconvert( u"J",PotentialEnergy)
+
+# ╔═╡ fc70c4d2-74f8-11eb-33f5-539c278ed6b6
+md"""
+Adding units to numbers **just works** in Julia, and furthermore, does not slow down execution.  We are sneaking in an example of the power of generic programming and Julia's type system, some of the underlying technology that makes us love working with Julia.  More on this later in the book.  Meanwhile if this helps you do your problem sets in some other class, go for it.
+"""
+
+# ╔═╡ 2f7cde78-74a2-11eb-1e2f-81b5b2465819
+md"""
+# Reminder
+
+**Try your own pictures everywhere!**
+"""
+
+# ╔═╡ e099815e-74a1-11eb-1541-033f6abe9f8e
+md"""
+# Transforming Images
+"""
+
+# ╔═╡ e82a4dd8-74b0-11eb-1108-6b09e67a80c1
+md"""
+## 2.1. Downsampling / Upsampling
+"""
+
+# ╔═╡ 39552b7a-74fb-11eb-04e0-3981ada52c92
+md"""
+How can we pixelate a corgi? Found this cute picture online, but we'll pixelate
+a real corgi.
+"""
+
+# ╔═╡ 14f2b85e-74ad-11eb-2682-d9de646aedf3
+pixelated_corgi = load(download("https://i.redd.it/99lhfbnwpgd31.png"))
+
+# ╔═╡ 0ebb538b-1c72-4d0c-af8b-de9277e35ed5
+
+
+# ╔═╡ 516e73e2-74fb-11eb-213e-9dbd9472e0db
+philip =  load(download("https://user-images.githubusercontent.com/6933510/107239146-dcc3fd00-6a28-11eb-8c7b-41aaf6618935.png"))
+
+# ╔═╡ b5d0ef90-74fb-11eb-3126-792f954c7be7
+@bind r Slider(1:40, show_value=true, default=40)
+
+# ╔═╡ 754c3704-74fb-11eb-1199-2b9798d7251f
+downsample_philip = philip[1:r:end, 1:r:end]
+
+# ╔═╡ 9eb917ba-74fb-11eb-0527-15e981ce9c6a
+upsample_philip = kron(downsample_philip, fill(1,r,r))
+
+# ╔═╡ 486d3022-74ff-11eb-1865-e15436bd9aad
+md"""
+  Note the use of kron and fill. See [Wikipedia Kron](https://en.wikipedia.org/wiki/Kronecker_product)
+"""
+
+# ╔═╡ b9da7332-74ff-11eb-241b-fb87e77d646a
+md"""
+Exercise: Use the nose selection tool from Section 1.1 to pixelate a rectangle of an image.  Warning: you'll have to worry about sizes if not exact multiples.
+"""
+
+# ╔═╡ 339ccfca-74b1-11eb-0c35-774da6b189ed
+md"""
+## 2.2 Linear Combinations (Combining Images) 
+"""
+
+# ╔═╡ 8711c698-7500-11eb-2505-d35a4de169b4
+md"""
+One big idea in mathematics is the [linear combination](https://en.wikipedia.org/wiki/Linear_combination).
+The idea combines 
+- scaling an object 
+- combining two or more objects
+by combining scaled versions of multiple objects.
+"""
+
+# ╔═╡ 84350cb8-7501-11eb-095e-8f1a7e015f25
+md"""
+Let's scale some corgis.
+"""
+
+# ╔═╡ 91a1bca4-74aa-11eb-3917-1dfd73d0ad9c
+corgis = load(download("https://user-images.githubusercontent.com/6933510/108605549-fb28e180-73b4-11eb-8520-7e29db0cc965.png"))
+
+# ╔═╡ 8e698bdc-7501-11eb-1d2e-c336ccbde0b0
+@bind c Slider(0:.1:3, show_value=true, default=1)
+
+# ╔═╡ ab2bc924-7501-11eb-03ba-8dfc1ffe3f36
+c .* corgis  # scaling the corgis changes intensity
+
+# ╔═╡ e11d6300-7501-11eb-239a-135596309d20
+md"""
+ You might wonder about the **dot times** or **pointwise times**. You can
+delete the dot, but it is recommended for clarity
+and performance.  The dot emphasizes that the multiplication by c is happening
+pixel by pixel or that the scalar is being "broadcast" to every pixel.
+"""
+
+# ╔═╡ 9a66c07e-7503-11eb-3127-7fce91b3a24a
+md"""
+Scaling too far saturates the image.  (Any r,g,b ≥ 1, saturates at 1.)
+"""
+
+# ╔═╡ 47d40406-7502-11eb-2f43-cd5c848f25a6
+md"""
+We need another image.  We could grab one from somewhere or we can just transform the one we have.  Let's do the latter and turn the corgis upsidedown.
+"""
+
+# ╔═╡ 9ce0b980-74aa-11eb-0678-01209451fb65
+upsidedown_corgis = corgis[ end:-1:1 , :]
+
+# ╔═╡ 68821bf4-7502-11eb-0d3c-03d7a00fdba4
+md"""
+Now let's scaled version of the two images to see what that does.
+"""
+
+# ╔═╡ 447e7c9e-74b1-11eb-27ea-71aa4338b11a
+(.5 * upsidedown_corgis .+ .5 * corgis) 
+
+# ╔═╡ c9dff6f4-7503-11eb-2715-0bf9d3ece9e1
+md"""
+### Convex Combinations
+"""
+
+# ╔═╡ d834103c-7503-11eb-1a94-1fbad43801ff
+md"""
+If all the coefficients are positive and add to 1, we say we have a **convex combination**.  Let's take α and (1-α) as the two coefficients adding to 1, and
+scale the two corgi pictures with different α's, thereby giving different weights to the rightside-up and upside-down corgis.
+"""
+
+# ╔═╡ aa541288-74aa-11eb-1edc-ab6d7786f271
+@bind α Slider(0:.01:1 , show_value=true, default = 1.0)
+
+# ╔═╡ c9dcac48-74aa-11eb-31a6-23357180c1c8
+α .* corgis .+ (1-α) .* upsidedown_corgis
+
+# ╔═╡ 30b1c1f0-7504-11eb-1be7-a9463caea809
+md"""
+The moment I did this with α = .5, I noticed my brain's tendency to see the 
+rightsisde-up corgis even though both have equal weight.  For me maybe
+around α = .39 which gives weight .61 to the upside-down corgis "feels" balanced
+to me.  I think this is what the field of psychology called psychometrics 
+tries to measure -- perhaps someone can tell me if there are studies of the
+brain's tendency to use world experience to prefer rightside-up corgis,
+and in particular to put a numerical value to this tendency.
+"""
+
+# ╔═╡ 1fe70e38-751b-11eb-25b8-c741e1726613
+md"""
+10 seconds with google and I found there is a thing about faces:
+[The Face Inversion effect](https://en.wikipedia.org/wiki/Face_inversion_effect#:~:text=The%20face%20inversion%20effect%20is,same%20for%20non%2Dfacial%20objects.&text=The%20most%20supported%20explanation%20for,is%20the%20configural%20information%20hypothesis)
+and also the [Thatcher Effect](https://en.wikipedia.org/wiki/Thatcher_effect#:~:text=The%20Thatcher%20effect%20or%20Thatcher,obvious%20in%20an%20upright%20face) seems related.
+
+... the article suggests objects don't suffer in the same way as faces,
+so I put forth that the phenomenon applies to corgi faces as much as human faces,
+suggesting maybe that corgi faces are processed in the **face processing** part of the brain,not the **object processing** part of the brain.
+
+Corgis are human, after all, right?
+
+(Note, this is 5 minutes of armchair science, not a professional opinion.)
+"""
+
+# ╔═╡ 215291ec-74a2-11eb-3476-0dab43fd5a5e
+md"""
+## 2.3 Fun with Photoshop (What does "filter" mean in this context?)
+"""
+
+# ╔═╡ 61db42c6-7505-11eb-1ddf-05e906234572
+md"""
+[Photshop Filter Reference](https://helpx.adobe.com/photoshop/using/filter-effects-reference.html)
+"""
+
+# ╔═╡ cdd4cffc-74b1-11eb-1aa4-e333cb8601d1
+md"""
+Let's play with photoshop if for no other reason, let's see what image transformations are available considered useful by the pros.
+
+Some worth emphasizing are
+1. Blur
+2. Sharpen
+3. Stylize -> Find Edges
+3. Pixelate
+4. Distort
+
+Some of these transformations (e.g. Blur, Sharpen, Find Edges) are examples of 
+convolutions which are very efficient, and show up these days in 
+machine learning particularly in image recognition.
+"""
+
+# ╔═╡ 7489a570-74a3-11eb-1d0b-09d41604ffe1
+md"""
+## 2.4 Image Filtering (convolutions)
+"""
+
+# ╔═╡ 8a8e3f5e-74b2-11eb-3eed-e5468e573e45
+md"""
+Last semester Grant Sanderson (3Blue1Brown) lectured in this course.  This lecture on convolutions in image processing was popular.  Let's watch an excerpt (from 1:04 to 2:48).  (We pick a few exercepts, but we wouldn't blame you if you just wanted to
+watch the whole video.)
+"""
+
+# ╔═╡ 5864294a-74a5-11eb-23ef-f38a582f2c2d
+html"""
+<div notthestyle="position: relative; right: 0; top: 0; z-index: 300;"><iframe src="https://www.youtube.com/embed/8rrHTtUzyZA?start=64&end=168" width=400 height=250  frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+"""
+
+# ╔═╡ fa9c465e-74b2-11eb-2f3c-4be0e7f93bb5
+md"""
+### Definition of convolutions and kernels
+"""
+
+# ╔═╡ 4fab4616-74b0-11eb-0088-6b50237d7d54
+md"""
+[Wikipedia Page on Kernels]
+(https://en.wikipedia.org/wiki/Kernel_(image_processing)#Details)
+"""
+
+# ╔═╡ 275bf7ac-74b3-11eb-32c3-cda1e4f1f8c2
+md"""
+### Computer Science: Complexity
+
+The number of multiplications = (Number of Pixels in the Image) * (Number of Cells in the kernel)
+"""
+
+# ╔═╡ 537c54e4-74b3-11eb-341f-951b4a1e0b40
+md"""
+Thought Problem: Why are small kernels better than large kernels from a complexity viewpoint?
+"""
+
+# ╔═╡ c6e340ee-751e-11eb-3ca7-69595b3693b7
+md"""
+### Computer Science: Architectures: GPUs or Graphical Processing Units
+
+Some important computations can be greatly accelerated through the use of specialized hardware such as the GPU processors that were originally designed as image renderers but it has turned out that these processors can be quite fast at other very regular computations.  Convolutions is a very GPU friendly operation due to its regular structure.
+"""
+
+# ╔═╡ 54448d18-7528-11eb-209a-9717affa0d02
+ kernelize(M) = OffsetArray( M, -1:1, -1:1)	       
+
+# ╔═╡ acbc563a-7528-11eb-3c38-75a5b66c9241
+begin
+	identity = [0 0 0 ; 0 1 0 ; 0 0 0]
+	edge_detect = [0 -1 0; -1 4 -1; 0 -1 0] 
+	sharpen = identity .+ edge_detect  # Superposition!
+	box_blur = [1 1 1;1 1 1;1 1 1]/9
+	∇x = [-1 0 1;-1 0 1;-1 0 1]/2 # centered deriv in x
+	∇y = ∇x'
+	
+	kernels = [identity, edge_detect, sharpen, box_blur, ∇x, ∇y]
+	kernel_keys =["identity", "edge_detect", "sharpen", "box_blur", "∇x", "∇y"]
+	selections = kernel_keys .=> kernel_keys
+	kernel_matrix = Dict(kernel_keys .=> kernels)
+	md"$(@bind kernel_name Select(selections))"
+end
+
+# ╔═╡ 995392ee-752a-11eb-3394-0de331e24f40
+kernel_matrix[kernel_name]
+
+# ╔═╡ d22903d6-7529-11eb-2dcd-132cd27104c2
+[imfilter( corgis, kernelize(kernel_matrix[kernel_name])) Gray.(1.5 .* abs.(imfilter( corgis, kernelize(kernel_matrix[kernel_name])))) ]
+
+# ╔═╡ 844ed844-74b3-11eb-2ee1-2de664b26bc6
+md"""
+  ### Gaussian Filter
+"""
+
+# ╔═╡ 4ffe927c-74b4-11eb-23a7-a18d7e51c75b
+md"""
+In our next Grant Sanderson segment from Fall 2020 (4:35 to 7:00), we hear about
+convolving images with a Gaussian kernel.  
+"""
+
+# ╔═╡ 91109e5c-74b3-11eb-1f31-c50e436bc6e0
+html"""
+<div notthestyle="position: relative; right: 0; top: 0; z-index: 300;"><iframe src="https://www.youtube.com/embed/8rrHTtUzyZA?start=275&end=420" width=400 height=250  frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+"""
+
+# ╔═╡ 34109062-7525-11eb-10b3-d59d3a6dfda6
+round.(Kernel.gaussian(1), digits=3)
+
+# ╔═╡ 9ab89a3a-7525-11eb-186d-29e4b61deb7f
+md"""
+We could have defined this ourselves with calls to the exponential function.
+"""
+
+# ╔═╡ 50034058-7525-11eb-345b-3334e71ac50e
+begin
+	G = [exp( -(i^2+j^2)/2) for i=-2:2, j=-2:2]
+	round.(G ./ sum(G), digits=3)
+end
+
+# ╔═╡ c0aec7ae-7505-11eb-2822-a151aad48fc9
+md"""
+This is often known as Gaussian blur to emphasize the result of this operation.
+[Adobe on Gaussian blur](https://www.adobe.com/creativecloud/photography/discover/gaussian-blur.html).
+"""
+
+# ╔═╡ 628aea22-7521-11eb-2edc-39ac62683aea
+md"""
+Focus around 5:23
+"""
+
+# ╔═╡ 99eeb11c-7524-11eb-2154-df7d84976445
+@bind gparam Slider(0:9, show_value=true, default=1)
+
+# ╔═╡ 2ddcfb90-7520-11eb-2df7-172d07118b7e
+kernel = Kernel.gaussian(gparam)
+
+# ╔═╡ d62496b0-7524-11eb-3410-7177e7c7f8eb
+plotly()
+
+# ╔═╡ 6aa8a76e-7524-11eb-22b5-015aab4191b0
+surface([kernel;])
+
+# ╔═╡ ee93eeb2-7524-11eb-342d-0343d8aebf59
+md"""
+Note: black lines are contours
+"""
+
+# ╔═╡ 662d73b6-74b3-11eb-333d-f1323a001000
+md"""
+### Computer Science: Data Structure: Offset Arrays
+"""
+
+# ╔═╡ d127303a-7521-11eb-3507-7341a416211f
+kernel[0,0]
+
+# ╔═╡ d4581b56-7522-11eb-2c15-991c0c790e67
+kernel[-2,2]
+
+# ╔═╡ 40c15c3a-7523-11eb-1f2a-bd90b127dad2
+M = [ 1  2  3  4  5
+	  6  7  8  9 10
+	 11 12 13 14 15]
+
+# ╔═╡ 08642690-7523-11eb-00dd-63d4cf6513dc
+Z = OffsetArray(M, -1:1, -2:2)
+
+# ╔═╡ deac4cf2-7523-11eb-2832-7b9d31389b08
+the_indices = [ c.I for c ∈ CartesianIndices(Z)]
+
+# ╔═╡ 32887dfa-7524-11eb-35cd-051eff594fa9
+Z[1,-2]
+
+# ╔═╡ 0f765670-7506-11eb-2a37-931b15bb387f
+md"""
+## 2.5. Discrete vs Continuous
+"""
+
+# ╔═╡ 82737d28-7507-11eb-1e39-c7dc12e18882
+md"""
+Some folks only like discrete objects, others continuous.  The computer makes clear what many mathematicians already know, that while different language has evolved to describe discrete objects vs continuous objects, often the underlying conceptual idea is similar or the same.  Here is one analogy:
+"""
+
+# ╔═╡ 40d538b2-7506-11eb-116b-efeb16b3478d
+md"""
+### Blurring Kernels :: Integrals  ≡ Sharpening Kernels :: Derivatives
+"""
+
+# ╔═╡ df060a88-7507-11eb-034b-5346d67a0e0d
+md"""
+Think about integrals vs derivatives in one dimension.
+If you replace f(x) with g(x) = ∫ f(t) dt for x-r ≤ t ≤ x+r, that will blur or smooth out the features of f.  However if you take the derivative,you will emphasize the changes, i.e., you will sharpen or "edge-detect."
+"""
+
+# ╔═╡ 60c8db60-7506-11eb-1468-c989809c933a
+md"""
+## 2.6 Respect my Boundaries
+"""
+
+# ╔═╡ 8ed0be60-7506-11eb-2769-5f7da1c66243
+md"""
+Applying the convolution on a boundary requires special thought because it is literally an **edge case**.  Once again Grant said this so very well: (2:53-4:19)
+"""
+
+# ╔═╡ b9d636da-7506-11eb-37a6-3116d47b2787
+html"""
+<div notthestyle="position: relative; right: 0; top: 0; z-index: 300;"><iframe src="https://www.youtube.com/embed/8rrHTtUzyZA?start=173&end=259" width=400 height=250  frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+"""
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
-DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
-Images = "916415d5-f1e6-5110-898d-aaa5f9f070e0"
+ColorVectorSpace = "c3611d14-8923-5661-9e6a-0046d554d3a4"
+Colors = "5ae59095-9a9b-59fe-a467-6f913c188581"
+FileIO = "5789e2e9-d7fb-5bc7-8068-2c6fae9b9549"
+ImageFiltering = "6a3955dd-da59-5b1f-98d4-e7296123deb5"
+ImageIO = "82e4d734-157c-48bb-816b-45c225c6df19"
+ImageShow = "4e3cecfd-b093-5904-9786-8bbb286a6a31"
+OffsetArrays = "6fe1bfb0-de20-5000-8ca7-80f57d26f881"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
-Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
-StatsPlots = "f3b207a7-027a-5e70-b257-86293d7955fd"
+Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]
-DataFrames = "~1.5.0"
-Images = "~0.25.3"
+ColorVectorSpace = "~0.9.10"
+Colors = "~0.12.10"
+FileIO = "~1.16.1"
+ImageFiltering = "~0.7.4"
+ImageIO = "~0.6.6"
+ImageShow = "~0.3.7"
+OffsetArrays = "~1.12.9"
 Plots = "~1.38.14"
 PlutoUI = "~0.7.51"
-StatsPlots = "~0.15.5"
+Unitful = "~1.14.0"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -564,17 +500,19 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.0"
 manifest_format = "2.0"
-project_hash = "d9e2f967878732d3f8647a376af8497e085a4ebd"
+project_hash = "923010343fa08a3420fcc4a8994b75aee7d9d112"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
 git-tree-sha1 = "16b6dbc4cf7caee4e1e75c49485ec67b667098a0"
 uuid = "621f4979-c628-5d54-868e-fcf4e3e8185c"
 version = "1.3.1"
-weakdeps = ["ChainRulesCore"]
 
     [deps.AbstractFFTs.extensions]
     AbstractFFTsChainRulesCoreExt = "ChainRulesCore"
+
+    [deps.AbstractFFTs.weakdeps]
+    ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -596,32 +534,30 @@ weakdeps = ["StaticArrays"]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
 version = "1.1.1"
 
-[[deps.ArnoldiMethod]]
-deps = ["LinearAlgebra", "Random", "StaticArrays"]
-git-tree-sha1 = "62e51b39331de8911e4a7ff6f5aaf38a5f4cc0ae"
-uuid = "ec485272-7323-5ecc-a04f-4719b315124d"
-version = "0.2.0"
+[[deps.ArrayInterface]]
+deps = ["Adapt", "LinearAlgebra", "Requires", "SparseArrays", "SuiteSparse"]
+git-tree-sha1 = "d3f758863a47ceef2248d136657cb9c033603641"
+uuid = "4fba245c-0d91-5ea0-9b3e-6abc04ee57a9"
+version = "7.4.8"
 
-[[deps.Arpack]]
-deps = ["Arpack_jll", "Libdl", "LinearAlgebra", "Logging"]
-git-tree-sha1 = "9b9b347613394885fd1c8c7729bfc60528faa436"
-uuid = "7d9fca2a-8960-54d3-9f78-7d1dccf2cb97"
-version = "0.5.4"
+    [deps.ArrayInterface.extensions]
+    ArrayInterfaceBandedMatricesExt = "BandedMatrices"
+    ArrayInterfaceBlockBandedMatricesExt = "BlockBandedMatrices"
+    ArrayInterfaceCUDAExt = "CUDA"
+    ArrayInterfaceGPUArraysCoreExt = "GPUArraysCore"
+    ArrayInterfaceStaticArraysCoreExt = "StaticArraysCore"
+    ArrayInterfaceTrackerExt = "Tracker"
 
-[[deps.Arpack_jll]]
-deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "Libdl", "OpenBLAS_jll", "Pkg"]
-git-tree-sha1 = "5ba6c757e8feccf03a1554dfaf3e26b3cfc7fd5e"
-uuid = "68821587-b530-5797-8361-c406ea357684"
-version = "3.5.1+1"
+    [deps.ArrayInterface.weakdeps]
+    BandedMatrices = "aae01518-5342-5314-be14-df237901396f"
+    BlockBandedMatrices = "ffab5731-97b5-5995-9138-79e8c1846df0"
+    CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
+    GPUArraysCore = "46192b85-c4d5-4398-a991-12ede77f4527"
+    StaticArraysCore = "1e83bf80-4336-4d27-bf5d-d5a4f845583c"
+    Tracker = "9f7883ad-71c0-57eb-9f7f-b5c9e6d3789c"
 
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
-
-[[deps.AxisAlgorithms]]
-deps = ["LinearAlgebra", "Random", "SparseArrays", "WoodburyMatrices"]
-git-tree-sha1 = "66771c8d21c8ff5e3a93379480a2307ac36863f7"
-uuid = "13072b0f-2c55-5437-9ae7-d433b7a33950"
-version = "1.0.1"
 
 [[deps.AxisArrays]]
 deps = ["Dates", "IntervalSets", "IterTools", "RangeArrays"]
@@ -654,29 +590,11 @@ git-tree-sha1 = "4b859a208b2397a7a623a03449e4636bdb17bcf2"
 uuid = "83423d85-b0ee-5818-9007-b63ccbeb887a"
 version = "1.16.1+1"
 
-[[deps.Calculus]]
-deps = ["LinearAlgebra"]
-git-tree-sha1 = "f641eb0a4f00c343bbc32346e1217b86f3ce9dad"
-uuid = "49dc2e85-a5d0-5ad3-a950-438e2897f1b9"
-version = "0.5.1"
-
 [[deps.CatIndices]]
 deps = ["CustomUnitRanges", "OffsetArrays"]
 git-tree-sha1 = "a0f80a09780eed9b1d106a1bf62041c2efc995bc"
 uuid = "aafaddc9-749c-510e-ac4f-586e18779b91"
 version = "0.2.2"
-
-[[deps.ChainRulesCore]]
-deps = ["Compat", "LinearAlgebra", "SparseArrays"]
-git-tree-sha1 = "e30f2f4e20f7f186dc36529910beaedc60cfa644"
-uuid = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
-version = "1.16.0"
-
-[[deps.Clustering]]
-deps = ["Distances", "LinearAlgebra", "NearestNeighbors", "Printf", "Random", "SparseArrays", "Statistics", "StatsBase"]
-git-tree-sha1 = "a6e6ce44a1e0a781772fc795fb7343b1925e9898"
-uuid = "aaaa29a8-35af-508c-8bc3-b662a17a0fe5"
-version = "0.15.2"
 
 [[deps.CodecZlib]]
 deps = ["TranscodingStreams", "Zlib_jll"]
@@ -750,17 +668,6 @@ git-tree-sha1 = "d05d9e7b7aedff4e5b51a029dced05cfb6125781"
 uuid = "d38c429a-6771-53c6-b99e-75d170b6e991"
 version = "0.6.2"
 
-[[deps.CoordinateTransformations]]
-deps = ["LinearAlgebra", "StaticArrays"]
-git-tree-sha1 = "f9d7112bfff8a19a3a4ea4e03a8e6a91fe8456bf"
-uuid = "150eb455-5306-5404-9cee-2592286d6298"
-version = "0.6.3"
-
-[[deps.Crayons]]
-git-tree-sha1 = "249fe38abf76d48563e2f4556bebd215aa317e15"
-uuid = "a8cc5b0e-0ffa-5ad4-8c14-923d3ee1735f"
-version = "4.1.1"
-
 [[deps.CustomUnitRanges]]
 git-tree-sha1 = "1a3f97f907e6dd8983b744d2642651bb162a3f7a"
 uuid = "dc8bdbbb-1ca9-579f-8c36-e416f6a65cce"
@@ -771,22 +678,11 @@ git-tree-sha1 = "8da84edb865b0b5b0100c0666a9bc9a0b71c553c"
 uuid = "9a962f9c-6df0-11e9-0e5d-c546b8b5ee8a"
 version = "1.15.0"
 
-[[deps.DataFrames]]
-deps = ["Compat", "DataAPI", "Future", "InlineStrings", "InvertedIndices", "IteratorInterfaceExtensions", "LinearAlgebra", "Markdown", "Missings", "PooledArrays", "PrettyTables", "Printf", "REPL", "Random", "Reexport", "SentinelArrays", "SnoopPrecompile", "SortingAlgorithms", "Statistics", "TableTraits", "Tables", "Unicode"]
-git-tree-sha1 = "aa51303df86f8626a962fccb878430cdb0a97eee"
-uuid = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
-version = "1.5.0"
-
 [[deps.DataStructures]]
 deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
 git-tree-sha1 = "d1fff3a548102f48987a52a2e0d114fa97d730f0"
 uuid = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
 version = "0.18.13"
-
-[[deps.DataValueInterfaces]]
-git-tree-sha1 = "bfc1187b79289637fa0ef6d4436ebdfe6905cbd6"
-uuid = "e2d170a0-9d28-54be-80f0-106bbe20a464"
-version = "1.0.0"
 
 [[deps.Dates]]
 deps = ["Printf"]
@@ -798,29 +694,9 @@ git-tree-sha1 = "9e2f36d3c96a820c678f2f1f1782582fcf685bae"
 uuid = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 version = "1.9.1"
 
-[[deps.Distances]]
-deps = ["LinearAlgebra", "SparseArrays", "Statistics", "StatsAPI"]
-git-tree-sha1 = "49eba9ad9f7ead780bfb7ee319f962c811c6d3b2"
-uuid = "b4f34e82-e78d-54a5-968a-f98e89d6e8f7"
-version = "0.10.8"
-
 [[deps.Distributed]]
 deps = ["Random", "Serialization", "Sockets"]
 uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
-
-[[deps.Distributions]]
-deps = ["FillArrays", "LinearAlgebra", "PDMats", "Printf", "QuadGK", "Random", "SparseArrays", "SpecialFunctions", "Statistics", "StatsAPI", "StatsBase", "StatsFuns", "Test"]
-git-tree-sha1 = "c72970914c8a21b36bbc244e9df0ed1834a0360b"
-uuid = "31c24e10-a181-5473-b8eb-7969acd0382f"
-version = "0.25.95"
-
-    [deps.Distributions.extensions]
-    DistributionsChainRulesCoreExt = "ChainRulesCore"
-    DistributionsDensityInterfaceExt = "DensityInterface"
-
-    [deps.Distributions.weakdeps]
-    ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
-    DensityInterface = "b429d917-457f-4dbc-8f4c-0cc954292b1d"
 
 [[deps.DocStringExtensions]]
 deps = ["LibGit2"]
@@ -832,12 +708,6 @@ version = "0.9.3"
 deps = ["ArgTools", "FileWatching", "LibCURL", "NetworkOptions"]
 uuid = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 version = "1.6.0"
-
-[[deps.DualNumbers]]
-deps = ["Calculus", "NaNMath", "SpecialFunctions"]
-git-tree-sha1 = "5837a837389fccf076445fce071c8ddaea35a566"
-uuid = "fa6b7ba4-c1ee-5f82-b5fc-ecf0adba8f74"
-version = "0.6.8"
 
 [[deps.Expat_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -884,12 +754,6 @@ version = "1.16.1"
 [[deps.FileWatching]]
 uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
 
-[[deps.FillArrays]]
-deps = ["LinearAlgebra", "Random", "SparseArrays", "Statistics"]
-git-tree-sha1 = "ed569cb9e7e3590d5ba884da7edc50216aac5811"
-uuid = "1a297f60-69ca-5386-bcde-b61e274b549b"
-version = "1.1.0"
-
 [[deps.FixedPointNumbers]]
 deps = ["Statistics"]
 git-tree-sha1 = "335bfdceacc84c5cdf16aadc768aa5ddfc5383cc"
@@ -920,10 +784,6 @@ git-tree-sha1 = "aa31987c2ba8704e23c6c8ba8a4f769d5d7e4f91"
 uuid = "559328eb-81f9-559d-9380-de523a88c83c"
 version = "1.0.10+0"
 
-[[deps.Future]]
-deps = ["Random"]
-uuid = "9fa8497b-333b-5362-9e8d-4d0656e87820"
-
 [[deps.GLFW_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Libglvnd_jll", "Pkg", "Xorg_libXcursor_jll", "Xorg_libXi_jll", "Xorg_libXinerama_jll", "Xorg_libXrandr_jll"]
 git-tree-sha1 = "d972031d28c8c8d9d7b41a536ad7bb0c2579caca"
@@ -948,12 +808,6 @@ git-tree-sha1 = "9b02998aba7bf074d14de89f9d37ca24a1a0b046"
 uuid = "78b55507-aeef-58d4-861c-77aaff3498b1"
 version = "0.21.0+0"
 
-[[deps.Ghostscript_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "43ba3d3c82c18d88471cfd2924931658838c9d8f"
-uuid = "61579ee1-b43e-5ca0-a5da-69d92c66a64b"
-version = "9.55.0+4"
-
 [[deps.Glib_jll]]
 deps = ["Artifacts", "Gettext_jll", "JLLWrappers", "Libdl", "Libffi_jll", "Libiconv_jll", "Libmount_jll", "PCRE2_jll", "Pkg", "Zlib_jll"]
 git-tree-sha1 = "d3b3624125c1474292d0d8ed0f65554ac37ddb23"
@@ -972,12 +826,6 @@ git-tree-sha1 = "344bf40dcab1073aca04aa0df4fb092f920e4011"
 uuid = "3b182d85-2403-5c21-9c21-1e1f0cc25472"
 version = "1.3.14+0"
 
-[[deps.Graphs]]
-deps = ["ArnoldiMethod", "Compat", "DataStructures", "Distributed", "Inflate", "LinearAlgebra", "Random", "SharedArrays", "SimpleTraits", "SparseArrays", "Statistics"]
-git-tree-sha1 = "1cf1d7dcb4bc32d7b4a5add4232db3750c27ecb4"
-uuid = "86223c79-3864-5bf0-83f7-82e725a168b6"
-version = "1.8.0"
-
 [[deps.Grisu]]
 git-tree-sha1 = "53bb909d1151e57e2484c3d1b53e19552b887fb2"
 uuid = "42e2da0e-8278-4e71-bc24-59509adca0fe"
@@ -994,12 +842,6 @@ deps = ["Artifacts", "Cairo_jll", "Fontconfig_jll", "FreeType2_jll", "Glib_jll",
 git-tree-sha1 = "129acf094d168394e80ee1dc4bc06ec835e510a3"
 uuid = "2e76f6c2-a576-52d4-95c1-20adfe4de566"
 version = "2.8.1+1"
-
-[[deps.HypergeometricFunctions]]
-deps = ["DualNumbers", "LinearAlgebra", "OpenLibm_jll", "SpecialFunctions"]
-git-tree-sha1 = "84204eae2dd237500835990bcade263e27674a93"
-uuid = "34004b35-14d8-5ef3-9330-4cdb6864b03a"
-version = "0.3.16"
 
 [[deps.Hyperscript]]
 deps = ["Test"]
@@ -1019,6 +861,11 @@ git-tree-sha1 = "d75853a0bdbfb1ac815478bacd89cd27b550ace6"
 uuid = "b5f81e59-6552-4d32-b1f0-c071b021bf89"
 version = "0.2.3"
 
+[[deps.IfElse]]
+git-tree-sha1 = "debdd00ffef04665ccbb3e150747a77560e8fad1"
+uuid = "615f187c-cbe4-4ef1-ba3b-2fcf58d6d173"
+version = "0.1.1"
+
 [[deps.ImageAxes]]
 deps = ["AxisArrays", "ImageBase", "ImageCore", "Reexport", "SimpleTraits"]
 git-tree-sha1 = "c54b581a83008dc7f292e205f4c409ab5caa0f04"
@@ -1031,23 +878,11 @@ git-tree-sha1 = "b51bb8cae22c66d0f6357e3bcb6363145ef20835"
 uuid = "c817782e-172a-44cc-b673-b171935fbb9e"
 version = "0.1.5"
 
-[[deps.ImageContrastAdjustment]]
-deps = ["ImageCore", "ImageTransformations", "Parameters"]
-git-tree-sha1 = "0d75cafa80cf22026cea21a8e6cf965295003edc"
-uuid = "f332f351-ec65-5f6a-b3d1-319c6670881a"
-version = "0.3.10"
-
 [[deps.ImageCore]]
 deps = ["AbstractFFTs", "ColorVectorSpace", "Colors", "FixedPointNumbers", "Graphics", "MappedArrays", "MosaicViews", "OffsetArrays", "PaddedViews", "Reexport"]
 git-tree-sha1 = "acf614720ef026d38400b3817614c45882d75500"
 uuid = "a09fc81d-aa75-5fe9-8630-4744c3626534"
 version = "0.9.4"
-
-[[deps.ImageDistances]]
-deps = ["Distances", "ImageCore", "ImageMorphology", "LinearAlgebra", "Statistics"]
-git-tree-sha1 = "b1798a4a6b9aafb530f8f0c4a7b2eb5501e2f2a3"
-uuid = "51556ac3-7006-55f5-8cb3-34580c88182d"
-version = "0.2.16"
 
 [[deps.ImageFiltering]]
 deps = ["CatIndices", "ComputationalResources", "DataStructures", "FFTViews", "FFTW", "ImageBase", "ImageCore", "LinearAlgebra", "OffsetArrays", "Reexport", "SnoopPrecompile", "SparseArrays", "StaticArrays", "Statistics", "TiledIteration"]
@@ -1061,59 +896,17 @@ git-tree-sha1 = "342f789fd041a55166764c351da1710db97ce0e0"
 uuid = "82e4d734-157c-48bb-816b-45c225c6df19"
 version = "0.6.6"
 
-[[deps.ImageMagick]]
-deps = ["FileIO", "ImageCore", "ImageMagick_jll", "InteractiveUtils", "Libdl", "Pkg", "Random"]
-git-tree-sha1 = "5bc1cb62e0c5f1005868358db0692c994c3a13c6"
-uuid = "6218d12a-5da1-5696-b52f-db25d2ecc6d1"
-version = "1.2.1"
-
-[[deps.ImageMagick_jll]]
-deps = ["Artifacts", "Ghostscript_jll", "JLLWrappers", "JpegTurbo_jll", "Libdl", "Libtiff_jll", "Pkg", "Zlib_jll", "libpng_jll"]
-git-tree-sha1 = "124626988534986113cfd876e3093e4a03890f58"
-uuid = "c73af94c-d91f-53ed-93a7-00f77d67a9d7"
-version = "6.9.12+3"
-
 [[deps.ImageMetadata]]
 deps = ["AxisArrays", "ImageAxes", "ImageBase", "ImageCore"]
 git-tree-sha1 = "36cbaebed194b292590cba2593da27b34763804a"
 uuid = "bc367c6b-8a6b-528e-b4bd-a4b897500b49"
 version = "0.9.8"
 
-[[deps.ImageMorphology]]
-deps = ["ImageCore", "LinearAlgebra", "Requires", "TiledIteration"]
-git-tree-sha1 = "e7c68ab3df4a75511ba33fc5d8d9098007b579a8"
-uuid = "787d08f9-d448-5407-9aad-5290dd7ab264"
-version = "0.3.2"
-
-[[deps.ImageQualityIndexes]]
-deps = ["ImageContrastAdjustment", "ImageCore", "ImageDistances", "ImageFiltering", "LazyModules", "OffsetArrays", "PrecompileTools", "Statistics"]
-git-tree-sha1 = "bcc2f0db769e5d42a67f501ec6781401a4389e8f"
-uuid = "2996bd0c-7a13-11e9-2da2-2f5ce47296a9"
-version = "0.3.5"
-
-[[deps.ImageSegmentation]]
-deps = ["Clustering", "DataStructures", "Distances", "Graphs", "ImageCore", "ImageFiltering", "ImageMorphology", "LinearAlgebra", "MetaGraphs", "RegionTrees", "SimpleWeightedGraphs", "StaticArrays", "Statistics"]
-git-tree-sha1 = "44664eea5408828c03e5addb84fa4f916132fc26"
-uuid = "80713f31-8817-5129-9cf8-209ff8fb23e1"
-version = "1.8.1"
-
 [[deps.ImageShow]]
 deps = ["Base64", "ColorSchemes", "FileIO", "ImageBase", "ImageCore", "OffsetArrays", "StackViews"]
 git-tree-sha1 = "ce28c68c900eed3cdbfa418be66ed053e54d4f56"
 uuid = "4e3cecfd-b093-5904-9786-8bbb286a6a31"
 version = "0.3.7"
-
-[[deps.ImageTransformations]]
-deps = ["AxisAlgorithms", "ColorVectorSpace", "CoordinateTransformations", "ImageBase", "ImageCore", "Interpolations", "OffsetArrays", "Rotations", "StaticArrays"]
-git-tree-sha1 = "8717482f4a2108c9358e5c3ca903d3a6113badc9"
-uuid = "02fcd773-0e25-5acc-982a-7f6622650795"
-version = "0.9.5"
-
-[[deps.Images]]
-deps = ["Base64", "FileIO", "Graphics", "ImageAxes", "ImageBase", "ImageContrastAdjustment", "ImageCore", "ImageDistances", "ImageFiltering", "ImageIO", "ImageMagick", "ImageMetadata", "ImageMorphology", "ImageQualityIndexes", "ImageSegmentation", "ImageShow", "ImageTransformations", "IndirectArrays", "IntegralArrays", "Random", "Reexport", "SparseArrays", "StaticArrays", "Statistics", "StatsBase", "TiledIteration"]
-git-tree-sha1 = "5fa9f92e1e2918d9d1243b1131abe623cdf98be7"
-uuid = "916415d5-f1e6-5110-898d-aaa5f9f070e0"
-version = "0.25.3"
 
 [[deps.Imath_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
@@ -1131,18 +924,6 @@ git-tree-sha1 = "5cd07aab533df5170988219191dfad0519391428"
 uuid = "d25df0c9-e2be-5dd7-82c8-3ad0b3e990b9"
 version = "0.1.3"
 
-[[deps.InlineStrings]]
-deps = ["Parsers"]
-git-tree-sha1 = "9cc2baf75c6d09f9da536ddf58eb2f29dedaf461"
-uuid = "842dd82b-1e85-43dc-bf29-5d0ee9dffc48"
-version = "1.4.0"
-
-[[deps.IntegralArrays]]
-deps = ["ColorTypes", "FixedPointNumbers", "IntervalSets"]
-git-tree-sha1 = "be8e690c3973443bec584db3346ddc904d4884eb"
-uuid = "1d092043-8f09-5a30-832f-7509e371ab51"
-version = "0.1.5"
-
 [[deps.IntelOpenMP_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "0cb9352ef2e01574eeebdb102948a58740dcaf83"
@@ -1153,22 +934,11 @@ version = "2023.1.0+0"
 deps = ["Markdown"]
 uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 
-[[deps.Interpolations]]
-deps = ["Adapt", "AxisAlgorithms", "ChainRulesCore", "LinearAlgebra", "OffsetArrays", "Random", "Ratios", "Requires", "SharedArrays", "SparseArrays", "StaticArrays", "WoodburyMatrices"]
-git-tree-sha1 = "721ec2cf720536ad005cb38f50dbba7b02419a15"
-uuid = "a98d9a8b-a2ab-59e6-89dd-64a1c18fca59"
-version = "0.14.7"
-
 [[deps.IntervalSets]]
 deps = ["Dates", "Random", "Statistics"]
 git-tree-sha1 = "16c0cc91853084cb5f58a78bd209513900206ce6"
 uuid = "8197267c-284f-5f27-9208-e0e47529a953"
 version = "0.7.4"
-
-[[deps.InvertedIndices]]
-git-tree-sha1 = "0dc7b50b8d436461be01300fd8cd45aa0274b038"
-uuid = "41ab1584-1d38-5bbf-9106-f11c6c58b48f"
-version = "1.3.0"
 
 [[deps.IrrationalConstants]]
 git-tree-sha1 = "630b497eafcc20001bba38a4651b327dcfc491d2"
@@ -1179,17 +949,6 @@ version = "0.2.2"
 git-tree-sha1 = "fa6287a4469f5e048d763df38279ee729fbd44e5"
 uuid = "c8e1da08-722c-5040-9ed9-7db0dc04731e"
 version = "1.4.0"
-
-[[deps.IteratorInterfaceExtensions]]
-git-tree-sha1 = "a3f24677c21f5bbe9d2a714f95dcd58337fb2856"
-uuid = "82899510-4779-5014-852e-03e436cf321d"
-version = "1.0.0"
-
-[[deps.JLD2]]
-deps = ["FileIO", "MacroTools", "Mmap", "OrderedCollections", "Pkg", "Printf", "Reexport", "Requires", "TranscodingStreams", "UUIDs"]
-git-tree-sha1 = "42c17b18ced77ff0be65957a591d34f4ed57c631"
-uuid = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
-version = "0.4.31"
 
 [[deps.JLFzf]]
 deps = ["Pipe", "REPL", "Random", "fzf_jll"]
@@ -1220,12 +979,6 @@ deps = ["Artifacts", "JLLWrappers", "Libdl"]
 git-tree-sha1 = "6f2675ef130a300a112286de91973805fcc5ffbc"
 uuid = "aacddb02-875f-59d6-b918-886e6ef4fbf8"
 version = "2.1.91+0"
-
-[[deps.KernelDensity]]
-deps = ["Distributions", "DocStringExtensions", "FFTW", "Interpolations", "StatsBase"]
-git-tree-sha1 = "90442c50e202a5cdf21a7899c66b240fdef14035"
-uuid = "5ab0869b-81aa-558d-bb23-cbf5423bbe9b"
-version = "0.6.7"
 
 [[deps.LAME_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -1414,12 +1167,6 @@ git-tree-sha1 = "c13304c81eec1ed3af7fc20e75fb6b26092a1102"
 uuid = "442fdcdd-2543-5da2-b0f3-8c86c306513e"
 version = "0.3.2"
 
-[[deps.MetaGraphs]]
-deps = ["Graphs", "JLD2", "Random"]
-git-tree-sha1 = "1130dbe1d5276cb656f6e1094ce97466ed700e5a"
-uuid = "626554b9-1ddb-594c-aa3c-2596fe9399a5"
-version = "0.7.2"
-
 [[deps.Missings]]
 deps = ["DataAPI"]
 git-tree-sha1 = "f66bdc5de519e8f8ae43bdc598782d35a25b1272"
@@ -1439,23 +1186,11 @@ version = "0.3.4"
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
 version = "2022.10.11"
 
-[[deps.MultivariateStats]]
-deps = ["Arpack", "LinearAlgebra", "SparseArrays", "Statistics", "StatsAPI", "StatsBase"]
-git-tree-sha1 = "68bf5103e002c44adfd71fea6bd770b3f0586843"
-uuid = "6f286f6a-111f-5878-ab1e-185364afe411"
-version = "0.10.2"
-
 [[deps.NaNMath]]
 deps = ["OpenLibm_jll"]
 git-tree-sha1 = "0877504529a3e5c3343c6f8b4c0381e57e4387e4"
 uuid = "77ba4419-2d1f-58cd-9bb1-8ffee604a2e3"
 version = "1.0.2"
-
-[[deps.NearestNeighbors]]
-deps = ["Distances", "StaticArrays"]
-git-tree-sha1 = "2c3726ceb3388917602169bed973dbc97f1b51a8"
-uuid = "b8a86587-4115-5ab1-83bc-aa920d37bbce"
-version = "0.4.13"
 
 [[deps.Netpbm]]
 deps = ["FileIO", "ImageCore", "ImageMetadata"]
@@ -1466,11 +1201,6 @@ version = "1.1.0"
 [[deps.NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
 version = "1.2.0"
-
-[[deps.Observables]]
-git-tree-sha1 = "6862738f9796b3edc1c09d0890afce4eca9e7e93"
-uuid = "510215fc-4207-5dde-b226-833fc4488ee2"
-version = "0.5.4"
 
 [[deps.OffsetArrays]]
 deps = ["Adapt"]
@@ -1540,12 +1270,6 @@ deps = ["Artifacts", "Libdl"]
 uuid = "efcefdf7-47ab-520b-bdef-62a2eaa19f15"
 version = "10.42.0+0"
 
-[[deps.PDMats]]
-deps = ["LinearAlgebra", "SparseArrays", "SuiteSparse"]
-git-tree-sha1 = "67eae2738d63117a196f497d7db789821bce61d1"
-uuid = "90014a1f-27ba-587c-ab20-58faa44d9150"
-version = "0.11.17"
-
 [[deps.PNGFiles]]
 deps = ["Base64", "CEnum", "ImageCore", "IndirectArrays", "OffsetArrays", "libpng_jll"]
 git-tree-sha1 = "f809158b27eba0c18c269cf2a2be6ed751d3e81d"
@@ -1557,12 +1281,6 @@ deps = ["OffsetArrays"]
 git-tree-sha1 = "0fac6313486baae819364c52b4f483450a9d793f"
 uuid = "5432bcbf-9aad-5242-b902-cca2824c8663"
 version = "0.5.12"
-
-[[deps.Parameters]]
-deps = ["OrderedCollections", "UnPack"]
-git-tree-sha1 = "34c0e9ad262e5f7fc75b10a9952ca7692cfc5fbe"
-uuid = "d96e819e-fc66-5662-9728-84c9c7592b0a"
-version = "0.12.3"
 
 [[deps.Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
@@ -1630,12 +1348,6 @@ git-tree-sha1 = "b478a748be27bd2f2c73a7690da219d0844db305"
 uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 version = "0.7.51"
 
-[[deps.PooledArrays]]
-deps = ["DataAPI", "Future"]
-git-tree-sha1 = "a6062fe4063cdafe78f4a0a81cfffb89721b30e7"
-uuid = "2dfb63ee-cc39-5dd5-95bd-886bf059d720"
-version = "1.4.2"
-
 [[deps.PrecompileTools]]
 deps = ["Preferences"]
 git-tree-sha1 = "259e206946c293698122f63e2b513a7c99a244e8"
@@ -1647,12 +1359,6 @@ deps = ["TOML"]
 git-tree-sha1 = "7eb1686b4f04b82f96ed7a4ea5890a4f0c7a09f1"
 uuid = "21216c6a-2e73-6563-6e65-726566657250"
 version = "1.4.0"
-
-[[deps.PrettyTables]]
-deps = ["Crayons", "Formatting", "LaTeXStrings", "Markdown", "Reexport", "StringManipulation", "Tables"]
-git-tree-sha1 = "213579618ec1f42dea7dd637a42785a608b1ea9c"
-uuid = "08abe8d2-0d0c-5749-adfa-8a2ac140af0d"
-version = "2.2.4"
 
 [[deps.Printf]]
 deps = ["Unicode"]
@@ -1676,18 +1382,6 @@ git-tree-sha1 = "0c03844e2231e12fda4d0086fd7cbe4098ee8dc5"
 uuid = "ea2cea3b-5b76-57ae-a6ef-0a8af62496e1"
 version = "5.15.3+2"
 
-[[deps.QuadGK]]
-deps = ["DataStructures", "LinearAlgebra"]
-git-tree-sha1 = "6ec7ac8412e83d57e313393220879ede1740f9ee"
-uuid = "1fd47b50-473d-5c70-9696-f719f8f3bcdc"
-version = "2.8.2"
-
-[[deps.Quaternions]]
-deps = ["LinearAlgebra", "Random", "RealDot"]
-git-tree-sha1 = "da095158bdc8eaccb7890f9884048555ab771019"
-uuid = "94ee1d12-ae83-5a48-8b1c-48b8ff168ae0"
-version = "0.7.4"
-
 [[deps.REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
 uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
@@ -1700,22 +1394,6 @@ uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 git-tree-sha1 = "b9039e93773ddcfc828f12aadf7115b4b4d225f5"
 uuid = "b3c3ace0-ae52-54e7-9d0b-2c1406fd6b9d"
 version = "0.3.2"
-
-[[deps.Ratios]]
-deps = ["Requires"]
-git-tree-sha1 = "6d7bb727e76147ba18eed998700998e17b8e4911"
-uuid = "c84ed2f1-dad5-54f0-aa8e-dbefe2724439"
-version = "0.4.4"
-weakdeps = ["FixedPointNumbers"]
-
-    [deps.Ratios.extensions]
-    RatiosFixedPointNumbersExt = "FixedPointNumbers"
-
-[[deps.RealDot]]
-deps = ["LinearAlgebra"]
-git-tree-sha1 = "9f0a1b71baaf7650f4fa8a1d168c7fb6ee41f0c9"
-uuid = "c1ae055f-0cd5-4b69-90a6-9a35b1a98df9"
-version = "0.1.0"
 
 [[deps.RecipesBase]]
 deps = ["PrecompileTools"]
@@ -1734,12 +1412,6 @@ git-tree-sha1 = "45e428421666073eab6f2da5c9d310d99bb12f9b"
 uuid = "189a3867-3050-52da-a836-e630ba90ab69"
 version = "1.2.2"
 
-[[deps.RegionTrees]]
-deps = ["IterTools", "LinearAlgebra", "StaticArrays"]
-git-tree-sha1 = "4618ed0da7a251c7f92e869ae1a19c74a7d2a7f9"
-uuid = "dee08c22-ab7f-5625-9660-a9af2021b33f"
-version = "0.3.2"
-
 [[deps.RelocatableFolders]]
 deps = ["SHA", "Scratch"]
 git-tree-sha1 = "90bc7a7c96410424509e4263e277e43250c05691"
@@ -1752,24 +1424,6 @@ git-tree-sha1 = "838a3a4188e2ded87a4f9f184b4b0d78a1e91cb7"
 uuid = "ae029012-a4dd-5104-9daa-d747884805df"
 version = "1.3.0"
 
-[[deps.Rmath]]
-deps = ["Random", "Rmath_jll"]
-git-tree-sha1 = "f65dcb5fa46aee0cf9ed6274ccbd597adc49aa7b"
-uuid = "79098fc4-a85e-5d69-aa6a-4863f24498fa"
-version = "0.7.1"
-
-[[deps.Rmath_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "6ed52fdd3382cf21947b15e8870ac0ddbff736da"
-uuid = "f50d1b31-88e8-58de-be2c-1cc44531875f"
-version = "0.4.0+0"
-
-[[deps.Rotations]]
-deps = ["LinearAlgebra", "Quaternions", "Random", "StaticArrays"]
-git-tree-sha1 = "54ccb4dbab4b1f69beb255a2c0ca5f65a9c82f08"
-uuid = "6038ab10-8711-5258-84ad-4b1120ba62dc"
-version = "1.5.1"
-
 [[deps.SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 version = "0.7.0"
@@ -1780,18 +1434,8 @@ git-tree-sha1 = "30449ee12237627992a99d5e30ae63e4d78cd24a"
 uuid = "6c6a2e73-6563-6170-7368-637461726353"
 version = "1.2.0"
 
-[[deps.SentinelArrays]]
-deps = ["Dates", "Random"]
-git-tree-sha1 = "04bdff0b09c65ff3e06a05e3eb7b120223da3d39"
-uuid = "91c51154-3ec4-41a3-a24f-3f23e20d615c"
-version = "1.4.0"
-
 [[deps.Serialization]]
 uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
-
-[[deps.SharedArrays]]
-deps = ["Distributed", "Mmap", "Random", "Serialization"]
-uuid = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
 
 [[deps.Showoff]]
 deps = ["Dates", "Grisu"]
@@ -1809,12 +1453,6 @@ deps = ["InteractiveUtils", "MacroTools"]
 git-tree-sha1 = "5d7e3f4e11935503d3ecaf7186eac40602e7d231"
 uuid = "699a6c99-e7fa-54fc-8d76-47d257e15c1d"
 version = "0.9.4"
-
-[[deps.SimpleWeightedGraphs]]
-deps = ["Graphs", "LinearAlgebra", "Markdown", "SparseArrays"]
-git-tree-sha1 = "4b33e0e081a825dbfaf314decf58fa47e53d6acb"
-uuid = "47aef6b3-ad0c-573a-a1e2-d07658019622"
-version = "1.4.0"
 
 [[deps.Sixel]]
 deps = ["Dates", "FileIO", "ImageCore", "IndirectArrays", "OffsetArrays", "REPL", "libsixel_jll"]
@@ -1846,16 +1484,35 @@ deps = ["IrrationalConstants", "LogExpFunctions", "OpenLibm_jll", "OpenSpecFun_j
 git-tree-sha1 = "ef28127915f4229c971eb43f3fc075dd3fe91880"
 uuid = "276daf66-3868-5448-9aa4-cd146d93841b"
 version = "2.2.0"
-weakdeps = ["ChainRulesCore"]
 
     [deps.SpecialFunctions.extensions]
     SpecialFunctionsChainRulesCoreExt = "ChainRulesCore"
+
+    [deps.SpecialFunctions.weakdeps]
+    ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
 
 [[deps.StackViews]]
 deps = ["OffsetArrays"]
 git-tree-sha1 = "46e589465204cd0c08b4bd97385e4fa79a0c770c"
 uuid = "cae243ae-269e-4f55-b966-ac2d0dc13c15"
 version = "0.1.1"
+
+[[deps.Static]]
+deps = ["IfElse"]
+git-tree-sha1 = "dbde6766fc677423598138a5951269432b0fcc90"
+uuid = "aedffcd0-7271-4cad-89d0-dc628f76c6d3"
+version = "0.8.7"
+
+[[deps.StaticArrayInterface]]
+deps = ["ArrayInterface", "Compat", "IfElse", "LinearAlgebra", "Requires", "SnoopPrecompile", "SparseArrays", "Static", "SuiteSparse"]
+git-tree-sha1 = "33040351d2403b84afce74dae2e22d3f5b18edcb"
+uuid = "0d7ed370-da01-4f52-bd93-41d350b8b718"
+version = "1.4.0"
+weakdeps = ["OffsetArrays", "StaticArrays"]
+
+    [deps.StaticArrayInterface.extensions]
+    StaticArrayInterfaceOffsetArraysExt = "OffsetArrays"
+    StaticArrayInterfaceStaticArraysExt = "StaticArrays"
 
 [[deps.StaticArrays]]
 deps = ["LinearAlgebra", "Random", "StaticArraysCore", "Statistics"]
@@ -1885,31 +1542,6 @@ git-tree-sha1 = "75ebe04c5bed70b91614d684259b661c9e6274a4"
 uuid = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 version = "0.34.0"
 
-[[deps.StatsFuns]]
-deps = ["HypergeometricFunctions", "IrrationalConstants", "LogExpFunctions", "Reexport", "Rmath", "SpecialFunctions"]
-git-tree-sha1 = "f625d686d5a88bcd2b15cd81f18f98186fdc0c9a"
-uuid = "4c63d2b9-4356-54db-8cca-17b64c39e42c"
-version = "1.3.0"
-
-    [deps.StatsFuns.extensions]
-    StatsFunsChainRulesCoreExt = "ChainRulesCore"
-    StatsFunsInverseFunctionsExt = "InverseFunctions"
-
-    [deps.StatsFuns.weakdeps]
-    ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
-    InverseFunctions = "3587e190-3f89-42d0-90ee-14403ec27112"
-
-[[deps.StatsPlots]]
-deps = ["AbstractFFTs", "Clustering", "DataStructures", "Distributions", "Interpolations", "KernelDensity", "LinearAlgebra", "MultivariateStats", "NaNMath", "Observables", "Plots", "RecipesBase", "RecipesPipeline", "Reexport", "StatsBase", "TableOperations", "Tables", "Widgets"]
-git-tree-sha1 = "14ef622cf28b05e38f8af1de57bc9142b03fbfe3"
-uuid = "f3b207a7-027a-5e70-b257-86293d7955fd"
-version = "0.15.5"
-
-[[deps.StringManipulation]]
-git-tree-sha1 = "46da2434b41f41ac3594ee9816ce5541c6096123"
-uuid = "892a3eda-7b42-436c-8928-eab12a02cf0e"
-version = "0.3.0"
-
 [[deps.SuiteSparse]]
 deps = ["Libdl", "LinearAlgebra", "Serialization", "SparseArrays"]
 uuid = "4607b0f0-06f3-5cda-b6b1-a6196a1729e9"
@@ -1923,24 +1555,6 @@ version = "5.10.1+6"
 deps = ["Dates"]
 uuid = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
 version = "1.0.3"
-
-[[deps.TableOperations]]
-deps = ["SentinelArrays", "Tables", "Test"]
-git-tree-sha1 = "e383c87cf2a1dc41fa30c093b2a19877c83e1bc1"
-uuid = "ab02a1b2-a7df-11e8-156e-fb1833f50b87"
-version = "1.2.0"
-
-[[deps.TableTraits]]
-deps = ["IteratorInterfaceExtensions"]
-git-tree-sha1 = "c06b2f539df1c6efa794486abfb6ed2022561a39"
-uuid = "3783bdb8-4a98-5b6b-af9a-565f29a5fe9c"
-version = "1.0.1"
-
-[[deps.Tables]]
-deps = ["DataAPI", "DataValueInterfaces", "IteratorInterfaceExtensions", "LinearAlgebra", "OrderedCollections", "TableTraits", "Test"]
-git-tree-sha1 = "1544b926975372da01227b382066ab70e574a3ec"
-uuid = "bd369af6-aec1-5ad0-b16a-f7cc5008161c"
-version = "1.10.1"
 
 [[deps.Tar]]
 deps = ["ArgTools", "SHA"]
@@ -1964,10 +1578,10 @@ uuid = "731e570b-9d59-4bfa-96dc-6df516fadf69"
 version = "0.6.4"
 
 [[deps.TiledIteration]]
-deps = ["OffsetArrays"]
-git-tree-sha1 = "5683455224ba92ef59db72d10690690f4a8dc297"
+deps = ["OffsetArrays", "StaticArrayInterface"]
+git-tree-sha1 = "1176cc31e867217b06928e2f140c90bd1bc88283"
 uuid = "06e1c1a7-607b-532d-9fad-de7d9aa2abac"
-version = "0.3.1"
+version = "0.5.0"
 
 [[deps.TranscodingStreams]]
 deps = ["Random", "Test"]
@@ -1988,11 +1602,6 @@ version = "1.4.2"
 [[deps.UUIDs]]
 deps = ["Random", "SHA"]
 uuid = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
-
-[[deps.UnPack]]
-git-tree-sha1 = "387c1f73762231e86e0c9c5443ce3b4a0a9a0c2b"
-uuid = "3a884ed6-31ef-47d7-9d2a-63182c4928ed"
-version = "1.0.2"
 
 [[deps.Unicode]]
 uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
@@ -2037,18 +1646,6 @@ deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
 git-tree-sha1 = "4528479aa01ee1b3b4cd0e6faef0e04cf16466da"
 uuid = "2381bf8a-dfd0-557d-9999-79630e7b1b91"
 version = "1.25.0+0"
-
-[[deps.Widgets]]
-deps = ["Colors", "Dates", "Observables", "OrderedCollections"]
-git-tree-sha1 = "fcdae142c1cfc7d89de2d11e08721d0f2f86c98a"
-uuid = "cc8bc4a8-27d6-5769-a93b-9d913e69aa62"
-version = "0.6.6"
-
-[[deps.WoodburyMatrices]]
-deps = ["LinearAlgebra", "SparseArrays"]
-git-tree-sha1 = "de67fa59e33ad156a590055375a30b23c40299d3"
-uuid = "efce3f68-66dc-5838-9240-27a6d6f5f9b6"
-version = "0.5.5"
 
 [[deps.XML2_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Libiconv_jll", "Pkg", "Zlib_jll"]
@@ -2276,39 +1873,92 @@ version = "1.4.1+0"
 """
 
 # ╔═╡ Cell order:
-# ╠═6b9987e0-ff94-11ed-3d77-9595d9455b4b
-# ╠═2f4a2280-2b7e-4bbf-a6f4-43f0405c9bb8
-# ╟─7d09c2ba-2aa4-4b96-9795-d15ba01cdd5f
-# ╟─e5f544fd-820c-4a4a-af34-b71ba7bc1295
-# ╠═c558c796-a2ff-4f36-939a-658198c177ab
-# ╠═1b5efa7e-b348-4c44-b5ab-c5d8c597130b
-# ╟─e8a3c3eb-dc24-43cb-b030-b7551a77ec38
-# ╟─25157634-a1f8-4847-8961-d6d53200ed84
-# ╟─ad6480d0-4bfb-4b17-b4ea-9649e13566a5
-# ╠═3a8be0bd-c66b-4055-8056-37331376f4bf
-# ╠═487327af-6025-4968-b23d-33f960d377dd
-# ╠═bffefe9a-f336-4159-b6f5-0b366f1b1558
-# ╟─67cb85a9-5cbb-4fdd-beab-f786b87c4eb2
-# ╠═3bc45de4-e4d7-4de4-998c-b43cde7f04e2
-# ╠═aaa11ea2-b3cc-460d-99db-a4bba337c189
-# ╟─b9ead3c3-8e9f-4ba0-976c-33de0f716835
-# ╟─46497747-ed46-4a0b-85bb-e80684ae7e5f
-# ╟─2e9bcffd-0af6-455d-b04e-a34f699ec08b
-# ╠═823150e8-5b8a-4ac1-865b-497bb876bd03
-# ╠═b079cb75-cb83-41cc-a048-f8127b3755bd
-# ╠═684fa0a2-049e-4f5f-83d8-e93ad7eba035
-# ╟─0ccdd099-d011-4a04-9b02-c37400084ca2
-# ╟─746927a5-1ca6-49dd-8e92-51a34e3eb6f7
-# ╟─f87d0b0c-e06e-463b-950a-770e067db417
-# ╠═324d2e0d-5dca-4a10-99c9-c266e2b1cb54
-# ╠═7b12b0c1-3e8d-48db-9f00-5cb116f7ea16
-# ╠═10799197-9c6f-44eb-948a-01127ec0d7b2
-# ╠═8e972138-046c-4583-b4db-2ba15a186612
-# ╠═7271f4d9-254b-435b-8e36-594ee5f9397a
-# ╠═44213409-2b8d-4c0d-af97-d734177990da
-# ╟─e81b77ae-cdb4-41bd-ba72-1810fbe8be12
-# ╟─0ff9cebd-0f31-4b14-9fad-884243406884
-# ╠═495eb409-cd1b-42a7-a558-0bc1177a36e8
-# ╠═046df35d-6153-4570-aff7-6af9068898b0
+# ╟─8d389d80-74a1-11eb-3452-f38eff03483b
+# ╟─9f1a72da-7532-11eb-079c-b7baccc6614a
+# ╠═86f770fe-74a1-11eb-01f7-5b3ecf057124
+# ╟─4d332c7e-74f8-11eb-1f49-a518246d1db8
+# ╟─f7689472-74a8-11eb-32a1-8379ae5c88e1
+# ╟─0f2f9004-74a8-11eb-01a2-973dbe80f166
+# ╠═962143a8-74a7-11eb-26c3-c10548f326ee
+# ╠═c2964c80-74f8-11eb-3a74-b1bdd9e4ae02
+# ╠═caf488d8-74f8-11eb-0075-0586d66c23c1
+# ╠═02dd4a02-74f9-11eb-3d1e-53d83cee8062
+# ╠═10ef13d2-74f9-11eb-2849-fb9f83db6ae9
+# ╠═b76a56f4-74a9-11eb-1739-fbfc5e4958e8
+# ╠═77fbf18a-74f9-11eb-1d9e-3f9d2097388f
+# ╠═bcb69db6-74f9-11eb-100a-29d1d23963ab
+# ╟─fc70c4d2-74f8-11eb-33f5-539c278ed6b6
+# ╟─2f7cde78-74a2-11eb-1e2f-81b5b2465819
+# ╟─e099815e-74a1-11eb-1541-033f6abe9f8e
+# ╟─e82a4dd8-74b0-11eb-1108-6b09e67a80c1
+# ╟─39552b7a-74fb-11eb-04e0-3981ada52c92
+# ╠═14f2b85e-74ad-11eb-2682-d9de646aedf3
+# ╠═0ebb538b-1c72-4d0c-af8b-de9277e35ed5
+# ╠═516e73e2-74fb-11eb-213e-9dbd9472e0db
+# ╠═b5d0ef90-74fb-11eb-3126-792f954c7be7
+# ╠═754c3704-74fb-11eb-1199-2b9798d7251f
+# ╠═9eb917ba-74fb-11eb-0527-15e981ce9c6a
+# ╟─486d3022-74ff-11eb-1865-e15436bd9aad
+# ╟─b9da7332-74ff-11eb-241b-fb87e77d646a
+# ╟─339ccfca-74b1-11eb-0c35-774da6b189ed
+# ╟─8711c698-7500-11eb-2505-d35a4de169b4
+# ╟─84350cb8-7501-11eb-095e-8f1a7e015f25
+# ╠═91a1bca4-74aa-11eb-3917-1dfd73d0ad9c
+# ╠═8e698bdc-7501-11eb-1d2e-c336ccbde0b0
+# ╠═ab2bc924-7501-11eb-03ba-8dfc1ffe3f36
+# ╟─e11d6300-7501-11eb-239a-135596309d20
+# ╟─9a66c07e-7503-11eb-3127-7fce91b3a24a
+# ╟─47d40406-7502-11eb-2f43-cd5c848f25a6
+# ╠═9ce0b980-74aa-11eb-0678-01209451fb65
+# ╟─68821bf4-7502-11eb-0d3c-03d7a00fdba4
+# ╠═447e7c9e-74b1-11eb-27ea-71aa4338b11a
+# ╟─c9dff6f4-7503-11eb-2715-0bf9d3ece9e1
+# ╟─d834103c-7503-11eb-1a94-1fbad43801ff
+# ╠═aa541288-74aa-11eb-1edc-ab6d7786f271
+# ╠═c9dcac48-74aa-11eb-31a6-23357180c1c8
+# ╟─30b1c1f0-7504-11eb-1be7-a9463caea809
+# ╟─1fe70e38-751b-11eb-25b8-c741e1726613
+# ╟─215291ec-74a2-11eb-3476-0dab43fd5a5e
+# ╟─61db42c6-7505-11eb-1ddf-05e906234572
+# ╟─cdd4cffc-74b1-11eb-1aa4-e333cb8601d1
+# ╟─7489a570-74a3-11eb-1d0b-09d41604ffe1
+# ╟─8a8e3f5e-74b2-11eb-3eed-e5468e573e45
+# ╟─5864294a-74a5-11eb-23ef-f38a582f2c2d
+# ╟─fa9c465e-74b2-11eb-2f3c-4be0e7f93bb5
+# ╟─4fab4616-74b0-11eb-0088-6b50237d7d54
+# ╟─275bf7ac-74b3-11eb-32c3-cda1e4f1f8c2
+# ╟─537c54e4-74b3-11eb-341f-951b4a1e0b40
+# ╟─c6e340ee-751e-11eb-3ca7-69595b3693b7
+# ╠═54448d18-7528-11eb-209a-9717affa0d02
+# ╠═acbc563a-7528-11eb-3c38-75a5b66c9241
+# ╠═995392ee-752a-11eb-3394-0de331e24f40
+# ╠═d22903d6-7529-11eb-2dcd-132cd27104c2
+# ╟─844ed844-74b3-11eb-2ee1-2de664b26bc6
+# ╟─4ffe927c-74b4-11eb-23a7-a18d7e51c75b
+# ╟─91109e5c-74b3-11eb-1f31-c50e436bc6e0
+# ╠═34109062-7525-11eb-10b3-d59d3a6dfda6
+# ╟─9ab89a3a-7525-11eb-186d-29e4b61deb7f
+# ╠═50034058-7525-11eb-345b-3334e71ac50e
+# ╟─c0aec7ae-7505-11eb-2822-a151aad48fc9
+# ╟─628aea22-7521-11eb-2edc-39ac62683aea
+# ╠═99eeb11c-7524-11eb-2154-df7d84976445
+# ╠═2ddcfb90-7520-11eb-2df7-172d07118b7e
+# ╠═d62496b0-7524-11eb-3410-7177e7c7f8eb
+# ╠═6aa8a76e-7524-11eb-22b5-015aab4191b0
+# ╟─ee93eeb2-7524-11eb-342d-0343d8aebf59
+# ╟─662d73b6-74b3-11eb-333d-f1323a001000
+# ╠═d127303a-7521-11eb-3507-7341a416211f
+# ╠═d4581b56-7522-11eb-2c15-991c0c790e67
+# ╠═40c15c3a-7523-11eb-1f2a-bd90b127dad2
+# ╠═08642690-7523-11eb-00dd-63d4cf6513dc
+# ╠═deac4cf2-7523-11eb-2832-7b9d31389b08
+# ╠═32887dfa-7524-11eb-35cd-051eff594fa9
+# ╟─0f765670-7506-11eb-2a37-931b15bb387f
+# ╟─82737d28-7507-11eb-1e39-c7dc12e18882
+# ╟─40d538b2-7506-11eb-116b-efeb16b3478d
+# ╟─df060a88-7507-11eb-034b-5346d67a0e0d
+# ╟─60c8db60-7506-11eb-1468-c989809c933a
+# ╟─8ed0be60-7506-11eb-2769-5f7da1c66243
+# ╟─b9d636da-7506-11eb-37a6-3116d47b2787
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
