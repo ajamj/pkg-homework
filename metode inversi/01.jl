@@ -70,10 +70,92 @@ md"""
 > Sir Arthur Conan Doyle (1887)"""
 
 # ╔═╡ 11338610-a29b-4975-af5e-33ba3600b273
+md"""
+Kutipan itu berasal dari salah satu tokoh paling terkenal dalam sejarah ilmu pengetahuan, yaitu Sir Arthur Conan Doyle. Dia adalah penulis yang menciptakan karakter Sherlock Holmes, detektif fiksi yang sangat terkenal.
 
+Kutipan tersebut mencerminkan salah satu kemampuan unik dari Sherlock Holmes, yaitu kemampuannya untuk "reasoning backward" atau berpikir mundur. Dalam konteks kutipan tersebut, Sherlock Holmes mengatakan bahwa kebanyakan orang, jika diberi rangkaian kejadian, mereka akan bisa memprediksi hasil akhirnya. Namun, hanya sedikit orang yang, jika diberi hasil akhir, dapat menemukan dengan kesadaran dalam diri mereka sendiri langkah-langkah apa yang mengarah ke hasil tersebut.
+
+Jadi, dalam kata lain, kemampuan "reasoning backward" adalah kemampuan untuk menganalisis hasil akhir dan memahami langkah-langkah yang diperlukan untuk mencapai hasil tersebut. Sherlock Holmes menggunakan kemampuan ini untuk memecahkan misteri dan mencari petunjuk yang tidak terlihat oleh orang lain.
+
+Kutipan tersebut menunjukkan betapa hebatnya kemampuan pemikiran mundur ini dalam mengungkapkan kebenaran dan menemukan solusi. Hal ini juga dapat menjadi inspirasi bagi kita untuk melatih kemampuan pemikiran analitis kita sendiri dan mampu melihat hubungan sebab-akibat dalam situasi yang kompleks.
+"""
 
 # ╔═╡ 174dc3f7-65a1-47d2-8120-226c76648f6b
+md"""![reverse](https://github.com/ajamj/pkg-homework/blob/main/img/inversi_01.png?raw=true)\
+Skema "reversing a forward problem" mengacu pada pendekatan yang digunakan dalam metode inversi. Biasanya, dalam sebuah masalah, kita memiliki "masalah maju" atau "forward problem," di mana kita memiliki pemahaman tentang parameter masukan dan ingin memprediksi hasil atau keluaran yang terkait.
 
+Namun, dalam metode inversi, kita mengubah pendekatan ini dengan membalik arah masalah tersebut. Kita mencoba "membalikkan" masalah maju tersebut untuk mencari nilai-nilai parameter masukan yang paling sesuai dengan keluaran yang diamati atau diinginkan. Dengan kata lain, kita mencoba mendapatkan pemahaman tentang parameter masukan yang mungkin menghasilkan keluaran yang kita amati.
+
+Misalnya, dalam konteks geofisika, kita dapat menggunakan metode inversi untuk memperoleh model yang menggambarkan struktur bawah permukaan tanah yang paling konsisten dengan data yang diukur. Dalam kasus ini, "masalah maju" adalah menghitung prediksi data pengukuran berdasarkan model struktur bawah permukaan tanah tertentu. Namun, dengan membalik arah masalah, kita mencoba mencari model struktur bawah permukaan tanah yang paling sesuai dengan data yang diukur.
+
+Dalam skema "reversing a forward problem," kita menggunakan data pengukuran sebagai "petunjuk" dan mencoba mengembalikan nilai-nilai parameter yang dapat menghasilkan data tersebut. Metode inversi melibatkan optimisasi dan pencocokan data dengan model matematika atau numerik untuk mencari kombinasi parameter masukan yang paling cocok dengan keluaran yang diinginkan.
+
+Jadi, dengan membalik arah masalah maju, skema "reversing a forward problem" dalam metode inversi memungkinkan kita untuk mendapatkan pemahaman yang lebih baik tentang parameter masukan yang paling sesuai dengan keluaran yang diamati atau diinginkan."""
+
+# ╔═╡ 431bf188-9318-4e40-8cea-3fcd677d76f5
+md"""
+"Inverse problem" atau masalah inversi bisa dianggap sebagai pencarian informasi. Ketika kita memiliki masalah inversi, kita ingin mencari informasi yang mungkin tersembunyi dalam data yang kita miliki.
+
+Dalam masalah inversi, kita memiliki data pengamatan atau hasil yang diamati, dan tujuannya adalah mencari model atau parameter yang dapat menjelaskan atau memprediksi data tersebut. Dalam konteks ini, pencarian tersebut dapat dianggap sebagai pencarian informasi yang terkandung dalam data.
+
+Misalnya, dalam geofisika, ketika kita memiliki data pengukuran seismik atau medan magnet, kita ingin mencari informasi tentang struktur bawah permukaan tanah yang dapat menjelaskan data tersebut. Dengan menggunakan metode inversi, kita mencoba mengidentifikasi model atau parameter yang paling sesuai dengan data pengamatan kita. Dalam hal ini, kita melakukan pencarian informasi tentang struktur bawah permukaan tanah yang mungkin tersembunyi dalam data seismik atau medan magnet.
+
+Begitu juga dalam konteks lain, seperti dalam ilmu fisika, matematika, atau bidang lainnya, masalah inversi dapat melibatkan pencarian informasi yang terkandung dalam data pengamatan atau hasil eksperimen. Metode inversi digunakan untuk memperoleh pemahaman yang lebih dalam tentang hubungan sebab-akibat, sifat-sifat sistem, atau struktur yang mendasari data yang diamati.
+
+Jadi, dalam rangka mencari pemahaman yang lebih baik tentang data yang kita miliki, masalah inversi dapat dipandang sebagai "quest for information" atau pencarian informasi.
+"""
+
+# ╔═╡ 8444f125-e5d6-4792-9eb9-8563c2100065
+md"""
+Dalam menggambarkan anatomi metode inversi, kita bisa membaginya menjadi beberapa tahapan utama yang umumnya terjadi dalam prosesnya. Berikut adalah gambaran umum tentang anatomi metode inversi:
+
+1. Formulasi Masalah: Tahap pertama dalam metode inversi adalah merumuskan masalah secara matematis. Ini melibatkan mendefinisikan parameter yang ingin ditentukan, membangun model matematika yang menghubungkan parameter tersebut dengan data pengamatan, dan menentukan persamaan inversi yang harus dipecahkan.
+
+2. Pengumpulan Data: Tahap selanjutnya adalah pengumpulan data pengamatan yang diperlukan. Data ini bisa berupa data pengukuran langsung atau hasil pengamatan eksperimen yang diperoleh dari sistem yang ingin diteliti. Penting untuk mengumpulkan data yang relevan dan berkualitas tinggi agar hasil inversi dapat menjadi lebih akurat.
+
+3. Penyelesaian Masalah Inversi: Tahap ini melibatkan penyelesaian persamaan inversi untuk mencari parameter yang paling sesuai dengan data yang diamati. Ini melibatkan penggunaan algoritma dan metode numerik untuk memperoleh solusi yang optimal. Proses ini bisa melibatkan optimisasi dan pencocokan data untuk menemukan model atau parameter yang paling sesuai dengan data.
+
+4. Validasi dan Evaluasi: Setelah mendapatkan hasil inversi, tahap berikutnya adalah validasi dan evaluasi model atau parameter yang ditemukan. Ini melibatkan membandingkan hasil inversi dengan data pengamatan yang independen, melakukan analisis sensitivitas terhadap parameter, dan mengukur tingkat keakuratan dan ketepatan hasil inversi.
+
+5. Interpretasi dan Pengambilan Keputusan: Tahap terakhir adalah interpretasi hasil inversi dan pengambilan keputusan berdasarkan hasil tersebut. Ini melibatkan pemahaman dan penafsiran tentang makna parameter yang ditemukan, menghubungkannya dengan konteks geologi atau fenomena yang sedang dipelajari, dan membuat keputusan berdasarkan informasi yang diperoleh.
+
+Tentu saja, anatomi metode inversi dapat bervariasi tergantung pada aplikasinya dan jenis data yang digunakan. Namun, secara umum, langkah-langkah ini mencakup aspek fundamental dalam metode inversi.
+"""
+
+# ╔═╡ bcbfbd17-8b02-4273-83fe-79f4fbfed900
+md""" ## Contoh Kasus Sederhana
+Mari kita lihat contoh penerapan metode inversi dalam kasus yang sederhana: pemulihan distribusi resistivitas tanah.
+
+Dalam geofisika, resistivitas tanah digunakan untuk memahami karakteristik struktur bawah permukaan. Untuk mendapatkan informasi tentang distribusi resistivitas tanah, metode inversi dapat digunakan. Berikut adalah langkah-langkah yang mungkin terlibat dalam contoh ini:
+
+1. Pengumpulan Data: Data yang diperlukan adalah data resistivitas yang diukur di permukaan menggunakan metode geolistrik, seperti metode Wenner atau Schlumberger. Pengukuran ini memberikan nilai resistivitas pada titik-titik tertentu di permukaan tanah.
+
+2. Model Matematika: Selanjutnya, kita membangun model matematika yang menghubungkan distribusi resistivitas tanah dengan data pengukuran. Dalam kasus ini, kita dapat menggunakan model inversi 2D sederhana yang mengasumsikan distribusi resistivitas hanya bervariasi dalam satu dimensi.
+
+3. Persamaan Inversi: Dalam metode inversi, kita harus merumuskan persamaan inversi yang akan memungkinkan kita mencari distribusi resistivitas tanah yang paling sesuai dengan data pengukuran. Ini melibatkan pemodelan matematika, seperti persamaan Least Squares atau persamaan Tikhonov, yang menggabungkan data pengukuran dengan fungsi objektif untuk mencari solusi optimal.
+
+4. Pemecahan Persamaan Inversi: Setelah merumuskan persamaan inversi, kita menggunakan algoritma dan metode numerik untuk memecahkan persamaan tersebut dan mendapatkan distribusi resistivitas yang paling sesuai dengan data pengukuran. Ini melibatkan iterasi dan optimisasi untuk mengoptimalkan solusi.
+
+5. Validasi dan Evaluasi: Setelah mendapatkan hasil inversi, kita perlu melakukan validasi dan evaluasi. Ini melibatkan membandingkan hasil inversi dengan data pengukuran independen, melakukan analisis sensitivitas untuk melihat pengaruh perubahan resistivitas terhadap data pengukuran, dan mengukur tingkat keakuratan dan ketepatan hasil inversi.
+
+6. Interpretasi dan Pengambilan Keputusan: Terakhir, berdasarkan hasil inversi yang diperoleh, kita melakukan interpretasi dan pengambilan keputusan. Ini melibatkan memahami makna distribusi resistivitas yang ditemukan dan menghubungkannya dengan karakteristik geologi atau fenomena yang sedang dipelajari. Hasil ini dapat membantu dalam pengambilan keputusan terkait aplikasi geoteknik, eksplorasi sumber daya alam, atau pemodelan lingkungan.
+
+Itulah gambaran umum tentang penerapan metode inversi dalam pemulihan distribusi resistivitas tanah. Tentu saja, implementasi yang sebenarnya akan melibatkan langkah-langkah dan teknik yang lebih rinci, tergantung pada kompleksitas masalah dan data yang tersedia.
+"""
+
+# ╔═╡ 9b4086f8-8e90-4ceb-b074-c1d8cf39b385
+md""" ## Estimation dan Apprasial
+Coba bayangin kita lagi main game online, dan di dalam game itu ada suatu item yang super langka dan bernilai tinggi. Kamu pengen tahu berapa harga sebenarnya dari item itu sebelum kamu jual. Nah, di sinilah "estimation and appraisal" masuk ke dalam permainan.
+
+Pertama, kamu mulai naksir dan mengestimasi harga item itu berdasarkan data dan pengamatan kamu sejauh ini. Kamu lihat harga item serupa yang sudah dijual oleh pemain lain dan berusaha memperkirakan berapa harga yang sebanding untuk itemmu. Kamu bisa aja minta pendapat teman-temanmu tentang estimasi harganya.
+
+Setelah itu, kamu melakukan penilaian lebih mendalam. Kamu coba cari tahu informasi tambahan tentang item tersebut, seperti keunikan, popularitas, atau sejarah harga. Kamu bisa browsing forum atau bertanya kepada pemain lain yang udah punya pengalaman dengan item itu. Semakin banyak informasi yang kamu dapetin, semakin akurat penilaianmu.
+
+Tapi ingat, estimasi dan penilaian ini enggak selalu 100% tepat. Seperti saat kamu main game, selalu ada ketidakpastian. Kamu cuma bisa ngasih perkiraan berdasarkan apa yang kamu tahu sejauh ini. Jadi, penting juga buat tetap fleksibel dan siap mengubah perkiraan kamu ketika ada informasi baru yang muncul.
+
+Intinya, "estimation and appraisal" itu kayak kamu mencoba menebak harga suatu item berdasarkan data dan informasi yang ada. Kamu mencari tahu sebanyak mungkin dan memberikan perkiraan yang seakurat mungkin. Itu penting supaya kamu bisa mengambil keputusan yang lebih cerdas dan nggak terjebak dalam ketidakpastian.
+
+Jadi, seperti main game online, estimasi dan penilaian ini memungkinkan kamu untuk "grind" informasi dan mencoba mendapatkan harga yang optimal. Jangan lupa, dalam game dan kehidupan nyata, estimasi yang lebih akurat bisa bikin kamu "win" dalam pengambilan keputusan!"""
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -355,6 +437,10 @@ version = "17.4.0+0"
 # ╠═f612c525-afcd-4683-8d2f-305f8af55d5b
 # ╟─6fb09992-7abe-4205-972c-e159debba051
 # ╟─11338610-a29b-4975-af5e-33ba3600b273
-# ╠═174dc3f7-65a1-47d2-8120-226c76648f6b
+# ╟─174dc3f7-65a1-47d2-8120-226c76648f6b
+# ╟─431bf188-9318-4e40-8cea-3fcd677d76f5
+# ╟─8444f125-e5d6-4792-9eb9-8563c2100065
+# ╟─bcbfbd17-8b02-4273-83fe-79f4fbfed900
+# ╟─9b4086f8-8e90-4ceb-b074-c1d8cf39b385
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
