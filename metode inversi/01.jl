@@ -144,7 +144,8 @@ Itulah gambaran umum tentang penerapan metode inversi dalam pemulihan distribusi
 """
 
 # ╔═╡ 9b4086f8-8e90-4ceb-b074-c1d8cf39b385
-md""" ## Estimation dan Apprasial
+md""" ## Estimation dan Appraisal
+![estimation appraisal](https://github.com/ajamj/pkg-homework/blob/main/img/inversi_02.png?raw=true)\
 Coba bayangin kita lagi main game online, dan di dalam game itu ada suatu item yang super langka dan bernilai tinggi. Kamu pengen tahu berapa harga sebenarnya dari item itu sebelum kamu jual. Nah, di sinilah "estimation and appraisal" masuk ke dalam permainan.
 
 Pertama, kamu mulai naksir dan mengestimasi harga item itu berdasarkan data dan pengamatan kamu sejauh ini. Kamu lihat harga item serupa yang sudah dijual oleh pemain lain dan berusaha memperkirakan berapa harga yang sebanding untuk itemmu. Kamu bisa aja minta pendapat teman-temanmu tentang estimasi harganya.
@@ -156,6 +157,85 @@ Tapi ingat, estimasi dan penilaian ini enggak selalu 100% tepat. Seperti saat ka
 Intinya, "estimation and appraisal" itu kayak kamu mencoba menebak harga suatu item berdasarkan data dan informasi yang ada. Kamu mencari tahu sebanyak mungkin dan memberikan perkiraan yang seakurat mungkin. Itu penting supaya kamu bisa mengambil keputusan yang lebih cerdas dan nggak terjebak dalam ketidakpastian.
 
 Jadi, seperti main game online, estimasi dan penilaian ini memungkinkan kamu untuk "grind" informasi dan mencoba mendapatkan harga yang optimal. Jangan lupa, dalam game dan kehidupan nyata, estimasi yang lebih akurat bisa bikin kamu "win" dalam pengambilan keputusan!"""
+
+# ╔═╡ 0f5aa5d3-5978-4674-9dd3-48b4c2e7a71b
+md""" ## Model
+Model dalam konteks metode inversi itu bisa diumpamakan kayak foto diri kita yang di-edit di aplikasi kecantikan. Gue jelasin pake analogi ini ya.
+
+Jadi, bayangin kamu punya foto diri yang asli, tapi kamu pengen tahu gimana penampilan kamu kalo muka kamu dikasih efek-efek kecantikan. Nah, aplikasi kecantikan itu kayak metode inversi yang dipake buat mendapatkan model.
+
+Model ini adalah representasi atau gambaran dari struktur bawah permukaan tanah atau fenomena yang kita coba teliti. Misalnya, dalam geofisika, kita pengen tau gimana bentuk dan sifat tanah di bawah permukaan. Nah, metode inversi membantu kita bikin model yang bisa memperkirakan gimana bentuk dan sifat tanah tersebut berdasarkan data geofisika yang kita punya.
+
+Jadi, model ini kayak hasil edit foto kamu dengan efek-efek kecantikan. Aplikasi kecantikan itu menganalisis foto asli kamu dan menghasilkan model baru yang menggambarkan penampilan kamu yang diubah. Begitu juga dengan metode inversi, dia menganalisis data geofisika dan menghasilkan model yang menggambarkan struktur bawah permukaan tanah.
+
+Tapi, sama kayak foto editan, model yang dihasilkan ini enggak 100% akurat. Kadang-kadang bisa ada kesalahan atau ketidakpastian dalam proses pembuatan model. Jadi, kita harus tetap kritis dan mempertimbangkan hasil model ini dengan hati-hati.
+
+Jadi, model dalam metode inversi itu kayak hasil editan foto yang menggambarkan struktur bawah permukaan tanah atau fenomena yang kita teliti. Itu adalah representasi yang didapatkan berdasarkan data geofisika, kayak foto kamu yang diubah-ubah dengan efek-efek kecantikan. Jadi, metode inversi ini bantu kita "edit" struktur bawah permukaan tanah supaya kita bisa paham lebih dalam tentang apa yang ada di bawah sana."""
+
+# ╔═╡ 2278b36c-da4f-484e-91e2-4f3794b1c115
+md""" ## Diskritisasi Model Kontinyu
+Diskritisasi model kontinyu adalah proses mengubah model kontinu menjadi model yang terdiri dari elemen diskrit atau segmen-segmen diskrit. Dalam konteks metode inversi, diskritisasi digunakan ketika kita ingin merepresentasikan struktur bawah permukaan tanah dalam bentuk model yang terdiri dari elemen diskrit, misalnya grid atau jaringan sel-sel.
+
+Bayangkan kamu punya sebuah kue cokelat yang bentuknya kontinu, seperti permukaan tanah yang kita ingin teliti. Nah, diskritisasi itu kayak ngiris kue itu menjadi beberapa bagian diskrit, kayak potongan-potongan kotak kecil. Setiap kotak kecil tersebut mewakili elemen diskrit dalam model.
+
+Diskritisasi model kontinyu penting dalam metode inversi karena memungkinkan kita untuk memproses data geofisika secara lebih efisien dan memperoleh informasi yang lebih detail tentang struktur bawah permukaan tanah. Dengan membagi model menjadi elemen-elemen diskrit, kita dapat menghitung estimasi atau parameter geofisika di setiap elemen dengan lebih mudah.
+
+Contohnya, jika kita ingin mengestimasi distribusi kecepatan gelombang seismik di bawah permukaan tanah, kita bisa membagi model kontinu menjadi grid atau jaringan sel-sel kecil. Setiap sel di grid itu mewakili nilai kecepatan gelombang di lokasi tertentu. Dengan demikian, kita bisa menghitung estimasi kecepatan gelombang di setiap sel berdasarkan data geofisika yang kita punya.
+
+Diskritisasi juga membantu dalam memperoleh representasi yang lebih sederhana dan terstruktur dari model kontinu yang kompleks. Dengan menggantinya dengan elemen-elemen diskrit, kita dapat memahami dan memvisualisasikan model dengan lebih baik.
+
+Jadi, diskritisasi model kontinyu itu adalah proses mengubah model yang kontinu menjadi model yang terdiri dari elemen-elemen diskrit. Ini memudahkan kita dalam memproses data geofisika, menghitung estimasi, dan memahami struktur bawah permukaan tanah dengan lebih baik."""
+
+# ╔═╡ d25be995-3622-42b4-a7ea-af57b4168685
+md""" ## Regresi Linier
+Oke, bro! Aku jelasin tentang regresi linear pake bahasa gaul, interaktif, dan analogis buat kamu.
+
+Regresi linear itu kayak ngehubungin dua hal yang punya hubungan linear, kayak duo sepakbola yang sering nongkrong bareng di lapangan. Bayangin ada dua pemain sepakbola, si A dan si B, yang selalu main bareng dan performanya selalu ada hubungan linier.
+
+Jadi, regresi linear itu kayak ngeliatin data performa mereka seiring waktu. Kita coba nyari persamaan garis yang paling pas buat ngehubungin performa si A dengan performa si B. Dari data-datanya, kita bisa bikin garis regresi linear yang ngasih kita perkiraan performa si B berdasarkan performa si A.
+
+Nah, kaitannya dengan metode inversi, regresi linear ini sering digunakan sebagai salah satu metode untuk mengestimasi hubungan antara dua variabel dalam proses inversi. Misalnya, dalam geofisika, kita punya data pengukuran di permukaan dan kita ingin memperkirakan karakteristik bawah permukaan tanah.
+
+Dengan menggunakan regresi linear, kita bisa menentukan hubungan antara data yang kita punya di permukaan dengan karakteristik bawah permukaan yang ingin kita ketahui. Persamaan garis regresi linear ini bisa digunakan untuk memperkirakan karakteristik tanah di lokasi-lokasi yang belum diukur.
+
+Jadi, regresi linear itu kayak duo sepakbola yang performanya berhubungan linier. Kita nyari persamaan garis yang pas buat ngehubungin performa mereka. Dalam metode inversi, regresi linear digunakan buat memperkirakan hubungan antara data yang ada di permukaan dengan karakteristik bawah permukaan yang ingin kita ketahui.
+
+Pokoknya, regresi linear ini membantu kita bikin perkiraan yang lebih akurat dan bisa jadi alat penting dalam proses inversi.
+"""
+
+# ╔═╡ 1ae5497d-daec-4862-82c7-49cc58c88ef1
+md""" ## Karakterisasi Masalah Inversi
+Eits, gue ngerti nih, bro! Oke, gue jelasin karakterisasi masalah inversi pake bahasa gaul ala anak Jaksel buat kamu.
+
+Karakterisasi masalah inversi itu kayak ngejelasin dulu sebelum main game seru. Jadi, bayangin kita mau main game petualangan seru banget di hutan. Sebelum kita mulai, kita harus tau tujuan mainnya, seperti nyari harta karun atau mengalahkan monster. Nah, karakterisasi masalah inversi itu kayak kita nentuin tujuan mainnya.
+
+Terus, kita juga harus tau apa yang ada di hutan, misalnya ada pohon besar, sungai, atau jalan setapak. Nah, dalam karakterisasi masalah inversi, kita harus tau jenis data yang kita punya. Apakah data itu akurat, lengkap, atau ada gangguan lainnya. 
+
+Selanjutnya, kita harus pikirin gimana cara kita mau main gamenya. Misalnya, mau pake strategi yang rumit atau yang simpel aja. Nah, dalam karakterisasi masalah inversi, kita pikirin juga jenis model yang kita mau pake. Apakah modelnya yang rumit atau yang sederhana.
+
+Terus, kita juga harus tau kemungkinan adanya masalah atau ketidakpastian dalam game kita. Misalnya, ada jembatan yang rusak atau ada hewan buas di sekitar. Nah, dalam karakterisasi masalah inversi, kita perlu pikirin juga masalah atau ketidakpastian yang bisa muncul dalam data atau model kita.
+
+Jadi, karakterisasi masalah inversi itu kayak nentuin tujuan main game, ngecek apa aja yang ada di sekitar kita, mikirin strategi mainnya, dan siapin solusi buat masalah yang mungkin muncul. Dengan karakterisasi yang baik, kita bisa main game dengan lebih siap dan sukses.
+
+Nah, bro, sekarang kamu udah paham kan tentang karakterisasi masalah inversi dengan bahasa gaul ala anak Jaksel? Yuk, siap-siap main game inversi dengan penuh semangat!
+"""
+
+# ╔═╡ b0f0ee92-7b9a-4c95-b7bc-b0abbf6b4805
+md""" ## Tipe-tipe Masalah Inversi
+1. Inversi linier: Ini kayak pas lagi ngejodohin dua orang yang hubungannya lurus-lurus aja, gak rumit. Misalnya, si A sama si B emang cocok banget, jadi gue cariin persamaan garis yang pas buat mereka. Persamaan garis ini ngebantu gue estimasi hubungan mereka dengan lebih mudah.
+
+2. Inversi non-linier: Beda sama yang linier, ini pas lagi jodohin dua orang yang hubungannya rumit dan bikin pusing. Misalnya, si A dan si B itu hubungannya gak lurus-lurus, tapi meliuk-meliuk kayak jalan berliku. Nah, dalam inversi non-linier, gue harus cari cara yang lebih kompleks buat estimasi hubungan mereka yang rumit ini.
+
+3. Inversi kecil-kuadrat: Ini kayak gue lagi main tebak-tebakan, tapi gue harus cari jawaban yang paling mendekati dengan kesalahan yang paling kecil. Misalnya, ada data pengukuran yang gak sempurna, jadi gue harus cari solusi yang paling cocok dengan data itu dengan meminimalkan kesalahan.
+
+4. Inversi probabilistik: Ini kayak gue main judi, bro! Gue harus perhitungin peluang-peluangnya berdasarkan data yang ada. Gue bikin model yang ada peluangnya berdasarkan distribusi probabilitas, jadi gue bisa dapetin perkiraan terbaik dan juga rentang kepercayaan yang mungkin.
+
+5. Inversi berbasis model: Ini kayak lagi upgrade game yang udah ada. Misalnya, gue punya model yang udah ada tentang suatu masalah. Tapi gue mau tambahin atau perbaiki model itu berdasarkan data baru yang gue punya. Jadi gue cari parameter tambahan yang paling pas buat nge-upgrade model yang udah ada.
+
+Jadi, bro, tipe-tipe masalah inversi itu kayak jodoh-jodohan, tebak-tebakan, judi, atau upgrade game. Tergantung dari hubungan data dan parameter yang mau diestimasi, kompleksitas masalahnya, dan tingkat ketidakpastian yang ada. Semakin paham tipe masalah inversi, semakin siap kita hadapi tantangannya dan dapetin hasil yang lebih mantap!"""
+
+# ╔═╡ b19d3922-ca3e-43d1-868c-19d7355578e0
+
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -429,12 +509,12 @@ version = "17.4.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╠═36a7d603-503f-4573-93ca-7748f36f3c0b
-# ╠═e2f429d2-2ce9-4bd2-be22-8a5f1bb1fa82
+# ╟─36a7d603-503f-4573-93ca-7748f36f3c0b
+# ╟─e2f429d2-2ce9-4bd2-be22-8a5f1bb1fa82
 # ╟─c752d570-019a-11ee-1f24-7d853caa2209
 # ╟─4197ddad-a01c-4c93-9a14-049cea8d6862
 # ╟─ad807e5d-f70a-4f50-8813-76a4c06763b6
-# ╠═f612c525-afcd-4683-8d2f-305f8af55d5b
+# ╟─f612c525-afcd-4683-8d2f-305f8af55d5b
 # ╟─6fb09992-7abe-4205-972c-e159debba051
 # ╟─11338610-a29b-4975-af5e-33ba3600b273
 # ╟─174dc3f7-65a1-47d2-8120-226c76648f6b
@@ -442,5 +522,11 @@ version = "17.4.0+0"
 # ╟─8444f125-e5d6-4792-9eb9-8563c2100065
 # ╟─bcbfbd17-8b02-4273-83fe-79f4fbfed900
 # ╟─9b4086f8-8e90-4ceb-b074-c1d8cf39b385
+# ╟─0f5aa5d3-5978-4674-9dd3-48b4c2e7a71b
+# ╟─2278b36c-da4f-484e-91e2-4f3794b1c115
+# ╟─d25be995-3622-42b4-a7ea-af57b4168685
+# ╟─1ae5497d-daec-4862-82c7-49cc58c88ef1
+# ╟─b0f0ee92-7b9a-4c95-b7bc-b0abbf6b4805
+# ╠═b19d3922-ca3e-43d1-868c-19d7355578e0
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
