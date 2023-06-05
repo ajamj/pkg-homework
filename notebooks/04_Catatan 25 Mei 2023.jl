@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.25
+# v0.19.26
 
 using Markdown
 using InteractiveUtils
@@ -15,9 +15,6 @@ using BenchmarkTools
 
 # ╔═╡ a4c66e59-ba4e-4c0c-b397-eecfed910b3f
 using Distributed
-
-# ╔═╡ a67aa425-84e7-431d-a40d-c5474e3f2601
-using SharedArrays
 
 # ╔═╡ 5368d8a0-fab8-11ed-0e1c-5736fd7e3344
 md"""# 25 Mei 2023"""
@@ -430,7 +427,7 @@ Dalam Julia, kita bisa buat:
 """
 
 # ╔═╡ 231b2af3-1738-43eb-880c-520d959a418f
-function lap2d!(u, new)
+function lap2d!(u, unew)
 	M,N = size(u)
 	for j in 2:N-1
 		for i in 2:M-1
@@ -519,27 +516,35 @@ heatmap(unew,xlabel="X",ylabel="Y")
 # ╔═╡ 28741fe7-2ebb-447a-91bb-75c54030abed
 @btime threaded_lap2d!(u, unew)
 
-# ╔═╡ 6c73a76c-49e3-466f-bf65-b4397ca24d4b
-function shared_lap2d!(u::SharedArray, unew::SharedArray)
-    M, N = size(u)
-    @sync @distributed for j in 2:N-1
-        for i in 2:M-1
-            @inbounds unew[i, j] = 0.25 * (u[i+1,j] + u[i-1,j] + u[i,j+1] + u[i,j-1])
-        end
-    end
+# ╔═╡ 569b59d1-35a1-4338-964f-5a951853daba
+md"""## `@simd`"""
+
+# ╔═╡ faf60c2d-d436-40f1-865d-0486d4717bf2
+
+
+# ╔═╡ 8ae510d4-4ef2-40cd-b097-aa91d55a09c1
+function simd_lap2d!(u, simd_unew)
+	M,N = size(u)
+	@inbounds for j in 2:N-1
+    @simd for i in 2:M-1
+        @inbounds simd_unew[i,j] = 0.25 * (u[i+1,j] + u[i-1,j] + u[i,j+1] + u[i,j-1])
+    	end
+	end
+
 end
 
-# ╔═╡ 6b7e58a7-8ce7-4f42-ba98-ec8c67e19442
-begin
-	su = SharedArray(u);
-	sunew = SharedArray(unew);
+# ╔═╡ 21cf9a7f-79c4-496c-bd99-efc2a4a70474
+for i in 1:maximum_iteration
+	simd_lap2d!(simd_u, simd_unew)
+	# copy new computed field to old array
+	simd_u = copy(unew)
 end
 
-# ╔═╡ a8aac540-8d86-4b70-a5cb-9895fd2dfb03
-@btime shared_lap2d!(su, sunew)
+# ╔═╡ a5ca90e9-e8e4-4e45-94c2-536b966f8c86
+heatmap(simd_unew,xlabel="X",ylabel="Y")
 
-# ╔═╡ 3a8650fe-67cb-49f8-8885-24d14cb58495
-heatmap(sunew)
+# ╔═╡ ac8791d8-28f8-43ac-8c72-5de064cd1233
+
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -548,7 +553,6 @@ BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
 Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
-SharedArrays = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
 
 [compat]
 BenchmarkTools = "~1.3.2"
@@ -562,7 +566,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.0"
 manifest_format = "2.0"
-project_hash = "53aad687a4b8e8399784f79c2d96b098443beaef"
+project_hash = "a4072104f9eff9203ee813c52da6164f43437fcf"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -1226,10 +1230,6 @@ version = "1.2.0"
 [[deps.Serialization]]
 uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
 
-[[deps.SharedArrays]]
-deps = ["Distributed", "Mmap", "Random", "Serialization"]
-uuid = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
-
 [[deps.Showoff]]
 deps = ["Dates", "Grisu"]
 git-tree-sha1 = "91eddf657aca81df9ae6ceb20b959ae5653ad1de"
@@ -1648,10 +1648,11 @@ version = "1.4.1+0"
 # ╠═2a55379b-01f7-43d1-9211-39b8c645f2b5
 # ╠═375760c8-318f-4701-a7f3-093af3aa25c0
 # ╠═28741fe7-2ebb-447a-91bb-75c54030abed
-# ╠═a67aa425-84e7-431d-a40d-c5474e3f2601
-# ╠═6c73a76c-49e3-466f-bf65-b4397ca24d4b
-# ╠═6b7e58a7-8ce7-4f42-ba98-ec8c67e19442
-# ╠═a8aac540-8d86-4b70-a5cb-9895fd2dfb03
-# ╠═3a8650fe-67cb-49f8-8885-24d14cb58495
+# ╠═569b59d1-35a1-4338-964f-5a951853daba
+# ╠═faf60c2d-d436-40f1-865d-0486d4717bf2
+# ╠═8ae510d4-4ef2-40cd-b097-aa91d55a09c1
+# ╠═21cf9a7f-79c4-496c-bd99-efc2a4a70474
+# ╠═a5ca90e9-e8e4-4e45-94c2-536b966f8c86
+# ╠═ac8791d8-28f8-43ac-8c72-5de064cd1233
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
