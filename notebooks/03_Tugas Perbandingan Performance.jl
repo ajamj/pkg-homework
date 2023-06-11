@@ -85,7 +85,7 @@ md"""
 Ajam Jamaludin\
 19/445602/PA/19426\
 Pemrograman Komputer Geofisika\
-[https://ajamj.github.io/pkg-homework](https://ajamj.github.io/pkg-homework)
+[https://ajamj.github.io/](https://ajamj.github.io/)
 """
 
 # ╔═╡ 132e107c-503d-41d5-b00c-5e46407f30d9
@@ -431,6 +431,97 @@ bench_julia_simd = @benchmark collatz_conjecture_simd(num)
 # ╔═╡ 1d2866f4-c28d-46a9-ab0d-1355d081670a
 dict["Julia simd"] = minimum(bench_julia_simd.times)/1e6 #in miliseconds
 
+# ╔═╡ c72afedd-8d95-4132-b4c6-48a3df3625da
+md""" ## 7. Fortran
+Sayangnya, kode dalam Fortran tidak berjalan dengan baik."""
+
+# ╔═╡ c1e38e92-9304-46c7-a9a8-56ec690d7894
+# ╠═╡ disabled = true
+#=╠═╡
+begin
+#using Libdl
+
+const Fortran_code = """
+module collatz_conjecture_module
+    implicit none
+    
+    contains
+    
+    function j_collatz_conjecture(n) result(result_dict)
+        integer, intent(in) :: n
+        integer :: current_num
+        integer, allocatable :: sequence(:)
+        integer :: steps
+        integer, allocatable :: result_sequence(:)
+        character(len=100) :: error_message
+        type :: dict_type
+            integer :: number
+            integer :: steps
+            integer, allocatable :: sequence(:)
+        end type dict_type
+        type(dict_type) :: result_dict
+        
+        if (n > 0) then
+            allocate(sequence(1))
+            sequence(1) = n
+            current_num = n
+            steps = 1
+            
+            do while (current_num > 1)
+                if (mod(current_num, 2) == 1) then
+                    current_num = 3 * current_num + 1
+                else
+                    current_num = current_num / 2
+                end if
+                steps = steps + 1
+                allocate(result_sequence(steps))
+                result_sequence(steps) = current_num
+            end do
+            
+            result_dict%number = sequence(1)
+            result_dict%steps = steps
+            allocate(result_dict%sequence(steps))
+            result_dict%sequence = result_sequence
+            
+        else
+            error_message = "ERROR: Masukan harus berupa bilangan bulat positif atau yang semisal."
+            write(*, *) error_message
+        end if
+        
+        deallocate(sequence)
+        deallocate(result_sequence)
+        
+    end function j_collatz_conjecture
+    
+end module collatz_conjecture_module
+"""
+
+const Fortrancode = "/tmp/test.f90"
+const Fortranlib = "/tmp/test.so"
+
+# Simpan kode Fortran ke file
+open(Fortrancode, "w") do f
+    print(f, Fortran_code)
+end
+
+# Compile kode Fortran menjadi shared library menggunakan gfortran
+run(`gfortran -shared -O3 -fPIC $Fortrancode -o $Fortranlib`)
+
+# Load shared library
+lib = Libdl.dlopen(Fortranlib)
+
+# Definisikan fungsi Julia yang memanggil fungsi Fortran
+function fortran_j_collatz_conjecture(n::Cint)
+    ccall((:j_collatz_conjecture, Fortranlib), Ref{Dict{String, Any}}, (Cint,), n)
+end
+end
+  ╠═╡ =#
+
+# ╔═╡ 42164be4-e5ca-41dc-b581-d244cc3fec8b
+#=╠═╡
+fortran_j_collatz_conjecture(Int32(8))
+  ╠═╡ =#
+
 # ╔═╡ ef3d160c-ec6b-4e2d-b67f-7cf2ccd23496
 md"""
 # Perbandingan
@@ -460,77 +551,6 @@ values = [pair.second for pair in sorted_dict]
 
 # ╔═╡ 863a2b78-f4a9-4aea-bc6b-fd11684b37a5
 bar(keys, values, legend=false, xlabel="Language", ylabel="Execution Time", title="Comparison", yscale=:log10)
-
-# ╔═╡ 96da97cc-235c-4874-b7a9-7b2a8cd7f3f0
-md"""
-## Fortran
-Sayangnya, kode dalam Fortran tidak berjalan dengan baik.
-"""
-
-# ╔═╡ eab26fdd-e214-4649-9c12-91eb7c7794ba
-# ╠═╡ disabled = true
-#=╠═╡
-begin
-	const Clib3 = tempname() # create a temporary file
-F_code = """
-subroutine fortran_cc(n, arr)
-  implicit none
-  integer, intent(in) :: n
-  integer, intent(out), allocatable :: arr(:)
-  integer :: len, i
-
-  if (n > 0) then
-    len = 1
-    allocate(arr(len))
-    arr(len) = n
-
-    do while (n > 1)
-      if (mod(n, 2) == 0) then
-        n = n / 2
-      else
-        n = n * 3 + 1
-      end if
-
-      len = len + 1
-      allocate(arr(len))
-      arr(len) = n
-    end do
-  else
-    print *, "ERROR: Masukan harus berupa bilangan bulat positif atau yang semisal."
-    allocate(arr(0))
-  end if
-
-end subroutine fortran_cc
-
-
-"""
-
-# Compile Fortran code to a shared library using GCC
-open(`gfortran -fPIC -shared -xc -o $(Clib3 * "." * Libdl.dlext) -`, "w") do f
-    print(f, F_code)
-end
-
-# Define the CResult struct using Ref
-struct CResult2
-    number::Cint
-    steps::Cint
-    sequence::Ptr{Cint}
-end
-
-function f_lang(n)
-    c_result = ccall((:collatz_sequence, Clib3), CResult2, (Cint,), n)
-    sequence = unsafe_wrap(Vector{Cint}, c_result.sequence, c_result.steps)
-    result_dict = Dict(
-        "number" => c_result.number,
-        "steps" => c_result.steps,
-        "sequence" => Vector{Int}(sequence)
-    )
-    ccall(:free, Cvoid, (Ptr{Cint},), c_result.sequence)
-    return result_dict
-end
-
-end
-  ╠═╡ =#
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1622,6 +1642,9 @@ version = "1.4.1+0"
 # ╠═8280ce00-6e2a-4da1-a82b-f9691b1126ab
 # ╠═43b163a3-b5c6-4a4d-8136-019dc6a9df1b
 # ╠═1d2866f4-c28d-46a9-ab0d-1355d081670a
+# ╟─c72afedd-8d95-4132-b4c6-48a3df3625da
+# ╠═c1e38e92-9304-46c7-a9a8-56ec690d7894
+# ╠═42164be4-e5ca-41dc-b581-d244cc3fec8b
 # ╟─ef3d160c-ec6b-4e2d-b67f-7cf2ccd23496
 # ╠═ffdee078-192d-43ff-9b1c-07eb0e4c8ad3
 # ╠═2bae9580-5fec-43d6-b5ef-c36281ceded8
@@ -1630,7 +1653,5 @@ version = "1.4.1+0"
 # ╠═8a2af82b-e46b-4fd1-84b7-ee54258e0325
 # ╠═13140b94-7807-474a-8025-1ba65676b1b4
 # ╠═863a2b78-f4a9-4aea-bc6b-fd11684b37a5
-# ╟─96da97cc-235c-4874-b7a9-7b2a8cd7f3f0
-# ╠═eab26fdd-e214-4649-9c12-91eb7c7794ba
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

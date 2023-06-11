@@ -7,6 +7,9 @@ using InteractiveUtils
 # ╔═╡ fc150ed3-1142-4a4a-b859-fb71f3b708b9
 using Pkg
 
+# ╔═╡ f1c3ecc6-0644-41a8-a42e-b6e00ef7c424
+Pkg.add("PlutoUI")
+
 # ╔═╡ 4ebab3c0-1bd2-4042-b19c-889fe35ae08c
 Pkg.add("BenchmarkTools")
 
@@ -308,10 +311,89 @@ md"""
 ## 9. Fortran
 """
 
+# ╔═╡ 814a40a8-5fee-48f8-aa70-9925279f1c95
+begin
+	#using Libdl
+	Fortran_code = """
+	module m 
+	contains
+	real*8 function fortran_sum(n,X)
+	    implicit none
+	    integer*8, intent(in) :: n
+	    real*8, dimension(n), intent(in) :: X
+	    integer :: i
+	
+	    fortran_sum = 0.0
+	    do i = 1,n
+	        fortran_sum = fortran_sum + X(i)
+	    end do
+	end function fortran_sum
+	end module m
+	"""
+end
+
+# ╔═╡ 9a2ef5bd-a68f-4aa2-b178-546b161a142f
+begin
+	const Fortrancode = raw"/tmp/test.f90"
+	const Fortranlib = raw"/tmp/test.so"   # make a temporary file
+	
+	# compile to a shared library by piping Fortran_code to gfortran
+	# (works only if you have gfortran installed):
+	open("$Fortrancode","w") do f
+	    print(f, Fortran_code)
+	end
+end
+
+# ╔═╡ d49a6441-8478-4a71-81cd-e34960417f01
+begin
+	run(`gfortran -shared -O3 -fPIC $Fortrancode -o $Fortranlib`)
+	
+	# define a Julia function that calls the Fortran function:
+	fortran_sum(X::Array{Float64}) = ccall((:__m_MOD_fortran_sum, Fortranlib),
+	    Float64,(Ref{Int64},Ptr{Float64}),length(X),X)
+end
+
+# ╔═╡ c40629da-d7aa-42b9-8e3c-86d1af99c681
+fortran_sum(a) ≈ sum(a)
+
+# ╔═╡ 6db4178c-ee36-4f0a-8853-27deadabc9d5
+fortran_bench = @benchmark $fortran_sum($a)
+
+# ╔═╡ 3f0fe950-a66e-488d-a363-2def111844bf
+d["Fortran"] = minimum(fortran_bench.times) / 1e6  # in milliseconds
+
+# ╔═╡ 38bd8f61-3991-4509-b623-2779f30c68ee
+d
+
 # ╔═╡ a8a60dea-0225-44d3-8948-4586b276da3f
 md"""
-## 10. ???
+## 10. Fortran -Ofast
 """
+
+# ╔═╡ e59abc3d-48fc-42bc-9969-9fc8df202858
+begin
+	const Fortrancode2 = raw"/tmp/test.f90"
+	const Fortranlib_fastmath = raw"/tmp/test_fast.so"   # make a temporary file
+	
+	# The same as above but with a -ffast-math flag added
+	open("$Fortrancode","w") do f
+	    print(f, Fortran_code)
+	end
+	run(`gfortran -shared -Ofast -fPIC -funroll-loops -ffast-math $Fortrancode -o $Fortranlib_fastmath`)
+	
+	# define a Julia function that calls the Fortran function:
+	fortran_sum_fastmath(X::Array{Float64}) = ccall((:__m_MOD_fortran_sum, Fortranlib_fastmath),
+	    Float64,(Ref{Int64},Ptr{Float64}),length(X),X)
+end
+
+# ╔═╡ 10914177-6fbe-46c6-a557-47f59ffde4d3
+fortran_fastmath_bench = @benchmark $fortran_sum_fastmath($a)
+
+# ╔═╡ 01cd49dc-60ef-4906-af1b-213ce36aabfd
+d["Fortran -ffast-math"] = minimum(fortran_fastmath_bench.times) / 1e6  # in milliseconds
+
+# ╔═╡ d2bd096e-dbf4-48a6-8c5e-e98827c2e997
+d
 
 # ╔═╡ aecdddf9-894d-47d9-a1ff-3219456924dd
 md"""
@@ -329,6 +411,7 @@ end
 
 # ╔═╡ Cell order:
 # ╟─357d5106-efb7-11ed-0baa-8b2c959350b3
+# ╠═f1c3ecc6-0644-41a8-a42e-b6e00ef7c424
 # ╠═3bfbb235-ca41-4dc2-9e80-ec5a36c911a9
 # ╠═79f4afdc-6df3-4578-9354-2938ed7eef37
 # ╟─5c6f9261-9337-4268-b4e8-830dcd5f0845
@@ -398,7 +481,18 @@ end
 # ╠═959effb8-5cc4-4f58-abfc-f679ec82cf51
 # ╠═804ce46e-49ee-482d-81b2-bfe7bb2f0366
 # ╟─03c05c81-08cb-4ed4-93d3-42914c1bf076
+# ╠═814a40a8-5fee-48f8-aa70-9925279f1c95
+# ╠═9a2ef5bd-a68f-4aa2-b178-546b161a142f
+# ╠═d49a6441-8478-4a71-81cd-e34960417f01
+# ╠═c40629da-d7aa-42b9-8e3c-86d1af99c681
+# ╠═6db4178c-ee36-4f0a-8853-27deadabc9d5
+# ╠═3f0fe950-a66e-488d-a363-2def111844bf
+# ╠═38bd8f61-3991-4509-b623-2779f30c68ee
 # ╟─a8a60dea-0225-44d3-8948-4586b276da3f
+# ╠═e59abc3d-48fc-42bc-9969-9fc8df202858
+# ╠═10914177-6fbe-46c6-a557-47f59ffde4d3
+# ╠═01cd49dc-60ef-4906-af1b-213ce36aabfd
+# ╠═d2bd096e-dbf4-48a6-8c5e-e98827c2e997
 # ╟─aecdddf9-894d-47d9-a1ff-3219456924dd
 # ╠═008d9743-9819-4dea-a38a-0a4b3d8b795f
 # ╠═9bb17a59-d197-4318-8881-aa3d0d99435e

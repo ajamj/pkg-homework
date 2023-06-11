@@ -4,6 +4,9 @@
 using Markdown
 using InteractiveUtils
 
+# ╔═╡ b7c1d819-4532-4277-bc01-6357538a6ea3
+using Pkg
+
 # ╔═╡ 27122160-fc0c-485a-8565-448ef3ab0797
 Pkg.add("BenchmarkTools")
 
@@ -168,6 +171,9 @@ d["C"] = minimum(c_bench.times) / 1e6  # in milliseconds
 
 # ╔═╡ c388b8b9-88ca-48d1-95f8-81e9bc4ecf8f
 d
+
+# ╔═╡ ff94b0d0-0c1c-4ccf-be30-03bffd590354
+Pkg.add("Plots")
 
 # ╔═╡ 35777942-f5d3-4da4-93b1-ebb322358b41
 gr()
@@ -464,15 +470,6 @@ for (key, value) in sort(collect(d), by=last)
     println(rpad(key, 25, "."), lpad(round(value; digits=1), 6, "."))
 end
 
-# ╔═╡ b7c1d819-4532-4277-bc01-6357538a6ea3
-using Pkg
-
-# ╔═╡ 7380b907-92aa-40e4-83f2-71cbbb02c517
-using Pkg
-
-# ╔═╡ 382bc8ff-0c66-4542-a8bc-68811d1fc579
-using Pkg
-
 # ╔═╡ Cell order:
 # ╟─a4553f60-ef91-11ed-2378-c1db41212254
 # ╟─55c0e4ee-361f-4bbe-8135-60d98a3160e5
@@ -501,6 +498,7 @@ using Pkg
 # ╠═3deb941a-d382-4b43-af72-d1b8ed86f177
 # ╠═f0dace67-6e9b-4206-901b-f7e8f05659a2
 # ╠═c388b8b9-88ca-48d1-95f8-81e9bc4ecf8f
+# ╠═ff94b0d0-0c1c-4ccf-be30-03bffd590354
 # ╠═384d03f3-433f-4465-883c-61cffceb78c2
 # ╠═35777942-f5d3-4da4-93b1-ebb322358b41
 # ╠═f12e5a75-6045-421a-8e12-39a060d7bd1b
@@ -512,7 +510,6 @@ using Pkg
 # ╠═b59db834-e0b2-4bd5-87b6-67ab6ddac415
 # ╠═799f7d6f-7037-4301-a0b1-291d82266591
 # ╟─0d19797c-6799-4374-8907-0cb5f5ebdf18
-# ╠═7380b907-92aa-40e4-83f2-71cbbb02c517
 # ╠═881a660e-6996-4e37-aa5b-60a4542edc3f
 # ╠═5a5d70ae-5c11-4b79-908a-dd111a585a68
 # ╠═13a85fb7-9e40-4fb2-b821-f6ebc810ae79
@@ -522,7 +519,6 @@ using Pkg
 # ╠═48b72a2d-2ac7-471a-b40a-90b3052c2ea6
 # ╠═53498029-6b38-42ac-8d59-acfb953d40be
 # ╟─b8a6c2bc-1880-4bdc-bd4f-c7b54cb7e7be
-# ╠═382bc8ff-0c66-4542-a8bc-68811d1fc579
 # ╠═b42c3f38-4c52-44e1-955e-e2a6ce972941
 # ╠═3cf20d97-0ec9-46aa-b9b7-f60773f45017
 # ╠═b9db0e64-2939-48ad-bbc3-0dcaae6f408b
