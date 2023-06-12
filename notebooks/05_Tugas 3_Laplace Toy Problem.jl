@@ -89,33 +89,6 @@ function threaded_unbounded_lap2d!(u, unew)
     end
 end
 
-# ╔═╡ 187fd20a-394a-423c-a4a8-ac87bd53ae68
-# ╠═╡ disabled = true
-#=╠═╡
-function threaded_workaround_lap2d!(u, unew)
-    M, N = size(u)
-    partial = zeros(eltype(u), nthreads())
-
-    @threads for j in 2:N-1
-        for i in 2:M-1
-            partial[threadid()] += 0.25 * (u[i+1, j] + u[i-1, j] + u[i, j+1] + u[i, j-1])
-        end
-    end
-
-    s = zero(eltype(u))
-    for i in 1:nthreads()
-        s += partial[i]
-    end
-
-    @threads for j in 2:N-1
-        for i in 2:M-1
-            unew[i, j] = s
-        end
-    end
-end
-
-  ╠═╡ =#
-
 # ╔═╡ e4cdba30-50da-4526-818d-cb5b4cdd7e16
 md""" ## Pendefinisian Matriks dan Variabel"""
 
@@ -204,23 +177,6 @@ heatmap(unew,xlabel="X",ylabel="Y")
 
 # ╔═╡ ce53877d-91b4-45de-8b1d-bc7d8a31b73c
 md""" ### `threaded_workaround_lap2d!` """
-
-# ╔═╡ 5459c80e-1f31-4f99-b97a-ae2f13d3c071
-# ╠═╡ disabled = true
-#=╠═╡
-for i in 1:maximum_iteration
-	threaded_workaround_lap2d!(u, unew)
-	# copy new computed field to old array
-	u = copy(unew)
-	mt_twl = deepcopy(unew)
-end
-  ╠═╡ =#
-
-# ╔═╡ 30195a65-7cd1-4576-a368-3c42e1ae5382
-# ╠═╡ disabled = true
-#=╠═╡
-heatmap(unew,xlabel="X",ylabel="Y") #ERROR
-  ╠═╡ =#
 
 # ╔═╡ 3aee70c1-709b-4324-930e-2f0e411a699d
 plotly()
