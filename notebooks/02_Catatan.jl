@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.25
+# v0.19.26
 
 using Markdown
 using InteractiveUtils
@@ -38,7 +38,9 @@ sizeof(E)
 
 # ╔═╡ 87dad6a4-2ba4-43c0-a6c1-68c5cca36ca1
 md"""
-Membuat matriks dengan fungsi trues lebih hemat memori daripada dengan ones
+!!! catatan
+
+	Membuat matriks dengan fungsi `trues()` lebih hemat memori daripada dengan `ones()`.
 """
 
 # ╔═╡ 3a8a783a-45de-4444-96f9-69c7e42499f5
