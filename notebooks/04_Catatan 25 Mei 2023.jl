@@ -29,19 +29,41 @@ Julia ngerti banget sama yang namanya programming koncurrent dan paralel, bro. A
 
 1. "Tasks" atau coroutines yang asinkron:
 
-Julia punya fitur Tasks yang bisa ngasih kamu kemampuan buat nyuspend dan melanjutkan komputasi untuk I/O, event handling, proses produsen-konsumen, dan pola serupa. Tasks bisa sinkronisasi dengan operasi kayak wait dan fetch, dan bisa komunikasi pake Channels. Walaupun sebenarnya ini bukan komputasi paralel langsung, Julia juga bisa jadwalin Tasks di beberapa thread.
+Di Julia tuh ada fitur keren namanya Tasks. Jadi, fitur ini bisa ngasih kita kemampuan buat nyuspend dan melanjutkan komputasi dengan gampang, terutama buat tugas-tugas yang berhubungan sama I/O, event handling, produsen-konsumen, dan sejenisnya. Misalnya, lagi lagi lagi nge-download file dari internet, kan bisa lama tuh prosesnya. Nah, pake Tasks, kita bisa nyuspend proses itu sementara dan lanjutin lagi setelah selesai downloadnya.
+
+Selain itu, Tasks juga bisa kita pake buat sinkronisasi dan komunikasi antar-tasks. Misalnya, kita mau nungguin satu task selesai baru task lainnya berjalan, kita bisa pake operasi wait. Terus, kalo kita mau ngambil data dari task yang udah selesai, kita bisa pake operasi fetch.
+
+Nah, yang seru lagi, meskipun Tasks ini ga langsung bikin komputasi kita jalan paralel, di Julia kita juga bisa jadwalin Tasks di beberapa thread. Jadi, kita bisa bikin tugas-tugas berbeda jalan secara bersamaan di thread-thread yang berbeda buat nambahin kecepatan dan efisiensi komputasinya.
+
+Jadi, dengan fitur Tasks di Julia, komputasi kita bisa jadi lebih fleksibel, sinkron, dan bahkan bisa jalan di beberapa thread sekaligus. Mantap, kan?
 
 2. Multi-threading:
 
-Multi-threading di Julia ngasih kamu kemampuan buat menjadwalkan Tasks secara bersamaan di lebih dari satu thread atau inti CPU, sambil berbagi memori. Biasanya ini cara termudah buat dapetin paralelisme di PC atau server multi-core gede. Multi-threading di Julia bisa disusun secara komposisi. Ketika suatu fungsi multi-threaded manggil fungsi multi-threaded lainnya, Julia bakal menjadwalkan semua thread secara global di sumber daya yang tersedia, tanpa kelebihan langganan.
+Di Julia, fitur Multi-threading tuh bikin kita bisa menjadwalkan Tasks secara bersamaan di lebih dari satu thread atau inti CPU. Jadi, kita bisa dapetin paralelisme yang mantap di PC atau server yang punya banyak core.
+
+Yang seru lagi, fitur Multi-threading di Julia tuh bisa disusun secara komposisi. Jadi, kalo ada fungsi yang sudah multi-threaded dan dia manggil fungsi lain yang juga multi-threaded, Julia bakal secara otomatis menjadwalkan semua thread secara global di sumber daya yang tersedia. Mantap kan, nggak perlu ribet-ribet lagi!
+
+Pokoknya, dengan fitur Multi-threading di Julia, komputasi kita bisa jalan secara bersamaan di banyak thread dengan berbagi memori. Jadi, bisa dapetin performa yang keren tanpa repot-repot. Keren banget kan?
 
 3. Komputasi terdistribusi:
 
-Komputasi terdistribusi menjalankan beberapa proses Julia dengan ruang memori terpisah. Bisa di satu komputer atau beberapa komputer sekaligus. Library standar Distributed nyediain kemampuan buat eksekusi remote dari fungsi Julia. Dengan dasar yang ini, bisa banget bangun berbagai macam abstraksi komputasi terdistribusi. Contohnya, ada package seperti DistributedArrays.jl yang ngasih abstraksi semacam itu. Di sisi lain, ada juga package kayak MPI.jl dan Elemental.jl yang ngasih akses ke ekosistem library MPI yang udah ada.
+Bro, komputasi terdistribusi di Julia tuh keren banget! Jadi, kita bisa menjalankan beberapa proses Julia secara terpisah dengan ruang memori yang berbeda. Bisa dilakukan di satu komputer atau bahkan beberapa komputer sekaligus.
+
+Nah, di Julia, ada library standar bernama Distributed yang ngebantu kita dalam eksekusi remote dari fungsi Julia. Dengan bantuan library ini, kita bisa melakukan komputasi di mesin-mesin yang terhubung dalam jaringan.
+
+Kelebihan dari fitur ini adalah kita bisa membangun berbagai macam abstraksi komputasi terdistribusi. Contohnya, ada package keren namanya DistributedArrays.jl yang ngebantu kita dalam manipulasi array yang didistribusikan di beberapa mesin. Jadi, kita bisa memproses data besar secara terdistribusi dengan mudah.
+
+Selain itu, ada juga package lain seperti MPI.jl dan Elemental.jl yang memberikan akses ke ekosistem library MPI yang sudah ada. Ini memungkinkan kita untuk memanfaatkan library MPI yang powerful untuk komputasi terdistribusi.
+
+Jadi, dengan fitur komputasi terdistribusi di Julia, kita bisa memanfaatkan sumber daya komputasi di beberapa mesin untuk meningkatkan performa dan mengolah data secara efisien. Mantap kan, bro?
 
 4. Komputasi GPU:
 
-Compiler GPU di Julia ngasih kemampuan buat jalanin kode Julia langsung di GPU. Ada ekosistem yang kaya banget package Julia yang membidik GPU. Situs JuliaGPU.org nyediain daftar kemampuan, GPU yang didukung, package terkait, dan dokumentasi yang bisa kamu cek, bro.
+Di Julia ada compiler GPU yang canggih banget! Compiler ini ngasih kita kemampuan buat menjalankan kode Julia langsung di GPU, loh. Jadi, kita bisa memanfaatkan kecepatan dan kekuatan paralelitas yang dimiliki oleh GPU.
+
+Di Julia, ada ekosistem yang kaya banget dengan package-package yang fokus ke GPU. Kalo mau cek informasi dan dokumentasi terkait GPU di Julia, bisa langsung aja cek situs JuliaGPU.org. Di situs itu, kamu bakal nemuin daftar kemampuan yang ada, GPU yang didukung, package terkait, serta dokumentasi yang lengkap.
+
+Dengan adanya compiler GPU dan ekosistem package Julia yang khusus untuk GPU, kita bisa memaksimalkan performa komputasi dan mempercepat proses seperti pengolahan gambar, machine learning, dan simulasi fisika. Jadi, siap-siap aja bikin kode Julia yang bisa mengeluarkan potensi terbaik dari GPU, bro!
 """
 
 # ╔═╡ 730b3add-28f8-4d4c-a430-2f1018dedd91
@@ -392,26 +414,26 @@ Atomic threads: cepat dan benar. Tergantung jumlah thread.
 
 # ╔═╡ e43737f7-6a1d-422e-87eb-5215ea68dd05
 md"""
-Berdasarkan urutan kecepatan eksekusi, secara umum, urutan dari yang tercepat hingga yang paling lambat akan sebagai berikut:
+Jadi, ini nih urutannya dari yang paling kencang sampe yang paling lambat:
 
-1. `threaded_sqrt_sum_atomic`: Fungsi ini menggunakan pendekatan multithreading dengan operasi atomik, yang memungkinkan thread-thread untuk bekerja secara paralel tanpa adanya race condition. Karena itu, ini bisa menjadi yang paling cepat di antara ketiga fungsi ini.
+1. `threaded_sqrt_sum_atomic`: Ini yang paling top markotop! Dia ngandelin multithreading dengan operasi atomik. Makanya, thread-thread bisa kerja bareng-bareng tanpa bikin ribut. Jadinya, yang ini paling cepet.
 
-2. `sqrt_sum`: Fungsi ini melakukan perhitungan secara serial, artinya setiap elemen dari array `A` diakses dan dihitung secara berurutan. Karena tidak ada paralelisasi atau multithreading, ini akan lebih lambat dibandingkan dengan pendekatan multithreading.
+2. `sqrt_sum`: Ini agak pelan dikit, bro! Dia cuma bisa hitung satu-satu. Jadi, setiap elemen dari array diakses dan dihitung satu per satu. Gak ada kerjaan paralel atau multithreading. Makanya, yang ini lebih lambat dibanding yang lain.
 
-3. `race_sqrt_sum`: Fungsi ini menggunakan pendekatan multithreading tanpa melibatkan operasi atomik atau sinkronisasi. Karena tidak ada perlindungan terhadap race condition, kemungkinan terjadinya race condition akan lebih tinggi. Ini bisa menyebabkan ketidakpastian dan hasil yang tidak konsisten. Dalam hal ini, performa fungsi ini bisa lebih rendah dibandingkan dengan yang lain karena perlu mengatasi masalah race condition.
+3. `race_sqrt_sum`: Nah, ini yang paling pelan, bro! Dia juga pake multithreading, tapi gak ada perlindungan dari race condition. Jadi, bisa aja terjadi masalah race condition yang bikin hasil jadi ga konsisten. Makanya, performa dia bisa lebih rendah dibanding yang lainnya.
 
-Namun, penting untuk diingat bahwa faktor-faktor seperti ukuran array `A`, jumlah thread yang tersedia, dan karakteristik sistem komputasi dapat mempengaruhi kecepatan eksekusi. Selain itu, kecepatan relatif antara fungsi-fungsi ini dapat berbeda-beda tergantung pada konteks dan lingkungan penggunaan spesifik. Jadi, sebaiknya melakukan pengujian kinerja yang lebih terperinci untuk mendapatkan pemahaman yang lebih akurat tentang urutan kecepatan eksekusi dalam kasus-kasus yang spesifik.
+Tapi, inget ya, faktor-faktor kayak ukuran array, jumlah thread yang ada, dan karakteristik komputer bisa mempengaruhi kecepatan eksekusinya. Jadi, tergantung konteks dan situasinya, urutan kecepatannya bisa beda-beda. Sebaiknya, lakukan pengujian yang lebih detail buat dapetin gambaran yang lebih jelas dan akurat.
 """
 
 # ╔═╡ c12f3128-6d75-455a-8773-68732e54a983
 md"""
-Dalam konteks umum, fungsi `sqrt_sum` yang melakukan perhitungan secara serial tidak akan lebih cepat dari `threaded_sqrt_sum_atomic` yang menggunakan pendekatan multithreading dengan operasi atomik. Pendekatan multithreading memungkinkan beberapa thread bekerja secara paralel, memanfaatkan kekuatan pemrosesan paralel dari sistem komputer.
+Nah, begini, bro! Biasanya, `sqrt_sum` yang jalanin perhitungan secara serial gak bakal lebih kenceng dari `threaded_sqrt_sum_atomic` yang pake multithreading dengan operasi atomik. Multithreading memungkinkan beberapa thread kerja bareng-bareng secara paralel, jadi bisa pake kekuatan pemrosesan paralel yang ada di komputer.
 
-Namun, ada beberapa faktor yang dapat mempengaruhi performa relatif antara kedua fungsi tersebut. Jika array `A` memiliki ukuran yang sangat kecil atau jika sistem komputer memiliki jumlah thread yang terbatas, maka overhead yang terkait dengan multithreading dan sinkronisasi dapat membuat `threaded_sqrt_sum_atomic` menjadi lebih lambat daripada `sqrt_sum` yang melakukan perhitungan secara serial.
+Tapi, ada beberapa faktor yang bisa mempengaruhi kecepatan relatif antara dua fungsi ini, bro. Misalnya, kalo array `A`-nya kecil banget atau komputernya cuma punya sedikit thread, bisa aja ada overhead dari multithreading dan sinkronisasi yang bikin `threaded_sqrt_sum_atomic` jadi lebih lambat dari `sqrt_sum` yang jalanin perhitungan secara serial.
 
-Selain itu, karakteristik sistem komputer seperti arsitektur prosesor, cache, dan faktor-faktor lainnya juga dapat mempengaruhi performa relatif antara kedua fungsi tersebut.
+Selain itu, karakteristik komputernya juga bisa mempengaruhi, kayak arsitektur prosesor, cache, dan faktor-faktor lainnya.
 
-Dalam kondisi umum dengan ukuran array yang signifikan dan jumlah thread yang memadai, fungsi `threaded_sqrt_sum_atomic` cenderung lebih cepat karena memanfaatkan paralelisme dan operasi atomik untuk menghindari race condition dan sinkronisasi yang berlebihan.
+Tapi secara umum, kalo ukuran array lumayan besar dan jumlah thread cukup, biasanya `threaded_sqrt_sum_atomic` lebih cepet karena bisa pake paralelisme dan operasi atomik buat hindarin race condition dan sinkronisasi berlebihan.
 """
 
 # ╔═╡ 4ef3264b-1b7c-42be-9600-0e057e0c5789
