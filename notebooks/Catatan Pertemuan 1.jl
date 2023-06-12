@@ -163,7 +163,7 @@ md"""
 5. Ekstrak file julia yang biasanya ekstensinya .tar.gz pake perintah berikut di terminal:
 > tar -xvf nama\_file\_julia
 6. Masuk ke folder julia, misalnya:
-> cd julia-1.9.1/
+> cd julia-1.9.1/\
 > cd bin/
 7. Jalankan julia:
 > /.julia
