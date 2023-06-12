@@ -488,63 +488,8 @@ md"""
 2. Besarkan nilai N=512, 2048, 4096, 8192
 """
 
-# ╔═╡ 645a93d8-c4bc-47aa-994e-f1588cc2b706
-md"""
-## Multithreading
-"""
-
-# ╔═╡ 6c1dcce4-4878-4428-8576-34e32799d8af
-function threaded_lap2d!(u, new)
-	M,N = size(u)
-	@threads for j in 2:N-1
-		for i in 2:M-1
-			@inbounds unew[i,j]=0.25*(u[i-1,j]+u[i+1,j]+u[i,j-1]+u[i,j+1])
-		end
-	end
-end
-
-# ╔═╡ 2a55379b-01f7-43d1-9211-39b8c645f2b5
-for i in 1:maximum_iteration
-	threaded_lap2d!(u, unew)
-	# copy new computed field to old array
-	u = copy(unew)
-end
-
-# ╔═╡ 375760c8-318f-4701-a7f3-093af3aa25c0
-heatmap(unew,xlabel="X",ylabel="Y")
-
-# ╔═╡ 28741fe7-2ebb-447a-91bb-75c54030abed
-@btime threaded_lap2d!(u, unew)
-
-# ╔═╡ 569b59d1-35a1-4338-964f-5a951853daba
-md"""## `@simd`"""
-
-# ╔═╡ faf60c2d-d436-40f1-865d-0486d4717bf2
-
-
-# ╔═╡ 8ae510d4-4ef2-40cd-b097-aa91d55a09c1
-function simd_lap2d!(u, simd_unew)
-	M,N = size(u)
-	@inbounds for j in 2:N-1
-    @simd for i in 2:M-1
-        @inbounds simd_unew[i,j] = 0.25 * (u[i+1,j] + u[i-1,j] + u[i,j+1] + u[i,j-1])
-    	end
-	end
-
-end
-
-# ╔═╡ 21cf9a7f-79c4-496c-bd99-efc2a4a70474
-for i in 1:maximum_iteration
-	simd_lap2d!(simd_u, simd_unew)
-	# copy new computed field to old array
-	simd_u = copy(unew)
-end
-
-# ╔═╡ a5ca90e9-e8e4-4e45-94c2-536b966f8c86
-heatmap(simd_unew,xlabel="X",ylabel="Y")
-
-# ╔═╡ ac8791d8-28f8-43ac-8c72-5de064cd1233
-
+# ╔═╡ cc47bebf-9559-459a-8115-df74b6a747ae
+md""" Jawaban bisa dicek di link [ini.](https://ajamj.github.io/pkg-homework/notebooks/05_Tugas%203_Laplace%20Toy%20Problem.html) """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1643,16 +1588,6 @@ version = "1.4.1+0"
 # ╠═e9242cd0-5986-434b-8173-0c316db782e0
 # ╠═66116501-3435-40e4-b786-4d10ba9a65e9
 # ╟─6616e58e-40e5-4889-8a6e-bd36b014a69d
-# ╟─645a93d8-c4bc-47aa-994e-f1588cc2b706
-# ╠═6c1dcce4-4878-4428-8576-34e32799d8af
-# ╠═2a55379b-01f7-43d1-9211-39b8c645f2b5
-# ╠═375760c8-318f-4701-a7f3-093af3aa25c0
-# ╠═28741fe7-2ebb-447a-91bb-75c54030abed
-# ╠═569b59d1-35a1-4338-964f-5a951853daba
-# ╠═faf60c2d-d436-40f1-865d-0486d4717bf2
-# ╠═8ae510d4-4ef2-40cd-b097-aa91d55a09c1
-# ╠═21cf9a7f-79c4-496c-bd99-efc2a4a70474
-# ╠═a5ca90e9-e8e4-4e45-94c2-536b966f8c86
-# ╠═ac8791d8-28f8-43ac-8c72-5de064cd1233
+# ╟─cc47bebf-9559-459a-8115-df74b6a747ae
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
