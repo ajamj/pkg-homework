@@ -165,7 +165,7 @@ md"""
 # ╔═╡ de3e93d0-3fa9-4492-8d70-56a9406f06d0
 md"""
 ### Pluto
-Kalo di Python, lo pasti ga asing sama yang namanya Jupyter Notebook. Di Julia juga ada notebook-nya, yaitu [Pluto.jl](https://plutojl.org/). Sama-sama nama planet😂"""
+Kalo di Python, lo pasti ga asing sama yang namanya Jupyter Notebook. Di Julia juga ada notebook-nya, yaitu [Pluto.jl](https://plutojl.org/). Sama-sama nama planet (planet kw tapi😂)"""
 
 # ╔═╡ 2a141861-901b-425b-8faf-cb6f2b9ee06e
 md"""
