@@ -148,7 +148,7 @@ Jadi, Julia cocok banget buat technical computing, data science, machine learnin
 md"""
 ## Instalasi
 ### Julia
-1. Lo bisa download Julia versi terbaru lewat link [https://julialang.org/downloads/](https://julialang.org/downloads/). Pantau aja terus lin-nya! Soalnya rilis versi terbarunya cepet banget!
+1. Lo bisa download Julia versi terbaru lewat link [https://julialang.org/downloads/](https://julialang.org/downloads/). Pantau aja terus link-nya! Soalnya rilis versi terbarunya cepet banget!
 2. Instalnya gampang banget. kalo di Windows, tinggal sat set sat set.
 3. Kalo di linux (WSL, misalnya), lo pilih link download yang sesuai dulu.  Kalo lo pake WSL Ubuntu, lo pilih link download yang **Generic Linux on x86**, terus pilih yang **64-bit (glibc)**.
 4. Simpan file di direktori WSL, biar gampang.
