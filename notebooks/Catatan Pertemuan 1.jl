@@ -15,17 +15,6 @@ md"""
 # ╔═╡ 7f39a629-ca6a-47eb-b749-559612c19ebc
 TableOfContents()
 
-# ╔═╡ f42b2488-ee94-4822-a23b-96ca4e63ab67
-md"""
-## Outline
-+ *Overview: Julia in a Nutshell*
-+ *Why Julia?*
-+ Instalasi
-+ Sintaks Dasar
-+ Struktur Kontrol
-+ Fungsi
-"""
-
 # ╔═╡ edd71197-1e00-4d2e-a421-29180298d9e7
 md"""## *Overview: Julia in a Nutshell*
 [![](https://mermaid.ink/img/pako:eNp1U8Fu2zAM_RVCvbiAk9lO7Do-DGibthiwIsXW05CLYssJYVkSJHmrl-bfR8dpukssGKD4yMcnUtqzUleCFWxrudnB63KtgL7b4JE7fw2Tydf3JVquSq620CnfNWCErbVtOXhU2y2-w11wr1uDUlTgNYi6xhKF8qC4x98ChgLXI-19sOwVb7EcmV_RCKi451Dh4Ha0UVB1Tae2ZKDywvLGY001RoJl8EMYq6uuxI0UI8t3knHK6AeVG3QDoR0DG4fn7IejUO34Ofe5kx6NJBXoDPfl7qjAaMnpmK3V1JWWHKvVyxGoqYxDrbg8cz4GT0KRTHlq1of4sVffvqyAu16VO6uV7lwIrfDcjMQtCQ-hknJ6ZnsKVkYocLqz5Unii9W9aEB_-kOQYoODVIsQT6MogkYrb3HTeW2PXCOb8z0d7RZqlLK4ypPNzXzzP3J_EVleRB4uIo8XkaeLyN0JqRfDCp23uhHFVZZlJ3vyByu_KxLz9uGouNtxa3lfQBpCulYsZK2g-4gVXeP9wL5mfidasWYFmZWoOU15zdbqQKGcevSTBsIKbzsRss7QBRRL5MNEWFFz6cgrKqRWPo9P4_hCQma4-qX1ZwztWbFnb6xIoulNHs_imzxa5PRn85D15I6TabzIZlESpbMsTZPkELK_R4poukjzPMnmUZzP5nGWp4d_8Rkkdg?type=png)](https://mermaid.live/edit#pako:eNp1U8Fu2zAM_RVCvbiAk9lO7Do-DGibthiwIsXW05CLYssJYVkSJHmrl-bfR8dpukssGKD4yMcnUtqzUleCFWxrudnB63KtgL7b4JE7fw2Tydf3JVquSq620CnfNWCErbVtOXhU2y2-w11wr1uDUlTgNYi6xhKF8qC4x98ChgLXI-19sOwVb7EcmV_RCKi451Dh4Ha0UVB1Tae2ZKDywvLGY001RoJl8EMYq6uuxI0UI8t3knHK6AeVG3QDoR0DG4fn7IejUO34Ofe5kx6NJBXoDPfl7qjAaMnpmK3V1JWWHKvVyxGoqYxDrbg8cz4GT0KRTHlq1of4sVffvqyAu16VO6uV7lwIrfDcjMQtCQ-hknJ6ZnsKVkYocLqz5Unii9W9aEB_-kOQYoODVIsQT6MogkYrb3HTeW2PXCOb8z0d7RZqlLK4ypPNzXzzP3J_EVleRB4uIo8XkaeLyN0JqRfDCp23uhHFVZZlJ3vyByu_KxLz9uGouNtxa3lfQBpCulYsZK2g-4gVXeP9wL5mfidasWYFmZWoOU15zdbqQKGcevSTBsIKbzsRss7QBRRL5MNEWFFz6cgrKqRWPo9P4_hCQma4-qX1ZwztWbFnb6xIoulNHs_imzxa5PRn85D15I6TabzIZlESpbMsTZPkELK_R4poukjzPMnmUZzP5nGWp4d_8Rkkdg)
@@ -1807,7 +1796,6 @@ version = "1.4.1+0"
 # ╟─c7d13ff0-08bb-11ee-19ed-411e0be3b771
 # ╠═445152e2-aa3f-4544-8cd9-da18a186df81
 # ╠═7f39a629-ca6a-47eb-b749-559612c19ebc
-# ╟─f42b2488-ee94-4822-a23b-96ca4e63ab67
 # ╟─edd71197-1e00-4d2e-a421-29180298d9e7
 # ╟─047b66fd-e76c-4d4f-aee3-acd6379b04fd
 # ╟─0fa9a8eb-28d0-4d02-9ec6-8218952e7757
