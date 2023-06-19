@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.22
+# v0.19.26
 
 using Markdown
 using InteractiveUtils
@@ -293,7 +293,7 @@ To simulate something that resembles e.g. the evolution of temperature in a 2D h
 @btime lap2d!(u, unew)
 
 # ╔═╡ 69ee8f7c-57fa-410c-b92a-19546c98c9c7
-@bind maximum_iteration html"<input type=range min=1 max=100>"
+@bind maximum_iteration Slider(1:100, default=100, show_value=true)
 
 # ╔═╡ 14db4a1f-f034-46d4-a653-a1c9811b9060
 println(maximum_iteration)
