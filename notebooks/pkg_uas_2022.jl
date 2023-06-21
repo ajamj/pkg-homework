@@ -7,9 +7,6 @@ using InteractiveUtils
 # ╔═╡ 8019fea8-102d-11ee-2602-41125f96071f
 using PlutoUI, BenchmarkTools
 
-# ╔═╡ dd5fa3ff-449a-4ed4-9c8f-f20a688b870b
-using .Threads
-
 # ╔═╡ 480109e2-59bb-4794-9869-8752d1072d68
 md"""
 # UAS PKG 2022
@@ -24,6 +21,65 @@ md"""
 Pilih 6 fungsi standar yang terdapat di bahasa pemrograman fortran dan 6 fungsi standar yang terdapat di bahasa pemrograman julia. jelaskan masing-masing kegunaannya dan berikan contoh penggunaannya
 """
 
+# ╔═╡ 2438dbc6-c885-482f-8b27-1683f745b965
+md"""
+### Fungsi standar Julia
+1. Fungsi`sqrt` untuk mendapatkan nilai akar dua dari input. Contoh:
+"""
+
+# ╔═╡ a2ad03f4-d150-4f7d-b64d-e4006c672baa
+sqrt(100)
+
+# ╔═╡ 6d1239ce-bde2-4db8-ab73-52ac5c7575a0
+md"""
+2. Fungsi `sum` untuk mendapatkan jumlah nilai dari input. Contoh:
+"""
+
+# ╔═╡ 8b4398ae-cade-45ea-9651-070e2973ef6a
+sum([10, 20])
+
+# ╔═╡ 5cbc2a21-7e0b-488b-8140-446a3011d482
+md"""
+3. Fungsi `length` untuk mengetahui panjang atau jumlah elemen dari sebuah collection. Contoh:
+"""
+
+# ╔═╡ 29967cf1-a39f-4d55-9017-d62bb1d9998e
+length([23, 12, 1])
+
+# ╔═╡ 2d951a37-0038-4987-af21-eb50b6ff17d9
+md"""
+4. Fungsi `typeof` untuk mengetahui tipe data dari sebuah variabel. Contoh:
+"""
+
+# ╔═╡ 085b0d21-dfee-4875-beec-70556ab36136
+typeof("kata")
+
+# ╔═╡ c9a1b3b8-a272-4469-981c-cf0114d5c89e
+md"""
+5. Fungsi `size` untuk mengetahui ukuran dimensi dari vektor atau matriks. Contoh:
+"""
+
+# ╔═╡ a26ad96f-77e5-4821-8639-ffeadcabefaa
+size([2 3 3 2])
+
+# ╔═╡ cbaa8437-bdef-47a6-b018-1cbc90bf9a16
+size([1, 2, 4])
+
+# ╔═╡ 038cea98-2bc1-4de6-8617-6614bfe9f385
+md"""
+6. Fungsi `abs` untuk mendapatkan nilai absolute atau nilai mutlak dari input. Contoh:
+"""
+
+# ╔═╡ 7f80e1fc-150a-4f6a-b18f-6d59a4dfc612
+abs(-2)
+
+# ╔═╡ f05eed58-40e3-4a9e-94e7-13fc331cece2
+md"""
+### Fungsi standar FORTRAN"""
+
+# ╔═╡ eeb2856a-d568-4537-990c-b1f60d89513d
+md"""nyusul"""
+
 # ╔═╡ 35a8f79f-862f-4a0a-8c09-0692b0d75997
 md"""
 ## Dua
@@ -32,6 +88,35 @@ Tuliskan 3 contoh fungsi sederhana dengan julia yang memanfaatkan fitur multiple
 2. memiliki input dua string dan hasilnya adalah gabungan kedua string tersebut dan jumlah karakter pada string yang digabungkan
 3. memiliki input dua matriks dan hasilnya perkalian matriks yang dihitung menggunakan bahasa pemrograman C/fortran/C++.
 """
+
+# ╔═╡ 00ec53eb-734f-492a-89cf-2ef934b5891d
+md"""
+### Fungsi pertama
+"""
+
+# ╔═╡ b0a0065c-c285-413b-b63f-660a07ea9b67
+function soal2(x::Union{Int, Float64}, y::Union{Int, Float64})
+	return x^y
+end
+
+# ╔═╡ 233f0859-c1df-4560-9cda-7d8aa4d3ca26
+function soal2(x::String, y::String)
+	gabungan = string(x,y)
+	panjang = length(gabungan)
+	return gabungan, panjang
+end
+
+# ╔═╡ 5ab3b34c-e71b-4fe6-821d-e853ed064890
+function soal2(x::Matrix, y::Matrix)
+	return nothing
+end
+# nyusul
+
+# ╔═╡ 3ab64cfc-fee0-48ea-82cf-1e19f910e187
+soal2(2, 3)
+
+# ╔═╡ 88071582-a35b-4b65-ad26-e16af55cc790
+soal2("foot", "ball")
 
 # ╔═╡ d0d49447-982f-48a2-8226-5b2f507ece3c
 md"""
@@ -93,42 +178,11 @@ gelombang = Gelombang(x -> f(x,L), g, c)
 # ╔═╡ 69307fe4-1789-457a-a190-77eec287b86c
 y = sls_gelombang(T, L, gelombang; n_t=2401, n_x=101)
 
-# ╔═╡ 1ca519f5-046e-4fb8-8ff0-85243be52b4b
-function sls_gelombang_op(T, L, gelombang::Gelombang; n_t=100, n_x=100)
-	ts = range(0, T; length=n_t)
-	xs = range(0, L; length=n_x)
-	dt = ts[2] - ts[1]
-	dx = xs[2] - xs[1]
-	y = zeros(n_t, n_x)
-
-	# kondisi batas
-	y[:,1] .= gelombang.f(0)
-	y[:,end] .= gelombang.f(L)
-
-	# kondisi awal
-	y[1,2:end-1] = gelombang.f.(xs[2:end-1])
-	y[2,2:end-1] = y[1,2:end-1] + dt*gelombang.g.(xs[2:end-1])
-
-	# solusi untuk t = 2*dt, 3*dt, ..., T
-	@inbounds for t in 2:n_t-1, x in 2:n_x-1
-		dy_xx = (y[t, x+1] - 2*y[t, x] + y[t, x-1])/dx^2
-		y[t+1, x] = c^2 * dt^2 * dy_xx + 2*y[t, x] - y[t-1, x]
-	end
-
-	return y
-end
-
-# ╔═╡ e6fa189e-a1de-495f-ac9e-ba9ef3acf4da
-y_op = sls_gelombang_op(T, L, gelombang; n_t=2401, n_x=101)
-
-# ╔═╡ e79958c0-6efa-4664-a3e0-6c1106061025
+# ╔═╡ 67b3f43c-e8e6-4830-9761-92775159744e
 @btime y
 
-# ╔═╡ e5600169-b3bf-4e70-bce0-6992b3bc7447
-@btime y_op
-
-# ╔═╡ 9f97ab1d-5a1a-471b-8b99-4038135cea73
-function sls_gelombang_mt(T, L, gelombang::Gelombang; n_t=100, n_x=100)
+# ╔═╡ 1ca519f5-046e-4fb8-8ff0-85243be52b4b
+function sls_gelombang_op(T, L, gelombang::Gelombang; n_t=100, n_x=100)
     ts = range(0, T; length=n_t)
     xs = range(0, L; length=n_x)
     dt = ts[2] - ts[1]
@@ -136,30 +190,68 @@ function sls_gelombang_mt(T, L, gelombang::Gelombang; n_t=100, n_x=100)
     y = zeros(n_t, n_x)
 
     # kondisi batas
-    y[:, 1] .= gelombang.f(0)
-    y[:, end] .= gelombang.f(L)
+    @inbounds y[:,1] .= gelombang.f(0)
+    @inbounds y[:,end] .= gelombang.f(L)
 
     # kondisi awal
-    y[1, 2:end-1] .= gelombang.f.(xs[2:end-1])
-    y[2, 2:end-1] .= y[1, 2:end-1] + dt * gelombang.g.(xs[2:end-1])
+    @inbounds y[1,2:end-1] = gelombang.f.(xs[2:end-1])
+    @inbounds y[2,2:end-1] = y[1,2:end-1] + dt*gelombang.g.(xs[2:end-1])
 
     # solusi untuk t = 2*dt, 3*dt, ..., T
-    @threads for t in 2:n_t-1
-        for x in 2:n_x-1
-            dy_xx = (y[t, x+1] - 2 * y[t, x] + y[t, x-1]) / dx^2
-            y[t+1, x] = gelombang.c^2 * dt^2 * dy_xx + 2 * y[t, x] - y[t-1, x]
-        end
+    for t in 2:n_t-1
+		@simd for x in 2:n_x-1
+        	@inbounds dy_xx = (y[t, x+1] - 2*y[t, x] + y[t, x-1])/dx^2
+        	@inbounds y[t+1, x] = c^2 * dt^2 * dy_xx + 2*y[t, x] - y[t-1, x]
+		end
     end
 
     return y
 end
 
 
-# ╔═╡ 78841ebd-5966-456b-8592-7935e38cb5bd
-y_mt = sls_gelombang_mt(T, L, gelombang; n_t=2401, n_x=101)
+# ╔═╡ e6fa189e-a1de-495f-ac9e-ba9ef3acf4da
+y_op = sls_gelombang_op(T, L, gelombang; n_t=2401, n_x=101)
 
-# ╔═╡ be77f983-3207-4937-bae5-d31e1b4c3fd3
-@btime y_mt
+# ╔═╡ e5600169-b3bf-4e70-bce0-6992b3bc7447
+@btime y_op
+
+# ╔═╡ cbc0f4b1-dc9f-4aa4-8a88-4ede66844561
+function sls_gelombang_workaround(T, L, gelombang::Gelombang; n_t=100, n_x=100)
+    ts = range(0, T; length=n_t)
+    xs = range(0, L; length=n_x)
+    dt = ts[2] - ts[1]
+    dx = xs[2] - xs[1]
+    y = zeros(n_t, n_x)
+
+    # kondisi batas
+    @inbounds y[:,1] .= gelombang.f(0)
+    @inbounds y[:,end] .= gelombang.f(L)
+
+    # kondisi awal
+    @inbounds y[1,2:end-1] = gelombang.f.(xs[2:end-1])
+    @inbounds y[2,2:end-1] = y[1,2:end-1] + dt*gelombang.g.(xs[2:end-1])
+
+    # solusi untuk t = 2*dt, 3*dt, ..., T
+    for t in 2:n_t-1
+        @inbounds y[t+1, 2:end-1] = @. c^2 * dt^2 * (y[t, 3:end] - 2*y[t, 2:end-1] + y[t, 1:end-2])/dx^2 + 2*y[t, 2:end-1] - y[t-1, 2:end-1]
+    end
+
+    return y
+end
+
+
+# ╔═╡ 5bb46996-0cfb-4c8c-8cad-ad9ee2d798fc
+y_wk = sls_gelombang_workaround(T, L, gelombang; n_t=2401, n_x=101)
+
+# ╔═╡ 63da1603-6580-455e-8498-607928634059
+@btime y_wk
+
+# ╔═╡ 81c7a95c-3ddf-4356-b5ee-c7b1a0406942
+md"""
+Aku masih gak ngerti, kenapa walaupun udah dioptimasi pake `@inbound` dan `@simd`, tapi waktunya masih gak beda jauh. 
+
+Aku udah coba pake `@threads`, tapi hasilnya beda. Sepertinya ada race condition.
+"""
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -449,7 +541,28 @@ version = "17.4.0+0"
 # ╠═8019fea8-102d-11ee-2602-41125f96071f
 # ╠═57e80c11-c9b1-41bc-8d5c-6b70488a68f6
 # ╟─66a08004-48e0-48ec-bdbf-5c25da0a415d
+# ╟─2438dbc6-c885-482f-8b27-1683f745b965
+# ╠═a2ad03f4-d150-4f7d-b64d-e4006c672baa
+# ╟─6d1239ce-bde2-4db8-ab73-52ac5c7575a0
+# ╠═8b4398ae-cade-45ea-9651-070e2973ef6a
+# ╟─5cbc2a21-7e0b-488b-8140-446a3011d482
+# ╠═29967cf1-a39f-4d55-9017-d62bb1d9998e
+# ╟─2d951a37-0038-4987-af21-eb50b6ff17d9
+# ╠═085b0d21-dfee-4875-beec-70556ab36136
+# ╟─c9a1b3b8-a272-4469-981c-cf0114d5c89e
+# ╠═a26ad96f-77e5-4821-8639-ffeadcabefaa
+# ╠═cbaa8437-bdef-47a6-b018-1cbc90bf9a16
+# ╟─038cea98-2bc1-4de6-8617-6614bfe9f385
+# ╠═7f80e1fc-150a-4f6a-b18f-6d59a4dfc612
+# ╟─f05eed58-40e3-4a9e-94e7-13fc331cece2
+# ╟─eeb2856a-d568-4537-990c-b1f60d89513d
 # ╟─35a8f79f-862f-4a0a-8c09-0692b0d75997
+# ╟─00ec53eb-734f-492a-89cf-2ef934b5891d
+# ╠═b0a0065c-c285-413b-b63f-660a07ea9b67
+# ╠═233f0859-c1df-4560-9cda-7d8aa4d3ca26
+# ╠═3ab64cfc-fee0-48ea-82cf-1e19f910e187
+# ╠═88071582-a35b-4b65-ad26-e16af55cc790
+# ╠═5ab3b34c-e71b-4fe6-821d-e853ed064890
 # ╟─d0d49447-982f-48a2-8226-5b2f507ece3c
 # ╠═9d61bdbe-1ac5-423b-a7d0-42b1e3f52c14
 # ╠═14952c02-564d-4cc6-a588-c81489fcc625
@@ -460,13 +573,13 @@ version = "17.4.0+0"
 # ╠═787137c3-edbb-40c4-8fdd-53737b33ea93
 # ╠═e8b17246-3c56-472b-8b98-03ee21c7cf18
 # ╠═69307fe4-1789-457a-a190-77eec287b86c
+# ╠═67b3f43c-e8e6-4830-9761-92775159744e
 # ╠═1ca519f5-046e-4fb8-8ff0-85243be52b4b
 # ╠═e6fa189e-a1de-495f-ac9e-ba9ef3acf4da
-# ╠═e79958c0-6efa-4664-a3e0-6c1106061025
 # ╠═e5600169-b3bf-4e70-bce0-6992b3bc7447
-# ╠═dd5fa3ff-449a-4ed4-9c8f-f20a688b870b
-# ╠═9f97ab1d-5a1a-471b-8b99-4038135cea73
-# ╠═78841ebd-5966-456b-8592-7935e38cb5bd
-# ╠═be77f983-3207-4937-bae5-d31e1b4c3fd3
+# ╠═cbc0f4b1-dc9f-4aa4-8a88-4ede66844561
+# ╠═5bb46996-0cfb-4c8c-8cad-ad9ee2d798fc
+# ╠═63da1603-6580-455e-8498-607928634059
+# ╟─81c7a95c-3ddf-4356-b5ee-c7b1a0406942
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
