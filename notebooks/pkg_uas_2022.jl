@@ -21,7 +21,9 @@ TableOfContents()
 # ╔═╡ 66a08004-48e0-48ec-bdbf-5c25da0a415d
 md"""
 ## Satu
-Pilih 6 fungsi standar yang terdapat di bahasa pemrograman fortran dan 6 fungsi standar yang terdapat di bahasa pemrograman julia. jelaskan masing-masing kegunaannya dan berikan contoh penggunaannya
+!!! soal
+	
+	Pilih 6 fungsi standar yang terdapat di bahasa pemrograman fortran dan 6 fungsi standar yang terdapat di bahasa pemrograman julia. jelaskan masing-masing kegunaannya dan berikan contoh penggunaannya
 """
 
 # ╔═╡ 2438dbc6-c885-482f-8b27-1683f745b965
@@ -81,7 +83,7 @@ md"""
 ### Fungsi standar FORTRAN"""
 
 # ╔═╡ eeb2856a-d568-4537-990c-b1f60d89513d
-md"""Berikut adalah 10 contoh fungsi standar dalam Fortran beserta penjelasan dan contoh penggunaannya:
+md"""Berikut adalah 6 + bonus 4 contoh fungsi standar dalam Fortran beserta penjelasan dan contoh penggunaannya:
 
 1. **ABS**: Fungsi ini mengembalikan nilai absolut dari suatu bilangan.
 
@@ -172,10 +174,11 @@ Fungsi-fungsi standar ini dapat digunakan dalam program Fortran untuk melakukan 
 # ╔═╡ 35a8f79f-862f-4a0a-8c09-0692b0d75997
 md"""
 ## Dua
-Tuliskan 3 contoh fungsi sederhana dengan julia yang memanfaatkan fitur multiple dispatch yang memenuhi kriteria:
-1. memiliki input dua integer atau float dan hasilnya adalah bilangan pertama pangkat bilangan kedua
-2. memiliki input dua string dan hasilnya adalah gabungan kedua string tersebut dan jumlah karakter pada string yang digabungkan
-3. memiliki input dua matriks dan hasilnya perkalian matriks yang dihitung menggunakan bahasa pemrograman C/fortran/C++.
+!!! soal
+	Tuliskan 3 contoh fungsi sederhana dengan julia yang memanfaatkan fitur multiple dispatch yang memenuhi kriteria:
+	1. Memiliki input dua integer atau float dan hasilnya adalah bilangan pertama pangkat bilangan kedua
+	2. Memiliki input dua string dan hasilnya adalah gabungan kedua string tersebut dan jumlah karakter pada string yang digabungkan
+	3. Memiliki input dua matriks dan hasilnya perkalian matriks yang dihitung menggunakan bahasa pemrograman C/fortran/C++.
 """
 
 # ╔═╡ 00ec53eb-734f-492a-89cf-2ef934b5891d
@@ -199,7 +202,7 @@ end
 function soal2(x::Matrix, y::Matrix)
 	return nothing
 end
-# nyusul, kalo sempat
+# gak ngerti :')
 
 # ╔═╡ 3ab64cfc-fee0-48ea-82cf-1e19f910e187
 soal2(2, 3)
@@ -210,8 +213,9 @@ soal2("foot", "ball")
 # ╔═╡ d0d49447-982f-48a2-8226-5b2f507ece3c
 md"""
 ## Tiga
-1. optimasi kode di bawah! sertakan penjelasannya!
-2. estimasikan perkiraan peningkatan kecepatan setelah dilakukan optimasi beserta alasan penjelasannya
+!!! soal
+	1. Optimasi kode di bawah! sertakan penjelasannya!
+	2. Estimasikan perkiraan peningkatan kecepatan setelah dilakukan optimasi beserta alasan penjelasannya
 """
 
 # ╔═╡ d96ca305-6623-451c-8603-653bf7029815
