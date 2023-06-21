@@ -181,11 +181,6 @@ md"""
 	3. Memiliki input dua matriks dan hasilnya perkalian matriks yang dihitung menggunakan bahasa pemrograman C/fortran/C++.
 """
 
-# ╔═╡ 00ec53eb-734f-492a-89cf-2ef934b5891d
-md"""
-### Fungsi pertama
-"""
-
 # ╔═╡ b0a0065c-c285-413b-b63f-660a07ea9b67
 function soal2(x::Union{Int, Float64}, y::Union{Int, Float64})
 	return x^y
@@ -674,7 +669,6 @@ version = "17.4.0+0"
 # ╟─f05eed58-40e3-4a9e-94e7-13fc331cece2
 # ╟─eeb2856a-d568-4537-990c-b1f60d89513d
 # ╟─35a8f79f-862f-4a0a-8c09-0692b0d75997
-# ╟─00ec53eb-734f-492a-89cf-2ef934b5891d
 # ╠═b0a0065c-c285-413b-b63f-660a07ea9b67
 # ╠═233f0859-c1df-4560-9cda-7d8aa4d3ca26
 # ╠═f6e65059-263b-4a44-8290-6e9b6b95a6fb
