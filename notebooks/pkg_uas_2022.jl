@@ -198,7 +198,7 @@ function soal2(x::String, y::String)
 	return gabungan, panjang
 end
 
-# ╔═╡ 5ab3b34c-e71b-4fe6-821d-e853ed064890
+# ╔═╡ f6e65059-263b-4a44-8290-6e9b6b95a6fb
 function soal2(x::Matrix, y::Matrix)
 	return nothing
 end
@@ -677,9 +677,9 @@ version = "17.4.0+0"
 # ╟─00ec53eb-734f-492a-89cf-2ef934b5891d
 # ╠═b0a0065c-c285-413b-b63f-660a07ea9b67
 # ╠═233f0859-c1df-4560-9cda-7d8aa4d3ca26
+# ╠═f6e65059-263b-4a44-8290-6e9b6b95a6fb
 # ╠═3ab64cfc-fee0-48ea-82cf-1e19f910e187
 # ╠═88071582-a35b-4b65-ad26-e16af55cc790
-# ╠═5ab3b34c-e71b-4fe6-821d-e853ed064890
 # ╟─d0d49447-982f-48a2-8226-5b2f507ece3c
 # ╟─d96ca305-6623-451c-8603-653bf7029815
 # ╠═9d61bdbe-1ac5-423b-a7d0-42b1e3f52c14
