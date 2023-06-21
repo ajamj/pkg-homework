@@ -7,8 +7,38 @@ using InteractiveUtils
 # ╔═╡ 8019fea8-102d-11ee-2602-41125f96071f
 using PlutoUI, BenchmarkTools
 
+# ╔═╡ dd5fa3ff-449a-4ed4-9c8f-f20a688b870b
+using .Threads
+
+# ╔═╡ 480109e2-59bb-4794-9869-8752d1072d68
+md"""
+# UAS PKG 2022
+"""
+
 # ╔═╡ 57e80c11-c9b1-41bc-8d5c-6b70488a68f6
 TableOfContents()
+
+# ╔═╡ 66a08004-48e0-48ec-bdbf-5c25da0a415d
+md"""
+## Satu
+Pilih 6 fungsi standar yang terdapat di bahasa pemrograman fortran dan 6 fungsi standar yang terdapat di bahasa pemrograman julia. jelaskan masing-masing kegunaannya dan berikan contoh penggunaannya
+"""
+
+# ╔═╡ 35a8f79f-862f-4a0a-8c09-0692b0d75997
+md"""
+## Dua
+Tuliskan 3 contoh fungsi sederhana dengan julia yang memanfaatkan fitur multiple dispatch yang memenuhi kriteria:
+1. memiliki input dua integer atau float dan hasilnya adalah bilangan pertama pangkat bilangan kedua
+2. memiliki input dua string dan hasilnya adalah gabungan kedua string tersebut dan jumlah karakter pada string yang digabungkan
+3. memiliki input dua matriks dan hasilnya perkalian matriks yang dihitung menggunakan bahasa pemrograman C/fortran/C++.
+"""
+
+# ╔═╡ d0d49447-982f-48a2-8226-5b2f507ece3c
+md"""
+## Tiga
+1. optimasi kode di bawah! sertakan penjelasannya!
+2. estimasikan perkiraan peningkatan kecepatan setelah dilakukan optimasi beserta alasan penjelasannya
+"""
 
 # ╔═╡ 9d61bdbe-1ac5-423b-a7d0-42b1e3f52c14
 struct Gelombang
@@ -65,28 +95,28 @@ y = sls_gelombang(T, L, gelombang; n_t=2401, n_x=101)
 
 # ╔═╡ 1ca519f5-046e-4fb8-8ff0-85243be52b4b
 function sls_gelombang_op(T, L, gelombang::Gelombang; n_t=100, n_x=100)
-    ts = range(0, T; length=n_t)
-    xs = range(0, L; length=n_x)
-    dt = ts[2] - ts[1]
-    dx = xs[2] - xs[1]
-    y = zeros(Float64, n_t, n_x)
-    y[:, 1] .= gelombang.f(0)
-    y[:, end] .= gelombang.f(L)
-    y[1, 2:end-1] = gelombang.f.(xs[2:end-1])
-    y[2, 2:end-1] = y[1, 2:end-1] + dt .* gelombang.g.(xs[2:end-1])
+	ts = range(0, T; length=n_t)
+	xs = range(0, L; length=n_x)
+	dt = ts[2] - ts[1]
+	dx = xs[2] - xs[1]
+	y = zeros(n_t, n_x)
 
-    c_squared_dt_squared = gelombang.c^2 * dt^2
+	# kondisi batas
+	y[:,1] .= gelombang.f(0)
+	y[:,end] .= gelombang.f(L)
 
-    @inbounds for t in 2:n_t-1
-        @inbounds for x in 2:n_x-1
-            dy_xx = (y[t, x+1] - 2*y[t, x] + y[t, x-1]) / dx^2
-            y[t+1, x] = c_squared_dt_squared * dy_xx + 2*y[t, x] - y[t-1, x]
-        end
-    end
+	# kondisi awal
+	y[1,2:end-1] = gelombang.f.(xs[2:end-1])
+	y[2,2:end-1] = y[1,2:end-1] + dt*gelombang.g.(xs[2:end-1])
 
-    return y
+	# solusi untuk t = 2*dt, 3*dt, ..., T
+	@inbounds for t in 2:n_t-1, x in 2:n_x-1
+		dy_xx = (y[t, x+1] - 2*y[t, x] + y[t, x-1])/dx^2
+		y[t+1, x] = c^2 * dt^2 * dy_xx + 2*y[t, x] - y[t-1, x]
+	end
+
+	return y
 end
-
 
 # ╔═╡ e6fa189e-a1de-495f-ac9e-ba9ef3acf4da
 y_op = sls_gelombang_op(T, L, gelombang; n_t=2401, n_x=101)
@@ -96,6 +126,40 @@ y_op = sls_gelombang_op(T, L, gelombang; n_t=2401, n_x=101)
 
 # ╔═╡ e5600169-b3bf-4e70-bce0-6992b3bc7447
 @btime y_op
+
+# ╔═╡ 9f97ab1d-5a1a-471b-8b99-4038135cea73
+function sls_gelombang_mt(T, L, gelombang::Gelombang; n_t=100, n_x=100)
+    ts = range(0, T; length=n_t)
+    xs = range(0, L; length=n_x)
+    dt = ts[2] - ts[1]
+    dx = xs[2] - xs[1]
+    y = zeros(n_t, n_x)
+
+    # kondisi batas
+    y[:, 1] .= gelombang.f(0)
+    y[:, end] .= gelombang.f(L)
+
+    # kondisi awal
+    y[1, 2:end-1] .= gelombang.f.(xs[2:end-1])
+    y[2, 2:end-1] .= y[1, 2:end-1] + dt * gelombang.g.(xs[2:end-1])
+
+    # solusi untuk t = 2*dt, 3*dt, ..., T
+    @threads for t in 2:n_t-1
+        for x in 2:n_x-1
+            dy_xx = (y[t, x+1] - 2 * y[t, x] + y[t, x-1]) / dx^2
+            y[t+1, x] = gelombang.c^2 * dt^2 * dy_xx + 2 * y[t, x] - y[t-1, x]
+        end
+    end
+
+    return y
+end
+
+
+# ╔═╡ 78841ebd-5966-456b-8592-7935e38cb5bd
+y_mt = sls_gelombang_mt(T, L, gelombang; n_t=2401, n_x=101)
+
+# ╔═╡ be77f983-3207-4937-bae5-d31e1b4c3fd3
+@btime y_mt
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -381,8 +445,12 @@ version = "17.4.0+0"
 """
 
 # ╔═╡ Cell order:
+# ╟─480109e2-59bb-4794-9869-8752d1072d68
 # ╠═8019fea8-102d-11ee-2602-41125f96071f
 # ╠═57e80c11-c9b1-41bc-8d5c-6b70488a68f6
+# ╟─66a08004-48e0-48ec-bdbf-5c25da0a415d
+# ╟─35a8f79f-862f-4a0a-8c09-0692b0d75997
+# ╟─d0d49447-982f-48a2-8226-5b2f507ece3c
 # ╠═9d61bdbe-1ac5-423b-a7d0-42b1e3f52c14
 # ╠═14952c02-564d-4cc6-a588-c81489fcc625
 # ╠═d885aba3-4395-4fd6-9ab0-55a3b02c76f9
@@ -396,5 +464,9 @@ version = "17.4.0+0"
 # ╠═e6fa189e-a1de-495f-ac9e-ba9ef3acf4da
 # ╠═e79958c0-6efa-4664-a3e0-6c1106061025
 # ╠═e5600169-b3bf-4e70-bce0-6992b3bc7447
+# ╠═dd5fa3ff-449a-4ed4-9c8f-f20a688b870b
+# ╠═9f97ab1d-5a1a-471b-8b99-4038135cea73
+# ╠═78841ebd-5966-456b-8592-7935e38cb5bd
+# ╠═be77f983-3207-4937-bae5-d31e1b4c3fd3
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
