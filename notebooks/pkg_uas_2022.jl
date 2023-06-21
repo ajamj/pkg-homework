@@ -78,7 +78,7 @@ md"""
 ### Fungsi standar FORTRAN"""
 
 # ╔═╡ eeb2856a-d568-4537-990c-b1f60d89513d
-md"""nyusul"""
+md"""nyusul, kalo sempat"""
 
 # ╔═╡ 35a8f79f-862f-4a0a-8c09-0692b0d75997
 md"""
@@ -110,7 +110,7 @@ end
 function soal2(x::Matrix, y::Matrix)
 	return nothing
 end
-# nyusul
+# nyusul, kalo sempat
 
 # ╔═╡ 3ab64cfc-fee0-48ea-82cf-1e19f910e187
 soal2(2, 3)
@@ -124,6 +124,9 @@ md"""
 1. optimasi kode di bawah! sertakan penjelasannya!
 2. estimasikan perkiraan peningkatan kecepatan setelah dilakukan optimasi beserta alasan penjelasannya
 """
+
+# ╔═╡ d96ca305-6623-451c-8603-653bf7029815
+md""" ### Kode soal"""
 
 # ╔═╡ 9d61bdbe-1ac5-423b-a7d0-42b1e3f52c14
 struct Gelombang
@@ -180,6 +183,9 @@ y = sls_gelombang(T, L, gelombang; n_t=2401, n_x=101)
 
 # ╔═╡ 67b3f43c-e8e6-4830-9761-92775159744e
 @btime y
+
+# ╔═╡ a8179635-72a8-4dd1-a726-0aa97ebc6dc5
+md""" ### Kode optimasi"""
 
 # ╔═╡ 1ca519f5-046e-4fb8-8ff0-85243be52b4b
 function sls_gelombang_op(T, L, gelombang::Gelombang; n_t=100, n_x=100)
@@ -564,6 +570,7 @@ version = "17.4.0+0"
 # ╠═88071582-a35b-4b65-ad26-e16af55cc790
 # ╠═5ab3b34c-e71b-4fe6-821d-e853ed064890
 # ╟─d0d49447-982f-48a2-8226-5b2f507ece3c
+# ╟─d96ca305-6623-451c-8603-653bf7029815
 # ╠═9d61bdbe-1ac5-423b-a7d0-42b1e3f52c14
 # ╠═14952c02-564d-4cc6-a588-c81489fcc625
 # ╠═d885aba3-4395-4fd6-9ab0-55a3b02c76f9
@@ -574,6 +581,7 @@ version = "17.4.0+0"
 # ╠═e8b17246-3c56-472b-8b98-03ee21c7cf18
 # ╠═69307fe4-1789-457a-a190-77eec287b86c
 # ╠═67b3f43c-e8e6-4830-9761-92775159744e
+# ╟─a8179635-72a8-4dd1-a726-0aa97ebc6dc5
 # ╠═1ca519f5-046e-4fb8-8ff0-85243be52b4b
 # ╠═e6fa189e-a1de-495f-ac9e-ba9ef3acf4da
 # ╠═e5600169-b3bf-4e70-bce0-6992b3bc7447
