@@ -314,7 +314,7 @@ y_op ≈ y # If true, there is no race condition
 
 # ╔═╡ 81c7a95c-3ddf-4356-b5ee-c7b1a0406942
 md"""
-Aku masih gak ngerti, kenapa walaupun udah dioptimasi pake `@inbound` dan `@simd`, tapi waktunya masih gak beda jauh. 
+Aku masih gak ngerti, kenapa walaupun udah dioptimasi pake `@inbound` dan `@simd`, tapi waktunya masih gak beda jauh, bahkan terkadang malah lebih lambat.
 
 Aku udah coba pake `@threads`, tapi hasilnya beda. Sepertinya ada race condition.
 """
