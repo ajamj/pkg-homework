@@ -338,7 +338,7 @@ function sls_gelombang_mt(T, L, gelombang::Gelombang; n_t=100, n_x=100)
 
     # kondisi awal
     @inbounds y[1,2:end-1] = gelombang.f.(xs[2:end-1])
-	@inbounds y[2,2:end-1] = y[1,2a:end-1] + dt*gelombang.g.(xs[2:end-1])
+	@inbounds y[2,2:end-1] = y[1,2:end-1] + dt*gelombang.g.(xs[2:end-1])
 
     # solusi untuk t = 2*dt, 3*dt, ..., T
     @threads for t in 2:n_t-1
