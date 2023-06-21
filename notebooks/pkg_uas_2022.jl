@@ -1,6 +1,11 @@
 ### A Pluto.jl notebook ###
 # v0.19.26
 
+#> [frontmatter]
+#> Author = "Ajam Jamaludin"
+#> title = "UAS PKG 2022"
+#> date = "2023-06-22"
+
 using Markdown
 using InteractiveUtils
 
@@ -360,7 +365,7 @@ y_mt = sls_gelombang_mt(T, L, gelombang; n_t=2401, n_x=101)
 @btime y_mt
 
 # ╔═╡ 63e5233d-51b5-4142-848b-8e104074b270
-y_mt ≈ y
+y_mt ≈ y 
 
 # ╔═╡ 46c7ed5a-a7c5-4fd2-8136-c8f98783f0cb
 md"""Jika hasil kode di atas `false`, berarti memang race condition."""
