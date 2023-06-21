@@ -7,6 +7,9 @@ using InteractiveUtils
 # ╔═╡ 8019fea8-102d-11ee-2602-41125f96071f
 using PlutoUI, BenchmarkTools
 
+# ╔═╡ 2ad9348e-a232-46ba-aaef-6914b2d27204
+using .Threads
+
 # ╔═╡ 480109e2-59bb-4794-9869-8752d1072d68
 md"""
 # UAS PKG 2022
@@ -78,7 +81,93 @@ md"""
 ### Fungsi standar FORTRAN"""
 
 # ╔═╡ eeb2856a-d568-4537-990c-b1f60d89513d
-md"""nyusul, kalo sempat"""
+md"""Berikut adalah 10 contoh fungsi standar dalam Fortran beserta penjelasan dan contoh penggunaannya:
+
+1. **ABS**: Fungsi ini mengembalikan nilai absolut dari suatu bilangan.
+
+   Contoh penggunaan:
+   ```fortran
+   real :: x = -3.5
+   x = ABS(x)  ! x sekarang bernilai 3.5
+   ```
+
+2. **SIN**: Fungsi ini mengembalikan sinus dari suatu sudut dalam radian.
+
+   Contoh penggunaan:
+   ```fortran
+   real :: angle = 0.5
+   real :: result = SIN(angle)  ! result berisi nilai sinus dari sudut 0.5 radian
+   ```
+
+3. **COS**: Fungsi ini mengembalikan kosinus dari suatu sudut dalam radian.
+
+   Contoh penggunaan:
+   ```fortran
+   real :: angle = 1.0
+   real :: result = COS(angle)  ! result berisi nilai kosinus dari sudut 1.0 radian
+   ```
+
+4. **SQRT**: Fungsi ini mengembalikan akar kuadrat dari suatu bilangan.
+
+   Contoh penggunaan:
+   ```fortran
+   real :: x = 16.0
+   real :: result = SQRT(x)  ! result berisi nilai akar kuadrat dari 16.0, yaitu 4.0
+   ```
+
+5. **EXP**: Fungsi ini mengembalikan nilai eksponensial (e^x) dari suatu bilangan.
+
+   Contoh penggunaan:
+   ```fortran
+   real :: x = 2.0
+   real :: result = EXP(x)  ! result berisi nilai eksponensial dari 2.0, yaitu 7.389056
+   ```
+
+6. **LOG**: Fungsi ini mengembalikan logaritma natural (basis e) dari suatu bilangan.
+
+   Contoh penggunaan:
+   ```fortran
+   real :: x = 10.0
+   real :: result = LOG(x)  ! result berisi logaritma natural dari 10.0, yaitu 2.302585
+   ```
+
+7. **MAX**: Fungsi ini mengembalikan nilai maksimum dari dua bilangan.
+
+   Contoh penggunaan:
+   ```fortran
+   real :: a = 5.0
+   real :: b = 7.0
+   real :: result = MAX(a, b)  ! result berisi nilai maksimum dari a dan b, yaitu 7.0
+   ```
+
+8. **MIN**: Fungsi ini mengembalikan nilai minimum dari dua bilangan.
+
+   Contoh penggunaan:
+   ```fortran
+   real :: a = 3.0
+   real :: b = 2.0
+   real :: result = MIN(a, b)  ! result berisi nilai minimum dari a dan b, yaitu 2.0
+   ```
+
+9. **MOD**: Fungsi ini mengembalikan sisa pembagian dari dua bilangan.
+
+   Contoh penggunaan:
+   ```fortran
+   integer :: a = 17
+   integer :: b = 5
+   integer :: result = MOD(a, b)  ! result berisi sisa pembagian 17 dengan 5, yaitu 2
+   ```
+
+10. **LEN**: Fungsi ini mengembalikan panjang string.
+
+    Contoh penggunaan:
+```fortran
+character(len=10) :: str = 'Hello'
+integer :: length = LEN(str)  ! length berisi panjang string str, yaitu 5
+```
+
+
+Fungsi-fungsi standar ini dapat digunakan dalam program Fortran untuk melakukan operasi matematika, manipulasi string, dan pemrosesan data secara umum."""
 
 # ╔═╡ 35a8f79f-862f-4a0a-8c09-0692b0d75997
 md"""
@@ -221,8 +310,22 @@ y_op = sls_gelombang_op(T, L, gelombang; n_t=2401, n_x=101)
 # ╔═╡ e5600169-b3bf-4e70-bce0-6992b3bc7447
 @btime y_op
 
-# ╔═╡ cbc0f4b1-dc9f-4aa4-8a88-4ede66844561
-function sls_gelombang_workaround(T, L, gelombang::Gelombang; n_t=100, n_x=100)
+# ╔═╡ b1877f2e-2a59-4f1f-a95f-bc30797f9a89
+y_op ≈ y # If true, there is no race condition
+
+# ╔═╡ 81c7a95c-3ddf-4356-b5ee-c7b1a0406942
+md"""
+Aku masih gak ngerti, kenapa walaupun udah dioptimasi pake `@inbound` dan `@simd`, tapi waktunya masih gak beda jauh. 
+
+Aku udah coba pake `@threads`, tapi hasilnya beda. Sepertinya ada race condition.
+"""
+
+# ╔═╡ c745236d-edc6-4f6c-80a7-2230f83430ed
+md"""
+Kita coba lagi multithreading"""
+
+# ╔═╡ 7c11766d-7e82-4fd8-ac13-ccf214b24a05
+function sls_gelombang_mt(T, L, gelombang::Gelombang; n_t=100, n_x=100)
     ts = range(0, T; length=n_t)
     xs = range(0, L; length=n_x)
     dt = ts[2] - ts[1]
@@ -235,29 +338,33 @@ function sls_gelombang_workaround(T, L, gelombang::Gelombang; n_t=100, n_x=100)
 
     # kondisi awal
     @inbounds y[1,2:end-1] = gelombang.f.(xs[2:end-1])
-    @inbounds y[2,2:end-1] = y[1,2:end-1] + dt*gelombang.g.(xs[2:end-1])
+	@inbounds y[2,2:end-1] = y[1,2a:end-1] + dt*gelombang.g.(xs[2:end-1])
 
     # solusi untuk t = 2*dt, 3*dt, ..., T
-    for t in 2:n_t-1
-        @inbounds y[t+1, 2:end-1] = @. c^2 * dt^2 * (y[t, 3:end] - 2*y[t, 2:end-1] + y[t, 1:end-2])/dx^2 + 2*y[t, 2:end-1] - y[t-1, 2:end-1]
+    @threads for t in 2:n_t-1
+        partial = zeros(n_x)
+        @simd for x in 2:n_x-1
+            @inbounds dy_xx = (y[t, x+1] - 2*y[t, x] + y[t, x-1])/dx^2
+            @inbounds partial[x] = c^2 * dt^2 * dy_xx + 2*y[t, x] - y[t-1, x]
+        end
+        @inbounds y[t+1, 2:n_x-1] .= partial[2:n_x-1]
     end
 
     return y
 end
 
 
-# ╔═╡ 5bb46996-0cfb-4c8c-8cad-ad9ee2d798fc
-y_wk = sls_gelombang_workaround(T, L, gelombang; n_t=2401, n_x=101)
+# ╔═╡ 9fc02121-f151-4e1e-afad-4e4fd27f8cf6
+y_mt = sls_gelombang_mt(T, L, gelombang; n_t=2401, n_x=101)
 
-# ╔═╡ 63da1603-6580-455e-8498-607928634059
-@btime y_wk
+# ╔═╡ 34409a9f-2c31-4905-9cbe-fc08f23b5fc5
+@btime y_mt
 
-# ╔═╡ 81c7a95c-3ddf-4356-b5ee-c7b1a0406942
-md"""
-Aku masih gak ngerti, kenapa walaupun udah dioptimasi pake `@inbound` dan `@simd`, tapi waktunya masih gak beda jauh. 
+# ╔═╡ 63e5233d-51b5-4142-848b-8e104074b270
+y_mt ≈ y
 
-Aku udah coba pake `@threads`, tapi hasilnya beda. Sepertinya ada race condition.
-"""
+# ╔═╡ 46c7ed5a-a7c5-4fd2-8136-c8f98783f0cb
+md"""Jika hasil kode di atas `false`, berarti memang race condition."""
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -585,9 +692,14 @@ version = "17.4.0+0"
 # ╠═1ca519f5-046e-4fb8-8ff0-85243be52b4b
 # ╠═e6fa189e-a1de-495f-ac9e-ba9ef3acf4da
 # ╠═e5600169-b3bf-4e70-bce0-6992b3bc7447
-# ╠═cbc0f4b1-dc9f-4aa4-8a88-4ede66844561
-# ╠═5bb46996-0cfb-4c8c-8cad-ad9ee2d798fc
-# ╠═63da1603-6580-455e-8498-607928634059
+# ╠═b1877f2e-2a59-4f1f-a95f-bc30797f9a89
 # ╟─81c7a95c-3ddf-4356-b5ee-c7b1a0406942
+# ╟─c745236d-edc6-4f6c-80a7-2230f83430ed
+# ╠═2ad9348e-a232-46ba-aaef-6914b2d27204
+# ╠═7c11766d-7e82-4fd8-ac13-ccf214b24a05
+# ╠═9fc02121-f151-4e1e-afad-4e4fd27f8cf6
+# ╠═34409a9f-2c31-4905-9cbe-fc08f23b5fc5
+# ╠═63e5233d-51b5-4142-848b-8e104074b270
+# ╟─46c7ed5a-a7c5-4fd2-8136-c8f98783f0cb
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
