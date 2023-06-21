@@ -295,9 +295,6 @@ To simulate something that resembles e.g. the evolution of temperature in a 2D h
 # ╔═╡ 69ee8f7c-57fa-410c-b92a-19546c98c9c7
 @bind maximum_iteration Slider(1:100, default=100, show_value=true)
 
-# ╔═╡ 14db4a1f-f034-46d4-a653-a1c9811b9060
-println(maximum_iteration)
-
 # ╔═╡ c38b1607-a6ee-4515-ab8b-a3cec545367f
 for i in 1:maximum_iteration
 	lap2d!(u, unew)
@@ -1391,7 +1388,6 @@ version = "1.4.1+0"
 # ╟─979bf6ea-21d3-41ac-a9eb-25f3341f9574
 # ╠═fe0ec95f-f229-4452-9ae4-672dfc4dc5e0
 # ╠═69ee8f7c-57fa-410c-b92a-19546c98c9c7
-# ╠═14db4a1f-f034-46d4-a653-a1c9811b9060
 # ╠═c38b1607-a6ee-4515-ab8b-a3cec545367f
 # ╠═c81b5b39-9051-4031-9c72-dd96f7cd4a49
 # ╠═5f98b69d-4aa8-41f5-b2a0-b2bd11f35946
