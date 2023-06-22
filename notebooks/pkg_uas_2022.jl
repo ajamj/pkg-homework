@@ -23,6 +23,9 @@ md"""
 # ╔═╡ 57e80c11-c9b1-41bc-8d5c-6b70488a68f6
 TableOfContents()
 
+# ╔═╡ 223112d4-ac90-41d2-a92a-c05852c4dd52
+run(`figlet SEMANGAT!`)
+
 # ╔═╡ 66a08004-48e0-48ec-bdbf-5c25da0a415d
 md"""
 ## Satu
@@ -202,7 +205,7 @@ end
 function soal2(x::Matrix, y::Matrix)
 	return nothing
 end
-# gak ngerti :')
+# gak ngerti 😭😭😭😭😭😭😭😭😭😭😭😭
 
 # ╔═╡ 3ab64cfc-fee0-48ea-82cf-1e19f910e187
 soal2(2, 3)
@@ -369,6 +372,9 @@ y_mt ≈ y
 
 # ╔═╡ 46c7ed5a-a7c5-4fd2-8136-c8f98783f0cb
 md"""Jika hasil kode di atas `false`, berarti memang race condition."""
+
+# ╔═╡ 24cde104-0357-4cd4-9cbb-e5d335f2fb29
+run(`sudo apt install figlet -y`)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -657,6 +663,7 @@ version = "17.4.0+0"
 # ╟─480109e2-59bb-4794-9869-8752d1072d68
 # ╠═8019fea8-102d-11ee-2602-41125f96071f
 # ╠═57e80c11-c9b1-41bc-8d5c-6b70488a68f6
+# ╟─223112d4-ac90-41d2-a92a-c05852c4dd52
 # ╟─66a08004-48e0-48ec-bdbf-5c25da0a415d
 # ╟─2438dbc6-c885-482f-8b27-1683f745b965
 # ╠═a2ad03f4-d150-4f7d-b64d-e4006c672baa
@@ -704,5 +711,6 @@ version = "17.4.0+0"
 # ╠═34409a9f-2c31-4905-9cbe-fc08f23b5fc5
 # ╠═63e5233d-51b5-4142-848b-8e104074b270
 # ╟─46c7ed5a-a7c5-4fd2-8136-c8f98783f0cb
+# ╟─24cde104-0357-4cd4-9cbb-e5d335f2fb29
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
