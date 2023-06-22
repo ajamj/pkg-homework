@@ -374,7 +374,7 @@ y_mt ≈ y
 md"""Jika hasil kode di atas `false`, berarti memang race condition."""
 
 # ╔═╡ 24cde104-0357-4cd4-9cbb-e5d335f2fb29
-run(`sudo apt install figlet -y`)
+run(`cowsay "Kalo kamu ngerti sama soal-soal yang belum dijawab, silakan edit notebook ini lalu tambahkan penjelasanmu!"`)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
