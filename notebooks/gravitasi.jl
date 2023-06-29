@@ -170,11 +170,8 @@ function plot_cylinder(radius, height, num_points)
     title!("Cylinder Volume")
 end
 
-# ╔═╡ 62b9448f-68a5-4b6d-b529-516bd9dfc75b
-cube = cube_volume(1000)
-
 # ╔═╡ 392d4ef6-c416-47e9-9d5a-751f4ec729a0
-function cube_heatmap(a, sample)
+function cube_heatmap(a, sample, cube)
 	b_a = k_a = sample
 	px = range(1, stop=a, length=sample)
 	py = range(1, stop=a, length=sample)
@@ -182,15 +179,19 @@ function cube_heatmap(a, sample)
 	for jx in 1:length(px)
     	for jy in 1:length(py)
 			U[jy, jx] = gravitational_potential(px[jx], py[jy], 0, cube, density)
+			println(U[jy, jx])
     	end
 	end
 end
+
+# ╔═╡ 62b9448f-68a5-4b6d-b529-516bd9dfc75b
+cube = cube_volume(10)
 
 # ╔═╡ d7feb367-bc08-4d59-a374-5dcafc672c69
 plot_cube(1000)
 
 # ╔═╡ 55e72756-6273-4687-af9f-4185d6b425dc
-cube_heatmap(1000, 50)
+cube_heatmap(1000, 50, cube)
 
 # ╔═╡ ef1aa806-be37-448c-bd0f-fb0f54647a81
 gravitational_potential(1000, 0, 0, cube, density) # titik sudut
