@@ -26,6 +26,20 @@ TableOfContents()
 # ╔═╡ 223112d4-ac90-41d2-a92a-c05852c4dd52
 run(`figlet SEMANGAT!`)
 
+# ╔═╡ 2e467265-d43d-4087-b880-1527fb676ed0
+# ╠═╡ disabled = true
+#=╠═╡
+md"""
+```
+				 ___  ___ _ __ ___   __ _ _ __   __ _  __ _| |_| |
+				/ __|/ _ \ '_ ` _ \ / _` | '_ \ / _` |/ _` | __| |
+				\__ \  __/ | | | | | (_| | | | | (_| | (_| | |_|_|
+				|___/\___|_| |_| |_|\__,_|_| |_|\__, |\__,_|\__(_)
+												|___/
+```
+"""
+  ╠═╡ =#
+
 # ╔═╡ 66a08004-48e0-48ec-bdbf-5c25da0a415d
 md"""
 ## Satu
@@ -376,6 +390,25 @@ md"""Jika hasil kode di atas `false`, berarti memang race condition."""
 # ╔═╡ 24cde104-0357-4cd4-9cbb-e5d335f2fb29
 run(`cowsay "Kalo kamu ngerti sama soal-soal yang belum dijawab, silakan edit notebook ini lalu tambahkan penjelasanmu!"`)
 
+# ╔═╡ e2ac8d47-b3e0-4bfc-bf0c-f1836402c802
+# ╠═╡ disabled = true
+#=╠═╡
+md"""
+```
+ ______________________________________
+/ Kalo kamu ngerti sama soal-soal yang \
+| belum dijawab, silakan edit notebook |
+\ ini lalu tambahkan penjelasanmu!     /
+ --------------------------------------
+        \   ^__^ \
+         \  (oo)\_______\
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+```
+"""
+  ╠═╡ =#
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -664,6 +697,7 @@ version = "17.4.0+0"
 # ╠═8019fea8-102d-11ee-2602-41125f96071f
 # ╠═57e80c11-c9b1-41bc-8d5c-6b70488a68f6
 # ╟─223112d4-ac90-41d2-a92a-c05852c4dd52
+# ╟─2e467265-d43d-4087-b880-1527fb676ed0
 # ╟─66a08004-48e0-48ec-bdbf-5c25da0a415d
 # ╟─2438dbc6-c885-482f-8b27-1683f745b965
 # ╠═a2ad03f4-d150-4f7d-b64d-e4006c672baa
@@ -711,6 +745,7 @@ version = "17.4.0+0"
 # ╠═34409a9f-2c31-4905-9cbe-fc08f23b5fc5
 # ╠═63e5233d-51b5-4142-848b-8e104074b270
 # ╟─46c7ed5a-a7c5-4fd2-8136-c8f98783f0cb
-# ╟─24cde104-0357-4cd4-9cbb-e5d335f2fb29
+# ╠═24cde104-0357-4cd4-9cbb-e5d335f2fb29
+# ╟─e2ac8d47-b3e0-4bfc-bf0c-f1836402c802
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
