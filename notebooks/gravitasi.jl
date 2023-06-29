@@ -83,6 +83,11 @@ function gravitational_potential(x, y, z, volume, density)
 end
 
 
+# ╔═╡ 4badc6f3-beb8-41f3-9062-14d63d91a849
+md"""
+Fungsi `gravitational_potential` digunakan untuk menghitung potensial gravitasi dari sebuah titik yang ada pada benda bervolume. Pada contoh di sini, didefinisikan fungsi densitas $$\rho(\xi,\eta,\zeta)=(2e5,3e5,5e4)$$.
+"""
+
 # ╔═╡ fbc45d99-a594-47ba-8bd8-52fbc22b69cf
 function cube_volume(a, sample)
     volume = []
@@ -127,6 +132,11 @@ function cylinder_volume(radius, height, num_points)
     return volume
 end
 
+# ╔═╡ 6387ddaa-6c60-442c-b4a0-fb3933fc6e82
+md"""
+Fungsi `cube_volume`, `sphere_volume`, dan `cylinder_volume` digunakan untuk membuat titik sampel permukaan benda pada sistem koordinat.
+"""
+
 # ╔═╡ fd576ef9-b732-4a1e-bc0d-be00bb5eab11
 function plot_sphere(volume)
     x = [point[1] for point in volume]
@@ -167,6 +177,11 @@ function plot_cylinder(radius, height, num_points)
     title!("Cylinder Volume")
 end
 
+# ╔═╡ 10ce7ae0-0638-4661-95b6-b0778933e591
+md"""
+Fungsi `plot_cube`, `plot_sphere`, dan `plot_cylinder` digunakan untuk membuat plot bentuk benda pada sistem koordinat.
+"""
+
 # ╔═╡ 392d4ef6-c416-47e9-9d5a-751f4ec729a0
 function cube_heatmap(a, sample, cube)
 	px = range(0, stop=a, length=sample)
@@ -180,6 +195,11 @@ function cube_heatmap(a, sample, cube)
 	contourf(U)
     title!("Gravitational Potential Heatmap of a Cube Surface")
 end
+
+# ╔═╡ 4e213318-1255-4d76-aeeb-e70fda1dbb34
+md"""
+Fungsi `cube_heatmap` digunakan untuk membuat plot potensial gravitasi dari sebuah sisi kubus.
+"""
 
 # ╔═╡ d8082e3f-acd4-4e41-a8c7-6d0266325fe6
 md""" ### Tes Kubus"""
@@ -205,6 +225,11 @@ gravitational_potential(cube_edge/2, 0, cube_edge/2, cube, density) # U di titik
 # ╔═╡ 24305a58-7a1d-4dc9-a5c0-4c2af54b9421
 gravitational_potential(0, 0, cube_edge, cube, density) # U di titik sudut permukaan
 
+# ╔═╡ 70211d30-9fde-41bd-bcad-ed6ef40ead4a
+md"""
+Untuk pengujian fungsi, digunakan sebuah kubus dengan panjang sisi `20`. Potensial gravitasi di titik tengah permukaan sebuah sisi kubus cenderung lebih besar daripada di bagian pinggir sisi kubus.
+"""
+
 # ╔═╡ 2bd19fbc-56c9-4376-98db-4f113e6b7bcd
 md""" ### Tes Bola"""
 
@@ -225,6 +250,10 @@ gravitational_potential(0, sphere_radius,0, sphere, density) # U di permukaan bo
 
 # ╔═╡ a7ec9c19-5d8d-45fc-9ecc-a2ae0e706a44
 gravitational_potential(sphere_radius, 0, 0, sphere, density) # U di permukaan bola dengan x = jari-jari
+
+# ╔═╡ a2412071-0f34-4f58-a098-eaafd3673a61
+md""" Besar potensial gravitasi pada tiga buah titik di permukaan bola cenderung sama besarnya, yaitu sekitar `0.0151`.
+"""
 
 # ╔═╡ 5d03f1d5-ec71-43c3-ae4f-22cda2ec659b
 md""" ### Tes Silinder"""
@@ -1276,13 +1305,17 @@ version = "1.4.1+0"
 # ╠═441f353f-08cf-4922-b0f5-534a08371a3a
 # ╠═b0a251ec-d8e6-4422-83fc-1012d0440d90
 # ╠═1667af60-1148-4f0a-99a1-e80e1100e2d7
+# ╟─4badc6f3-beb8-41f3-9062-14d63d91a849
 # ╠═fbc45d99-a594-47ba-8bd8-52fbc22b69cf
 # ╠═ecb726eb-6139-4bc4-87af-32a79f90bc9f
 # ╠═cada5b35-62a1-469f-a929-a011681512e2
+# ╟─6387ddaa-6c60-442c-b4a0-fb3933fc6e82
 # ╠═fd576ef9-b732-4a1e-bc0d-be00bb5eab11
 # ╠═d7b74a61-9c55-42dc-9ed8-4031640de855
 # ╠═e6ecb071-7340-4ea9-a34c-113c0ba45a25
+# ╟─10ce7ae0-0638-4661-95b6-b0778933e591
 # ╠═392d4ef6-c416-47e9-9d5a-751f4ec729a0
+# ╟─4e213318-1255-4d76-aeeb-e70fda1dbb34
 # ╟─d8082e3f-acd4-4e41-a8c7-6d0266325fe6
 # ╠═5ebbdd05-e212-47f0-b062-c09bca7ae034
 # ╠═cf579fdc-d87f-43bd-a1d4-59440b575b27
@@ -1291,6 +1324,7 @@ version = "1.4.1+0"
 # ╠═55e72756-6273-4687-af9f-4185d6b425dc
 # ╠═dd81d7fc-5af3-45c0-957b-9c979babde84
 # ╠═24305a58-7a1d-4dc9-a5c0-4c2af54b9421
+# ╟─70211d30-9fde-41bd-bcad-ed6ef40ead4a
 # ╟─2bd19fbc-56c9-4376-98db-4f113e6b7bcd
 # ╠═fca63b2a-4cb6-41b3-8ff1-6154af689090
 # ╠═3f2f0bb8-6b70-462f-b7ba-4af45ccd1906
@@ -1298,6 +1332,7 @@ version = "1.4.1+0"
 # ╠═e4b7f316-8770-44ea-ac29-2aa0d70de32d
 # ╠═d6be7519-f988-4b50-85d0-c51bc66b475e
 # ╠═a7ec9c19-5d8d-45fc-9ecc-a2ae0e706a44
+# ╟─a2412071-0f34-4f58-a098-eaafd3673a61
 # ╟─5d03f1d5-ec71-43c3-ae4f-22cda2ec659b
 # ╠═3822cb79-d40a-472f-8510-2b91a04b40cd
 # ╠═fc10f1bf-a0bf-4006-9dcb-827444a5e1b0
