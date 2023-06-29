@@ -85,7 +85,7 @@ end
 
 # ╔═╡ 4badc6f3-beb8-41f3-9062-14d63d91a849
 md"""
-Fungsi `gravitational_potential` digunakan untuk menghitung potensial gravitasi dari sebuah titik yang ada pada benda bervolume. Pada contoh di sini, didefinisikan fungsi densitas $$\rho(\xi,\eta,\zeta)=(2e5,3e5,5e4)$$.
+Fungsi `gravitational_potential` digunakan untuk menghitung potensial gravitasi dari sebuah titik yang ada pada benda bervolume. Pada contoh di sini, didefinisikan fungsi densitas $$\rho(\xi,\eta,\zeta)=(2e5,3e5,5e4)$$. Komputasi paralel diterapkan dengan menggunakan konsep *multithreading*, lebih tepatnya dengan menggunakan bantuan macro `@threads`.
 """
 
 # ╔═╡ fbc45d99-a594-47ba-8bd8-52fbc22b69cf
