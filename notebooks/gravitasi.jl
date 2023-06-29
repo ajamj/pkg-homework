@@ -10,9 +10,6 @@ using Plots
 # ╔═╡ 194e72e5-a6d0-4019-adf2-9c7eea1f8250
 using .Threads
 
-# ╔═╡ 18313860-892a-4dd4-96a4-7f6dd96a8c29
-using Distributed
-
 # ╔═╡ 245fdf8f-0c72-4d24-bf35-8b14a7939869
 md"""
 # UJIAN AKHIR SEMESTER (UAS) GENAP 2022/2023
@@ -53,36 +50,45 @@ Buatkan suatu fungsi yang dapat menghitung nilai potensial gravitasi berdasarkan
 
 # ╔═╡ 9bae94a4-42a3-4ea7-9d48-5974c65b4a69
 md"""
-## Pembahasan
-
+## Jawaban
+### Fungsi
 """
+
+# ╔═╡ fe118504-29b6-429c-a7a6-c67ef8c1b637
+gr()
+
+# ╔═╡ 6f2f908e-c31c-474a-9d8b-c2557636cd17
+Threads.nthreads()
 
 # ╔═╡ 441f353f-08cf-4922-b0f5-534a08371a3a
 G = 6.67430e-11 # N m^2 kg^-2
 
-# ╔═╡ 8f3da368-063d-4bec-9adb-02c09cb01f82
+# ╔═╡ b0a251ec-d8e6-4422-83fc-1012d0440d90
+density = [2e5, 3e5, 5e4]
+
+# ╔═╡ 1667af60-1148-4f0a-99a1-e80e1100e2d7
 function gravitational_potential(x, y, z, volume, density)
-    potential = 0.0
-    
-    for (ix, iy, iz) in volume
+    potential = Atomic{Float64}(0.0)  # Menggunakan Atomic untuk menjaga akses yang aman ke variabel potential
+
+    @threads for (ix, iy, iz) in volume
         distance = sqrt((ix - x)^2 + (iy - y)^2 + (iz - z)^2)
-        
+
         if distance != 0.0
-            potential += sum(density[:] ./ distance)
+            atomic_add!(potential, sum(density[:] ./ distance))
         end
     end
-    
-    potential *= G
-    return potential
+
+    potential[] *= G
+    return potential[]
 end
 
 
 # ╔═╡ fbc45d99-a594-47ba-8bd8-52fbc22b69cf
-function cube_volume(a)
+function cube_volume(a, sample)
     volume = []
-    for x in range(0,a,50)
-        for y in range(0,a,50)
-            for z in range(0,a,50)
+    for x in range(0,a,sample)
+        for y in range(0,a,sample)
+            for z in range(0,a,sample)
                 push!(volume, (x, y, z))
             end
         end
@@ -90,28 +96,21 @@ function cube_volume(a)
     return volume
 end
 
-# ╔═╡ ded0c908-e19f-4f40-8c21-4802f07fcf5f
-density = [2600, 2200, 2500]
-
 # ╔═╡ ecb726eb-6139-4bc4-87af-32a79f90bc9f
 function sphere_volume(radius)
     volume = []
-    num_points = 4 * 10  # Number of points used to approximate the sphere
-
-    phi_step = π / (num_points - 1)  # Adjusted step size
-    theta_step = 2π / num_points
-
-    for phi in 0:phi_step:π
-        for theta in 0:theta_step:2π
-            x = radius * sin(phi) * cos(theta)
-            y = radius * sin(phi) * sin(theta)
-            z = radius * cos(phi)
-            push!(volume, (x, y, z))
+    for ix in -radius:radius
+        for iy in -radius:radius
+            for iz in -radius:radius
+                if (ix^2 + iy^2 + iz^2) <= radius^2
+                    push!(volume, (ix, iy, iz))
+                end
+            end
         end
     end
-
     return volume
 end
+
 
 # ╔═╡ cada5b35-62a1-469f-a929-a011681512e2
 function cylinder_volume(radius, height, num_points)
@@ -129,27 +128,25 @@ function cylinder_volume(radius, height, num_points)
 end
 
 # ╔═╡ fd576ef9-b732-4a1e-bc0d-be00bb5eab11
-function plot_sphere(radius)
-    volume = sphere_volume(radius)
+function plot_sphere(volume)
     x = [point[1] for point in volume]
     y = [point[2] for point in volume]
     z = [point[3] for point in volume]
-    
-    fig = Figure()
-    ax = Axis3(fig)
-    scatter!(ax, x, y, z, markersize = 2, color = :blue)
-    fig[1, 1] = ax
-    save("file1.png", fig)
+    plot3d(x, y, z, legend = false)
+	xlabel!("X")
+    ylabel!("Y")
+    zlabel!("Z")
+    title!("Sphere Volume")
 end
 
 # ╔═╡ d7b74a61-9c55-42dc-9ed8-4031640de855
-function plot_cube(a)
-    volume = cube_volume(a)
+function plot_cube(a,sample)
+    volume = cube_volume(a,sample)
     x = [point[1] for point in volume]
     y = [point[2] for point in volume]
     z = [point[3] for point in volume]
     
-    plot3d(x, y, z, marker = :square, legend = false)
+    plot3d(x, y, z, legend = false)
     xlabel!("X")
     ylabel!("Y")
     zlabel!("Z")
@@ -163,7 +160,7 @@ function plot_cylinder(radius, height, num_points)
     y = [point[2] for point in volume]
     z = [point[3] for point in volume]
     
-    plot3d(x, y, z, marker = :circle, legend = false)
+    plot3d(x, y, z, legend = false)
     xlabel!("X")
     ylabel!("Y")
     zlabel!("Z")
@@ -172,46 +169,90 @@ end
 
 # ╔═╡ 392d4ef6-c416-47e9-9d5a-751f4ec729a0
 function cube_heatmap(a, sample, cube)
-	b_a = k_a = sample
-	px = range(1, stop=a, length=sample)
-	py = range(1, stop=a, length=sample)
-	U = Array{Any}(undef, (b_a, k_a))
+	px = range(0, stop=a, length=sample)
+	py = range(0, stop=a, length=sample)
+	U = Array{Any}(undef, (sample, sample))
 	for jx in 1:length(px)
     	for jy in 1:length(py)
 			U[jy, jx] = gravitational_potential(px[jx], py[jy], 0, cube, density)
-			println(U[jy, jx])
     	end
 	end
+	contourf(U)
+    title!("Gravitational Potential Heatmap of a Cube Surface")
 end
 
+# ╔═╡ d8082e3f-acd4-4e41-a8c7-6d0266325fe6
+md""" ### Tes Kubus"""
+
+# ╔═╡ 5ebbdd05-e212-47f0-b062-c09bca7ae034
+cube_edge = 20
+
+# ╔═╡ cf579fdc-d87f-43bd-a1d4-59440b575b27
+cube_sample = cube_edge+1
+
 # ╔═╡ 62b9448f-68a5-4b6d-b529-516bd9dfc75b
-cube = cube_volume(10)
+cube = cube_volume(cube_edge, cube_sample)
 
 # ╔═╡ d7feb367-bc08-4d59-a374-5dcafc672c69
-plot_cube(1000)
+plot_cube(cube_edge, cube_sample)
 
 # ╔═╡ 55e72756-6273-4687-af9f-4185d6b425dc
-cube_heatmap(1000, 50, cube)
-
-# ╔═╡ ef1aa806-be37-448c-bd0f-fb0f54647a81
-gravitational_potential(1000, 0, 0, cube, density) # titik sudut
-
-# ╔═╡ 1bf1cad9-a132-4e91-bbaa-4444768d7a8b
-gravitational_potential(0, 1000, 0, cube, density) # titik sudut
-
-# ╔═╡ 32530d71-4867-4844-a2fa-6bb5d88015b6
-gravitational_potential(0, 0, 1000, cube, density) # titik sudut
+cube_heatmap(cube_edge, cube_sample, cube)
 
 # ╔═╡ dd81d7fc-5af3-45c0-957b-9c979babde84
-gravitational_potential(500, 0, 500, cube, density) # titik tengah permukaan
+gravitational_potential(cube_edge/2, 0, cube_edge/2, cube, density) # U di titik tengah permukaan
+
+# ╔═╡ 24305a58-7a1d-4dc9-a5c0-4c2af54b9421
+gravitational_potential(0, 0, cube_edge, cube, density) # U di titik sudut permukaan
 
 # ╔═╡ 2bd19fbc-56c9-4376-98db-4f113e6b7bcd
+md""" ### Tes Bola"""
 
+# ╔═╡ fca63b2a-4cb6-41b3-8ff1-6154af689090
+sphere_radius = 10
+
+# ╔═╡ 3f2f0bb8-6b70-462f-b7ba-4af45ccd1906
+sphere = sphere_volume(sphere_radius)
+
+# ╔═╡ 1efe8f3f-e4c2-4bd8-b259-accad8a0dcfa
+plot_sphere(sphere)
+
+# ╔═╡ e4b7f316-8770-44ea-ac29-2aa0d70de32d
+gravitational_potential(0, 0, sphere_radius, sphere, density) # U di permukaan bola dengan z = jari-jari
+
+# ╔═╡ d6be7519-f988-4b50-85d0-c51bc66b475e
+gravitational_potential(0, sphere_radius,0, sphere, density) # U di permukaan bola dengan y = jari-jari
+
+# ╔═╡ a7ec9c19-5d8d-45fc-9ecc-a2ae0e706a44
+gravitational_potential(sphere_radius, 0, 0, sphere, density) # U di permukaan bola dengan x = jari-jari
+
+# ╔═╡ 5d03f1d5-ec71-43c3-ae4f-22cda2ec659b
+md""" ### Tes Silinder"""
+
+# ╔═╡ 3822cb79-d40a-472f-8510-2b91a04b40cd
+cylinder_radius = 5
+
+# ╔═╡ fc10f1bf-a0bf-4006-9dcb-827444a5e1b0
+cylinder_height = 10
+
+# ╔═╡ 53d79404-a2fd-4868-afed-dd0f47c2514d
+cylinder_points = 100
+
+# ╔═╡ d28878c7-e2d5-4732-9da1-96fdfe90d968
+cylinder_volume(cylinder_radius, cylinder_height, cylinder_points)
+
+# ╔═╡ f9be9717-51f4-4eca-8581-315f86712579
+plot_cylinder(cylinder_radius, cylinder_height, cylinder_points)
+
+# ╔═╡ c2cff90b-d6be-4547-8010-91b13cc20b49
+gravitational_potential(0, cylinder_radius, cylinder_height/2, sphere, density) # U di titik tengah selimut
+
+# ╔═╡ 451e7741-b5f7-4f80-807a-ce80574c5bd9
+gravitational_potential(0, cylinder_radius, cylinder_height, sphere, density) # U di titik ujung atas selimut
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
-Distributed = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 
 [compat]
@@ -224,7 +265,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.1"
 manifest_format = "2.0"
-project_hash = "33eb44b7b8be8d95e61506c1513df0402a41aab7"
+project_hash = "c47bfcca0ee0a5ecd37e000d6292be1778d83bc7"
 
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -343,10 +384,6 @@ deps = ["Mmap"]
 git-tree-sha1 = "9e2f36d3c96a820c678f2f1f1782582fcf685bae"
 uuid = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 version = "1.9.1"
-
-[[deps.Distributed]]
-deps = ["Random", "Serialization", "Sockets"]
-uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 
 [[deps.DocStringExtensions]]
 deps = ["LibGit2"]
@@ -1226,32 +1263,48 @@ version = "1.4.1+0"
 """
 
 # ╔═╡ Cell order:
-# ╠═245fdf8f-0c72-4d24-bf35-8b14a7939869
-# ╠═2f355bc6-1146-11ee-2a34-a9a439017154
-# ╠═884ce133-6395-4668-85d5-e1c82f89c0a6
-# ╠═0c1b1761-bff7-4c04-97cc-370928c7f334
-# ╠═5baa0c2b-041a-44ce-aad3-d7901508e7aa
+# ╟─245fdf8f-0c72-4d24-bf35-8b14a7939869
+# ╟─2f355bc6-1146-11ee-2a34-a9a439017154
+# ╟─884ce133-6395-4668-85d5-e1c82f89c0a6
+# ╟─0c1b1761-bff7-4c04-97cc-370928c7f334
+# ╟─5baa0c2b-041a-44ce-aad3-d7901508e7aa
 # ╟─9bae94a4-42a3-4ea7-9d48-5974c65b4a69
 # ╠═f96935d3-e41f-4c85-a167-c375e18c7348
+# ╠═fe118504-29b6-429c-a7a6-c67ef8c1b637
 # ╠═194e72e5-a6d0-4019-adf2-9c7eea1f8250
-# ╠═18313860-892a-4dd4-96a4-7f6dd96a8c29
+# ╠═6f2f908e-c31c-474a-9d8b-c2557636cd17
 # ╠═441f353f-08cf-4922-b0f5-534a08371a3a
-# ╠═8f3da368-063d-4bec-9adb-02c09cb01f82
+# ╠═b0a251ec-d8e6-4422-83fc-1012d0440d90
+# ╠═1667af60-1148-4f0a-99a1-e80e1100e2d7
 # ╠═fbc45d99-a594-47ba-8bd8-52fbc22b69cf
-# ╠═ded0c908-e19f-4f40-8c21-4802f07fcf5f
 # ╠═ecb726eb-6139-4bc4-87af-32a79f90bc9f
 # ╠═cada5b35-62a1-469f-a929-a011681512e2
 # ╠═fd576ef9-b732-4a1e-bc0d-be00bb5eab11
 # ╠═d7b74a61-9c55-42dc-9ed8-4031640de855
 # ╠═e6ecb071-7340-4ea9-a34c-113c0ba45a25
 # ╠═392d4ef6-c416-47e9-9d5a-751f4ec729a0
+# ╟─d8082e3f-acd4-4e41-a8c7-6d0266325fe6
+# ╠═5ebbdd05-e212-47f0-b062-c09bca7ae034
+# ╠═cf579fdc-d87f-43bd-a1d4-59440b575b27
 # ╠═62b9448f-68a5-4b6d-b529-516bd9dfc75b
 # ╠═d7feb367-bc08-4d59-a374-5dcafc672c69
 # ╠═55e72756-6273-4687-af9f-4185d6b425dc
-# ╠═ef1aa806-be37-448c-bd0f-fb0f54647a81
-# ╠═1bf1cad9-a132-4e91-bbaa-4444768d7a8b
-# ╠═32530d71-4867-4844-a2fa-6bb5d88015b6
 # ╠═dd81d7fc-5af3-45c0-957b-9c979babde84
-# ╠═2bd19fbc-56c9-4376-98db-4f113e6b7bcd
+# ╠═24305a58-7a1d-4dc9-a5c0-4c2af54b9421
+# ╟─2bd19fbc-56c9-4376-98db-4f113e6b7bcd
+# ╠═fca63b2a-4cb6-41b3-8ff1-6154af689090
+# ╠═3f2f0bb8-6b70-462f-b7ba-4af45ccd1906
+# ╠═1efe8f3f-e4c2-4bd8-b259-accad8a0dcfa
+# ╠═e4b7f316-8770-44ea-ac29-2aa0d70de32d
+# ╠═d6be7519-f988-4b50-85d0-c51bc66b475e
+# ╠═a7ec9c19-5d8d-45fc-9ecc-a2ae0e706a44
+# ╟─5d03f1d5-ec71-43c3-ae4f-22cda2ec659b
+# ╠═3822cb79-d40a-472f-8510-2b91a04b40cd
+# ╠═fc10f1bf-a0bf-4006-9dcb-827444a5e1b0
+# ╠═53d79404-a2fd-4868-afed-dd0f47c2514d
+# ╠═d28878c7-e2d5-4732-9da1-96fdfe90d968
+# ╠═f9be9717-51f4-4eca-8581-315f86712579
+# ╠═c2cff90b-d6be-4547-8010-91b13cc20b49
+# ╠═451e7741-b5f7-4f80-807a-ce80574c5bd9
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
