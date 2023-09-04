@@ -1,0 +1,16 @@
+# GMT 6 Session common arguments shelf
+BEGIN GMT 6.4.0
+B	pya10g10pxa60f10g10
+J	C
+JA	A114/10/6
+JC	Cyl_stere/0/45/12
+JM	M14c
+JR	R15c
+JX	X14c/0
+JZ	Z1
+R	92/150/-13/10
+Y	5
+Z	Z
+p	135/30
+@L	2
+END
